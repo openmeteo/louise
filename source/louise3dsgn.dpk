@@ -1,0 +1,52 @@
+package louise3dsgn;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'LoUISE - Library of User Interface Special Edition'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  thelma3,
+  louise3,
+  designide,
+  xmlrtl,
+  vclactnband,
+  vclx,
+  vcl,
+  dbrtl,
+  vcldb,
+  vclimg,
+  Tee;
+
+contains
+  iformdsgn in 'iformdsgn.pas',
+  strGrdOdDsn in 'strGrdOdDsn.pas',
+  tsgriddsgn in 'tsgriddsgn.pas',
+  tsdialogsdsgn in 'tsdialogsdsgn.pas',
+  OdURLLabeldsgn in 'OdURLLabeldsgn.pas',
+  OdAboutInfodsgn in 'OdAboutInfodsgn.pas',
+  propertiesdsn in 'propertiesdsn.pas';
+
+end.

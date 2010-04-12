@@ -1,0 +1,98 @@
+package louise3;
+
+{$R *.res}
+{$R 'tsgrid.dcr'}
+{$R 'strGrdOd.dcr'}
+{$R 'tsdialogs.dcr'}
+{$R 'OdURLLabel.dcr'}
+{$R 'OdAboutInfo.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'LoUISE - Library of User Interface Special Edition'}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  thelma3,
+  tee,
+  vcl,
+  vcldb,
+  dbrtl,
+  vclx,
+  vclactnband,
+  xmlrtl,
+  designide,
+  vclimg,
+  VclSmp;
+
+contains
+  uiutils in 'uiutils.pas',
+  filterdlg in 'filterdlg.pas' {FrmFilterDialog},
+  strGrdOd in 'strGrdOd.pas',
+  genopts in 'genopts.pas',
+  ilocales in 'ilocales.pas',
+  icomponent in 'icomponent.pas',
+  tsgrid in 'tsgrid.pas',
+  iform in 'iform.pas',
+  mcsettingsdlg in 'mcsettingsdlg.pas' {FrmConfIntSettings: TLForm},
+  frmsd in 'frmsd.pas' {FrmStageDischarge: TLForm},
+  frmsdcon in 'frmsdcon.pas' {FrmSDConstruction: TLForm},
+  frmselsdts in 'frmselsdts.pas' {SelectSDTimeseries: TLForm},
+  frmhydxs in 'frmhydxs.pas' {FrmHydrXSections: TLForm},
+  aggrdlg in 'aggrdlg.pas' {FrmAggregation: TLForm},
+  evidfdlg in 'evidfdlg.pas' {FrmIDFEval: TLForm},
+  frmdblmass in 'frmdblmass.pas' {FrmDoubleMass: TLForm},
+  frmdisaggr in 'frmdisaggr.pas' {FrmDissagregate: TLForm},
+  frmdrgts in 'frmdrgts.pas' {FrmTimeseriesSelections: TLForm},
+  frmMsgDlg in 'frmMsgDlg.pas' {FrmMessageDlg: TLForm},
+  frmprcsdlg in 'frmprcsdlg.pas' {FrmProcessingDialog: TLForm},
+  frmproperties in 'frmproperties.pas' {FrmPropertiesDlg},
+  frmstats in 'frmstats.pas' {FrmStatistics},
+  frmtscalcparse in 'frmtscalcparse.pas' {FrmTimeseriesParser: TLForm},
+  httpprs in 'httpprs.pas',
+  hymoddlg in 'hymoddlg.pas' {FrmHydroModel: TLForm},
+  idfcurvesdlg in 'idfcurvesdlg.pas' {FrmIDFCurves: TLForm},
+  idfsetdlg in 'idfsetdlg.pas' {FrmIDFSet: TLForm},
+  lincombdlg in 'lincombdlg.pas' {FrmLinearComb: TLForm},
+  tspropsdlg in 'tspropsdlg.pas' {FrmTimeseriesProperties: TLForm},
+  tsdialogs in 'tsdialogs.pas',
+  mlttsdlg in 'mlttsdlg.pas' {FrmMultiTimeseries: TLForm},
+  tsgraphdlg in 'tsgraphdlg.pas' {FrmTSeriesGraph: TLForm},
+  regstdlg in 'regstdlg.pas' {FrmRegularizeStep: TLForm},
+  RngChkDlg in 'RngChkDlg.pas' {FrmRangeCheck: TLForm},
+  regrdlg in 'regrdlg.pas' {FrmRegression: TLForm},
+  rgrrsltdlg in 'rgrrsltdlg.pas' {FrmRegressionResults: TLForm},
+  penmdlg in 'penmdlg.pas' {FrmPenman: TLForm},
+  OdURLLabel in 'OdURLLabel.pas',
+  OdAboutInfo in 'OdAboutInfo.pas',
+  frmhydrm in 'frmhydrm.pas' {FrmHydrometry},
+  frmdevchart in 'frmdevchart.pas' {FrmDeviationChart},
+  frmrgopt in 'frmrgopt.pas' {FrmRegressionOptimizationOptions},
+  midi in 'midi.pas',
+  frmtsarea in 'frmtsarea.pas' {FrmArealIntegration},
+  frmimpts in 'frmimpts.pas' {FrmImportDataToTimeseries},
+  frmflags in 'frmflags.pas' {FrmSetFlagsDialog},
+  frmtswiz in 'frmtswiz.pas' {FrmTimeseriesWizard},
+  frmaggr in 'frmaggr.pas' {FrmAggregationDialog};
+
+end.

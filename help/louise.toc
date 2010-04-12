@@ -1,0 +1,9 @@
+:Base louise.hlp>main
+:Title LoUISE Library Reference
+
+1 LoUISE Library Reference
+3 Units=IDH_Library_LoUISE_Library_Reference_Units
+3 Classes=IDH_Library_LoUISE_Library_Reference_Classes
+3 Other Types=IDH_Library_LoUISE_Library_Reference_OtherTypes
+3 Routines=IDH_Library_LoUISE_Library_Reference_Routines
+3 Global Constants=IDH_Library_LoUISE_Library_Reference_Constants

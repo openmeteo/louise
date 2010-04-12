@@ -1,0 +1,63 @@
+<!DOCTYPE Time2HELPProject_1_0>
+<Time2HELPProject_1_0 Name="LoUISE Library Reference">
+   <Properties>
+      <Property Name="Name">LoUISE Library Reference</Property>
+      <Property Name="Title">LoUISE Library Reference</Property>
+      <Property Name="CompilerVersion">6</Property>
+      <Property Name="PropagatePropertyDocumentation">0</Property>
+   </Properties>
+   <Delphi>
+      <SourceDirectories>
+         <SourceDirectory Name="Main" SourceDir="U:\louise\source" DocDir="U:\louise\doc">
+            <File>uiutils.pas</File>
+            <File>tsdialogs.pas</File>
+            <File>tsgrid.pas</File>
+            <File>GraphNet.pas</File>
+            <File>iform.pas</File>
+            <File>tsdb.pas</File>
+            <File>tlogin.pas</File>
+            <File>scenarios.pas</File>
+            <File>genopts.pas</File>
+            <File>dbfilter.pas</File>
+            <File>strGrdOd.pas</File>
+            <File>interpoldb.pas</File>
+            <File>flagcmpnt.pas</File>
+            <File>tsforms.pas</File>
+            <File>bookmarks.pas</File>
+            <File>ilocales.pas</File>
+         </SourceDirectory>
+      </SourceDirectories>
+      <ComponentImageFiles>
+         <File>U:\louise\source\graphnet.dcr</File>
+         <File>U:\louise\source\tsdialogs.dcr</File>
+         <File>U:\louise\source\tsgrid.dcr</File>
+      </ComponentImageFiles>
+   </Delphi>
+   <Outputs>
+      <Output Name="WinHelp" Engine="WinHelp">
+         <Properties>
+            <Property Name="MaxVisibility">PROTECTED</Property>
+            <Property Name="Implementation">No</Property>
+            <Property Name="IncludePMEKeywords">Yes</Property>
+            <Property Name="IncludeIntopicPMEList">Yes</Property>
+            <Property Name="KWF">No</Property>
+            <Property Name="HPJFilename">u:\louise\help\louise.HPJ</Property>
+            <Property Name="BuildMapFiles">0</Property>
+         </Properties>
+      </Output>
+      <Output Name="PlainHTML" Engine="PlainHTML">
+         <Properties>
+            <Property Name="MaxVisibility">protected</Property>
+            <Property Name="UsePNG">1</Property>
+            <Property Name="BGColor_Top">#FFFF00</Property>
+            <Property Name="BGColor_Body">#FFFFFF</Property>
+         </Properties>
+      </Output>
+      <Output Name="HTMLHelp" Engine="HTMLHelp">
+         <Properties>
+            <Property Name="MaxVisibility">public</Property>
+            <Property Name="DefaultTopicType">standard</Property>
+         </Properties>
+      </Output>
+   </Outputs>
+</Time2HELPProject_1_0>

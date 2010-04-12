@@ -1,0 +1,35 @@
+[OPTIONS]
+HCW=0
+Title=LoUISE Library Reference
+COPYRIGHT=louise   © National Technical University of Athens. Help file last compiled %date.
+HLP=.\louise.hlp
+BMROOT=C:\Program Files\DLogikk\Time2HELP\Templates\Delphi\WinHelp\images
+BMROOT=WinHelp\images
+BMROOT=WinHelp\images\
+BMROOT=C:\Program Files\Time2HELP\Templates\Delphi\WinHelp\images
+BMROOT=Z:\louise\help\WinHelp\images\
+[FILES]
+U:\louise\help\LocalCache\WinHelp\rtf\_#LoUISE Library Reference_Overview.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\uiutils.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\tsdialogs.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\tsgrid.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\GraphNet.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\iform.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\tsdb.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\tlogin.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\scenarios.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\genopts.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\dbfilter.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\strGrdOd.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\interpoldb.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\flagcmpnt.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\tsforms.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\bookmarks.rtf
+U:\louise\help\LocalCache\WinHelp\rtf\ilocales.rtf
+[WINDOWS]
+main="",(333,16,655,749),60676,(r14876671),,f2
+Example="Examples",(653,102,420,600),20736,(r14876671),(r12632256),f3
+pme="Properties, Methods and Events",(5,5,280,750),4,,(192,192,192),f2
+[CONFIG]
+BrowseButtons()
+[Map]
