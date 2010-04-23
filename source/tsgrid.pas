@@ -164,6 +164,7 @@ type
     FActiveIndex: Integer;
     FData: TObjectList;
     FBaseDate: TDateTime;
+    FFilteredSeries: TTimeseries;
     FNewBaseDate: TDateTime; { See FNewDisplayFormat below for an
       explanation. }
     FDates: array of TGridTimeStamp;
@@ -185,6 +186,7 @@ type
     FSavedFont: TFont; { See private procs SaveFont and RestoreFont for this }
     FBgColorForStatistics: TColor;
     FHighlightColor: TColor;
+    FFilteredColor: TColor;
     FHighlightMode: THighlightMode;
     FDisplayedTable: TDisplayedTable;
     FFiltered: Boolean;
@@ -248,6 +250,7 @@ type
     function GetCellTextWidth(ACol, ARow: Longint): Integer;
     procedure SetBgColorForStatistics(Value: TColor);
     procedure SetHighlightColor(Value: TColor);
+    procedure SetFilteredColor(Value: TColor);
     procedure SetHighlightMode(Value: THighlightMode);
     {** Calculates the statistics for a row or column.
         GetRowColStatistics is used internally to determine the statistics of
@@ -1008,6 +1011,9 @@ type
     }
     property HighlightColor: TColor read FHighlightColor
       write SetHighlightColor;
+    {** Specifies the background color used for cells that are filtered.}
+    property FilteredColor: TColor read FFilteredColor
+      write SetFilteredColor;
     {** Specifies how to determine which cells will be highlighted.
         Set HighlightMode to one of the following values:
         <ul>
@@ -1352,6 +1358,7 @@ resourcestring
 constructor TTimeseriesGrid.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FFilteredSeries := nil;
   FData := TObjectList.Create(True);
   FUndoBuffers := TTsGridUndoBuffers.Create(True);
   FFontForModified := TTimeseriesGridFont.Create(Self);
@@ -1368,6 +1375,7 @@ begin
   FFullyInvalidated := True;
   FUndoIDPointer := 0;
   FBgColorForStatistics := $00D0D0D0;
+  FFilteredColor := $00FFFCEC;
   FHighlightColor := clYellow;
   FHighlightMode := hlNone;
   FUpperBoundCoefficient := 3;
@@ -1458,6 +1466,7 @@ begin
     raise Exception.Create(rsNoFilterSpecified);
   if Filtered=FFiltered then Exit;
   FFiltered := Filtered;
+  FFilteredSeries := nil;
   FullInvalidate;
 end;
 
@@ -1731,9 +1740,17 @@ begin
   end
   else if Count>0 then
   begin
+    i := 0;
+    while i<Count do
+    begin
+      if Data[i]=FFilteredSeries then
+        Break;
+      Inc(i);
+    end;
+    if i = Count then FFilteredSeries := ActiveTimeseries;
     { Determine records that pass the filter }
-    for i := 0 to ActiveTimeseries.Count-1 do
-      with ActiveTimeseries[i] do
+    for i := 0 to FFilteredSeries.Count-1 do
+      with FFilteredSeries[i] do
       begin
         PassesFilter := False;
         case FilterCondition of
@@ -2380,6 +2397,10 @@ begin
   if AStatisticsBgColor and (ATsRecord<>nil) and
   (Canvas.Brush.Color=clWindow) then
     Canvas.Brush.Color := BgColorForStatistics;
+  if Filtered and (FFilteredSeries<>nil) and (ATsRecord<>nil) and
+    (ATsRecord.Owner = FFilteredSeries) and
+    (Canvas.Brush.Color=clWindow) then
+    Canvas.Brush.Color := FFilteredColor;
   ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED or
     ETO_OPAQUE, @ARect, PChar(s), Length(s), nil);
   Canvas.Brush.Color := SavedColor;
@@ -3642,6 +3663,13 @@ begin
   FullInvalidate;
 end;
 
+procedure TTimeseriesGrid.SetFilteredColor(Value: TColor);
+begin
+  if (FFilteredColor=Value) then Exit;
+  FFilteredColor := Value;
+  FullInvalidate;
+end;
+
 procedure TTimeseriesGrid.SetHighlightColor(Value: TColor);
 begin
   if FHighlightColor=Value then Exit;
@@ -3786,8 +3814,6 @@ function TTimeseriesGrid.SelectCell(ACol, ARow: Longint): Boolean;
 begin
   Result := inherited SelectCell(ACol, ARow);
   if not Result then Exit;
-  if Filtered and (GetIndex(ACol)<>ActiveIndex) then Result := False;
-  if not Result then Exit;
   if Assigned(FOnSelectCell) then FOnSelectCell(Self, ACol, ARow, Result);
 end;
 
@@ -3803,7 +3829,6 @@ begin
   AEditorMode := EditorMode;
   if PopupMenu = nil then
     PopupMenu := FSavedPopupMenu;
-  if Filtered and (GetIndex(MouseCoord(X,Y).X)<>ActiveIndex) then Exit;
   if AEditorMode then
     if (MouseCoord(X,Y).X <> X) or (MouseCoord(X,Y).Y <> Y) then
     begin
