@@ -166,6 +166,14 @@ type
     N9: TMenuItem;
     mnuAutoLeftAxis: TMenuItem;
     mnuAllowZoomAndPan: TMenuItem;
+    chartPDF: TChart;
+    seriesHistogram: TBarSeries;
+    N10: TMenuItem;
+    mnuCopyHistogram: TMenuItem;
+    mnuPrintHistogram: TMenuItem;
+    N11: TMenuItem;
+    mnuHistogram: TMenuItem;
+    Showhistogram1: TMenuItem;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -209,6 +217,10 @@ type
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure mnuAllowZoomAndPanClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure mnuCopyHistogramClick(Sender: TObject);
+    procedure mnuPrintHistogramClick(Sender: TObject);
+    procedure mnuHistogramClick(Sender: TObject);
+    procedure Showhistogram1Click(Sender: TObject);
   private
     FPaperType: TProbabilityPaperType;
     FTimeStep: TTimeStep;
@@ -240,6 +252,7 @@ type
     procedure PrepareGraphSeries;
     procedure PrepareLineSeries;
     procedure PreparePointSeries;
+    procedure PrepareHistogram;
     procedure DrawGrid;
     procedure ShowSeries;
     procedure DrawLines;
@@ -274,6 +287,7 @@ uses montecarlo, prob, uiutils, Clipbrd;
 procedure TFrmStatistics.IFormCreate(Sender: TObject);
 var
   i, j: Integer;
+  ALineSeries: TLineSeries;
 begin
   lstDistributions.Clear;
   for i := 101 to 200 do
@@ -320,14 +334,30 @@ begin
   SettingMCConfidence := 1;
   FAutoLeftAxisMin := False;
   FAllowZoomAndPan := False;
+  for i := 5 to Chart.SeriesCount-1 do
+  begin
+    ALineSeries := TLineSeries.Create(nil);
+    ALineSeries.Assign(Chart.Series[i]);
+    chartPDF.AddSeries(ALineSeries);
+  end;
+  ChartPDF.Align := alClient;
 end;
 
 procedure TFrmStatistics.IFormDestroy(Sender: TObject);
+var
+  i: Integer;
+  ALineSeries: TChartSeries;
 begin
   FrmProcessingDialog.Free;
-  FrmConfIntSettings.Free;  
+  FrmConfIntSettings.Free;
   FFullDataList.Free;
   FMonthlyDataList.Free;
+  for i := ChartPdf.SeriesCount-1 downto 1 do
+  begin
+    ALineSeries := ChartPdf.Series[i];
+    ChartPdf.RemoveSeries(ALineSeries);
+    ALineSeries.Free;
+  end;
 end;
 
 procedure TFrmStatistics.mnuExitClick(Sender: TObject);
@@ -338,6 +368,12 @@ end;
 procedure TFrmStatistics.mnuPrinterSetupClick(Sender: TObject);
 begin
   PrinterSetupDialog.Execute;
+end;
+
+procedure TFrmStatistics.mnuPrintHistogramClick(Sender: TObject);
+begin
+  if PrintDialog.Execute then
+    ChartPDF.Print;
 end;
 
 procedure TFrmStatistics.mnuPrintChartClick(Sender: TObject);
@@ -532,6 +568,11 @@ begin
   if FGEVParameter > 0.50 then
     FGEVParameter := 0.50;
   Refresh(False);    
+end;
+
+procedure TFrmStatistics.mnuCopyHistogramClick(Sender: TObject);
+begin
+  chartPDF.CopyToClipboardMetafile(True);
 end;
 
 procedure TFrmStatistics.mnuExceedanceProbabilityClick(Sender: TObject);
@@ -1304,6 +1345,11 @@ begin
   tbcMonths.TabWidth := tbcMonths.TabWidth * Screen.PixelsPerInch div 96;
 end;
 
+procedure TFrmStatistics.mnuHistogramClick(Sender: TObject);
+begin
+  chartPDF.Visible := (Sender as TMenuItem).Checked;
+end;
+
 procedure TFrmStatistics.DrawGraph(DrawStatus: Boolean);
 var
   ACursor: TCursor;
@@ -1416,6 +1462,7 @@ begin
   else
     Chart.LeftAxis.MinorTickCount := 1;
   PreparePointSeries;
+  PrepareHistogram;
   PrepareLineSeries;
 end;
 
@@ -1455,9 +1502,10 @@ begin
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
     Exit;
   for j := 0 to 26 do
-   begin
+  begin
     ADistribution := nil;
     Chart.SeriesList[j+5].Clear;
+    ChartPDF.SeriesList[j+1].Clear;
     if ADataList.Count<3 then
       Continue;
     try
@@ -1502,6 +1550,31 @@ begin
               Chart.Series[j+5].SeriesColor);
           end;
         end; {i := 0..120}
+      except
+        on EMathError do
+          Continue;
+        else
+          raise;
+      end;
+{Prepare Histogram}
+      try
+        for i := 0 to 119 do
+        begin
+          AXValue := (FPaperMaxX-ActualMinX)*(i+0.5)/120+ActualMinX;
+          if ADistribution.IsLowerBounded then
+            if AXValue <= ADistribution.MinX then
+              Continue;
+          if ADistribution.IsUpperBounded then
+            if AXValue >= ADistribution.MaxX then
+              Continue;
+          if ADistribution.IsLMomentMethod then
+            if not LMomentExist then
+              Continue;
+          AZValue := (ADistribution.cdfValue(AXValue+0.05)-
+            ADistribution.cdfValue(AXValue-0.05))/0.10;
+          ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
+            ChartPDF.Series[j+1].SeriesColor);
+        end; {i := 0..119}
       except
         on EMathError do
           Continue;
@@ -1576,6 +1649,46 @@ the same records}
     AddPoint(GringortenPoints, AProbabilityRecord.Value, AFloat,
       AProbabilityRecord.Date);
   end;
+end;
+
+procedure TFrmStatistics.PrepareHistogram;
+var
+  AIndex, i, RecordsCount, HClassesCount: Integer;
+  AValue, AWidth, XMax, XMin, AScale: Real;
+  HClasses: array of Integer;
+begin
+  seriesHistogram.Clear;
+  if FMonthShowed = 0 then
+  begin
+    RecordsCount := FFullDataList.Count;
+    XMax := FFullDataList[0].Value;
+    XMin := FFullDataList[RecordsCount-1].Value;
+  end else begin
+    RecordsCount := FMonthlyDataList.Months[FMonthShowed].Count;
+    XMax := FMonthlyDataList.Months[FMonthShowed][0].Value;
+    XMin := FMonthlyDataList.Months[FMonthShowed][RecordsCount-1].Value;
+  end;
+  if Abs(XMax-XMin)<1e-10 then Exit;
+  if RecordsCount<2 then Exit;
+  HClassesCount := Ceil(Sqrt(RecordsCount))+1;
+  SetLength(HClasses, HClassesCount);
+  AWidth := (XMax-XMin)/HClassesCount;
+  for i := 0 to HClassesCount-1 do
+    HClasses[i] := 0;
+  for i := 0 to RecordsCount-1 do
+  begin
+    if FMonthShowed = 0 then
+      AValue := FFullDataList[i].Value
+    else
+      AValue := FMonthlyDataList.Months[FMonthShowed][i].Value;
+    AIndex := Floor((AValue - XMin)/AWidth);
+    if AIndex = HClassesCount then Dec(AIndex);
+    Inc(HClasses[AIndex]);
+  end;
+  AScale := RecordsCount*AWidth;
+  for i := 0 to HClassesCount-1 do
+    seriesHistogram.AddXY(XMin+AWidth*0.5+AWidth*i, HClasses[i]/AScale, '',
+      clDefault);
 end;
 
 resourcestring
@@ -1658,6 +1771,11 @@ begin
   end;
 end;
 
+procedure TFrmStatistics.Showhistogram1Click(Sender: TObject);
+begin
+  seriesHistogram.Visible := (Sender as TMenuItem).Checked;
+end;
+
 procedure TFrmStatistics.ShowSeries;
 begin
 {Sometimes exception occurs when drawing lines, so use a
@@ -1680,6 +1798,8 @@ begin
   for i := 0 to lstDistributions.Count-1 do
     (lstDistributions.Items.Objects[i] as TLineSeries).Active :=
       lstDistributions.Selected[i];
+  for i := 1 to ChartPDF.SeriesCount-1 do
+    ChartPDF.Series[i].Active := Chart.Series[i+4].Active;
 end;
 
 procedure TFrmStatistics.DrawPoints;
@@ -1791,8 +1911,8 @@ resourcestring
 
 procedure TFrmStatistics.DoMonteCarloSimul(ADistributionType: TStatisticalDistributionType);
 var
-  i: Integer;
-  AFValue, AZValue: Real;
+  i, j: Integer;
+  AFValue, AZValue, APrevFValue: Real;
   Upper, Lower: Real;
   TrueUpper, TrueLower: Real;
   MCCount: Integer;
@@ -1855,10 +1975,18 @@ begin
   LowSampleLimitLine.Clear;
   HighConfidenceLimitLine.Clear;
   LowConfidenceLimitLine.Clear;
+  with chartPDF do
+    for i := SeriesCount-1 downto SeriesCount-4 do
+    begin
+      Series[i].Clear;
+      Series[i].Active := True;
+    end;
   LowConfidenceLimitLine.Title := rsConfidenceIntervalLimits +
     FormatFloat('#.##',MCConfidenceLevel*100)+'%';
   LowSampleLimitLine.Title := rsSampleLimits +
     FormatFloat('#.##',MCConfidenceLevel*100)+'%';
+  with chartPDF do Series[SeriesCount-4].Title := LowSampleLimitLine.Title;
+  with chartPDF do Series[SeriesCount-1].Title := LowConfidenceLimitLine.Title;
   HighSampleLimitLine.Active := True;
   LowSampleLimitLine.Active := True;
   HighConfidenceLimitLine.Active := True;
@@ -1896,16 +2024,29 @@ begin
       HighSampleLimitLine.AddXY(AZValue,Upper,'',
         HighSampleLimitLine.SeriesColor);
       LowSampleLimitLine.AddXY(AZValue,Lower,'',LowSampleLimitLine.SeriesColor);
+      if i <> 0 then
+      begin
+        for j := 1 to 4 do
+          with chart do
+            if Abs(Series[SeriesCount-j].YValue[i]-
+                  Series[SeriesCount-j].YValue[i-1])>1e-6 then
+              ChartPDF.Series[ChartPDF.SeriesCount-j].AddXY(
+                0.5*(Series[SeriesCount-j].YValue[i]+
+                  Series[SeriesCount-j].YValue[i-1]),
+                (AFValue-APrevFValue)/
+                  (Series[SeriesCount-j].YValue[i]-
+                    Series[SeriesCount-j].YValue[i-1]),'',clDefault);
+      end;
+      APrevFValue := AFValue;
     end;
   except
-    HighSampleLimitLine.Clear;
-    LowSampleLimitLine.Clear;
-    HighConfidenceLimitLine.Clear;
-    LowConfidenceLimitLine.Clear;
-    HighSampleLimitLine.Active := False;
-    LowSampleLimitLine.Active := False;
-    HighConfidenceLimitLine.Active := False;
-    LowConfidenceLimitLine.Active := False;
+    for i := 1 to 4 do
+    begin
+      with Chart do Series[SeriesCount-i].Clear;
+      with Chart do Series[SeriesCount-i].Active := False;
+      with ChartPDF do Series[SeriesCount-i].Clear;
+      with ChartPDF do Series[SeriesCount-i].Active := False;
+    end;
     raise;
   end;
   finally

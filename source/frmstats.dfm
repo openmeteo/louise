@@ -876,6 +876,57 @@ object FrmStatistics: TFrmStatistics
             YValues.Order = loNone
           end
         end
+        object chartPDF: TChart
+          Left = 72
+          Top = 78
+          Width = 367
+          Height = 274
+          Legend.Alignment = laTop
+          Legend.LegendStyle = lsSeries
+          MarginBottom = 3
+          MarginTop = 3
+          Title.Font.Charset = GREEK_CHARSET
+          Title.Font.Color = clBlack
+          Title.Font.Name = 'Tahoma'
+          Title.Text.Strings = (
+            'Probability Density Functions (PDF) - Histogram')
+          LeftAxis.Labels = False
+          Shadow.Visible = False
+          View3D = False
+          View3DWalls = False
+          Zoom.Pen.Color = clSilver
+          BevelOuter = bvNone
+          Color = clWhite
+          ParentShowHint = False
+          ShowHint = False
+          TabOrder = 1
+          Visible = False
+          PrintMargins = (
+            15
+            12
+            15
+            12)
+          object seriesHistogram: TBarSeries
+            BarBrush.Color = clWhite
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
+            Marks.Visible = False
+            SeriesColor = 14803696
+            ShowInLegend = False
+            Title = 'seriesHistogram'
+            BarStyle = bsRectGradient
+            BarWidthPercent = 50
+            Gradient.Direction = gdTopBottom
+            Gradient.StartColor = 11053311
+            Shadow.HorizSize = 1
+            Shadow.Visible = False
+            XValues.Name = 'X'
+            XValues.Order = loAscending
+            YValues.Name = 'Bar'
+            YValues.Order = loNone
+          end
+        end
       end
     end
     object tbcParameters: TTabSheet
@@ -1030,6 +1081,10 @@ object FrmStatistics: TFrmStatistics
         ShortCut = 16464
         OnClick = mnuPrintChartClick
       end
+      object mnuPrintHistogram: TMenuItem
+        Caption = 'Print Histogram'
+        OnClick = mnuPrintHistogramClick
+      end
       object mnuPrinterSetup: TMenuItem
         Caption = 'Print Setup'
         OnClick = mnuPrinterSetupClick
@@ -1067,11 +1122,26 @@ object FrmStatistics: TFrmStatistics
         ShortCut = 24641
         OnClick = MnuCopyGridSelectionClick
       end
+      object N10: TMenuItem
+        Caption = '-'
+      end
+      object mnuCopyHistogram: TMenuItem
+        Caption = 'Copy PDF && histogram to clipboard'
+        OnClick = mnuCopyHistogramClick
+      end
     end
     object mnuView: TMenuItem
       Caption = 'View'
+      object mnuHistogram: TMenuItem
+        AutoCheck = True
+        Caption = 'Histogram && PDF'
+        OnClick = mnuHistogramClick
+      end
+      object N11: TMenuItem
+        Caption = '-'
+      end
       object mnuPaperType: TMenuItem
-        Caption = 'Paper Type:'
+        Caption = 'CDF Paper Type:'
         Enabled = False
       end
       object mnuLinear: TMenuItem
@@ -1128,7 +1198,7 @@ object FrmStatistics: TFrmStatistics
         GroupIndex = 5
       end
       object HorizAxisis1: TMenuItem
-        Caption = 'Horiz. Axis is:'
+        Caption = 'CDF Horiz. Axis is:'
         Enabled = False
         GroupIndex = 5
       end
@@ -1208,6 +1278,13 @@ object FrmStatistics: TFrmStatistics
         Caption = 'Allow Zoom and Pan'
         GroupIndex = 5
         OnClick = mnuAllowZoomAndPanClick
+      end
+      object Showhistogram1: TMenuItem
+        AutoCheck = True
+        Caption = 'Show histogram alongside the PDFs'
+        Checked = True
+        GroupIndex = 5
+        OnClick = Showhistogram1Click
       end
     end
     object mnuForecasts: TMenuItem
