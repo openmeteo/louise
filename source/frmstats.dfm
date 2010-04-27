@@ -100,7 +100,7 @@ object FrmStatistics: TFrmStatistics
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 3
     object tbcPlots: TTabSheet
-      Caption = 'Distribution plots'
+      Caption = 'Distribution functions'
       DesignSize = (
         540
         456)
@@ -876,56 +876,63 @@ object FrmStatistics: TFrmStatistics
             YValues.Order = loNone
           end
         end
-        object chartPDF: TChart
-          Left = 72
-          Top = 78
-          Width = 367
-          Height = 274
-          Legend.Alignment = laTop
-          Legend.LegendStyle = lsSeries
-          MarginBottom = 3
-          MarginTop = 3
-          Title.Font.Charset = GREEK_CHARSET
-          Title.Font.Color = clBlack
-          Title.Font.Name = 'Tahoma'
-          Title.Text.Strings = (
-            'Probability Density Functions (PDF) - Histogram')
-          LeftAxis.Labels = False
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'Histogram - Density functions'
+      ImageIndex = 2
+      object chartPDF: TChart
+        Left = 3
+        Top = 3
+        Width = 502
+        Height = 424
+        Legend.Alignment = laTop
+        Legend.LegendStyle = lsSeries
+        MarginBottom = 3
+        MarginTop = 3
+        Title.Font.Charset = GREEK_CHARSET
+        Title.Font.Color = clBlack
+        Title.Font.Name = 'Tahoma'
+        Title.Text.Strings = (
+          'Probability Density Functions (PDF) - Histogram')
+        BottomAxis.MinorGrid.Color = clSilver
+        BottomAxis.MinorGrid.Style = psDash
+        BottomAxis.MinorGrid.SmallDots = True
+        BottomAxis.MinorGrid.Visible = True
+        LeftAxis.Labels = False
+        Shadow.Visible = False
+        View3D = False
+        View3DWalls = False
+        Zoom.Pen.Color = clSilver
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentShowHint = False
+        ShowHint = False
+        TabOrder = 0
+        PrintMargins = (
+          15
+          12
+          15
+          12)
+        object seriesHistogram: TBarSeries
+          BarBrush.Color = clWhite
+          Marks.Arrow.Visible = True
+          Marks.Callout.Brush.Color = clBlack
+          Marks.Callout.Arrow.Visible = True
+          Marks.Visible = False
+          SeriesColor = 14803696
+          ShowInLegend = False
+          Title = 'seriesHistogram'
+          BarStyle = bsRectGradient
+          BarWidthPercent = 50
+          Gradient.Direction = gdTopBottom
+          Gradient.StartColor = 11053311
+          Shadow.HorizSize = 1
           Shadow.Visible = False
-          View3D = False
-          View3DWalls = False
-          Zoom.Pen.Color = clSilver
-          BevelOuter = bvNone
-          Color = clWhite
-          ParentShowHint = False
-          ShowHint = False
-          TabOrder = 1
-          Visible = False
-          PrintMargins = (
-            15
-            12
-            15
-            12)
-          object seriesHistogram: TBarSeries
-            BarBrush.Color = clWhite
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
-            Marks.Visible = False
-            SeriesColor = 14803696
-            ShowInLegend = False
-            Title = 'seriesHistogram'
-            BarStyle = bsRectGradient
-            BarWidthPercent = 50
-            Gradient.Direction = gdTopBottom
-            Gradient.StartColor = 11053311
-            Shadow.HorizSize = 1
-            Shadow.Visible = False
-            XValues.Name = 'X'
-            XValues.Order = loAscending
-            YValues.Name = 'Bar'
-            YValues.Order = loNone
-          end
+          XValues.Name = 'X'
+          XValues.Order = loAscending
+          YValues.Name = 'Bar'
+          YValues.Order = loNone
         end
       end
     end
@@ -961,8 +968,8 @@ object FrmStatistics: TFrmStatistics
     end
   end
   object Memo: TMemo
-    Left = 290
-    Top = 265
+    Left = 346
+    Top = 154
     Width = 185
     Height = 101
     Lines.Strings = (
@@ -1132,14 +1139,6 @@ object FrmStatistics: TFrmStatistics
     end
     object mnuView: TMenuItem
       Caption = 'View'
-      object mnuHistogram: TMenuItem
-        AutoCheck = True
-        Caption = 'Histogram && PDF'
-        OnClick = mnuHistogramClick
-      end
-      object N11: TMenuItem
-        Caption = '-'
-      end
       object mnuPaperType: TMenuItem
         Caption = 'CDF Paper Type:'
         Enabled = False

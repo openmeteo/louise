@@ -166,14 +166,13 @@ type
     N9: TMenuItem;
     mnuAutoLeftAxis: TMenuItem;
     mnuAllowZoomAndPan: TMenuItem;
-    chartPDF: TChart;
-    seriesHistogram: TBarSeries;
     N10: TMenuItem;
     mnuCopyHistogram: TMenuItem;
     mnuPrintHistogram: TMenuItem;
-    N11: TMenuItem;
-    mnuHistogram: TMenuItem;
     Showhistogram1: TMenuItem;
+    TabSheet1: TTabSheet;
+    chartPDF: TChart;
+    seriesHistogram: TBarSeries;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -219,7 +218,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure mnuCopyHistogramClick(Sender: TObject);
     procedure mnuPrintHistogramClick(Sender: TObject);
-    procedure mnuHistogramClick(Sender: TObject);
     procedure Showhistogram1Click(Sender: TObject);
   private
     FPaperType: TProbabilityPaperType;
@@ -1345,11 +1343,6 @@ begin
   tbcMonths.TabWidth := tbcMonths.TabWidth * Screen.PixelsPerInch div 96;
 end;
 
-procedure TFrmStatistics.mnuHistogramClick(Sender: TObject);
-begin
-  chartPDF.Visible := (Sender as TMenuItem).Checked;
-end;
-
 procedure TFrmStatistics.DrawGraph(DrawStatus: Boolean);
 var
   ACursor: TCursor;
@@ -1461,10 +1454,23 @@ begin
     Chart.LeftAxis.MinorTickCount := 9
   else
     Chart.LeftAxis.MinorTickCount := 1;
+  chartPDF.BottomAxis.Logarithmic := ALogAxis;
+  if ALogAxis then
+  begin
+    ChartPDF.BottomAxis.MinorGrid.Visible := True;
+    ChartPDF.BottomAxis.MinorTickCount := 9
+  end else begin
+    ChartPDF.BottomAxis.MinorGrid.Visible := False;
+    ChartPDF.BottomAxis.MinorTickCount := 4;
+  end;
   PreparePointSeries;
   PrepareHistogram;
   PrepareLineSeries;
 end;
+
+resourcestring
+  rsSampleConsistingOf = 'Sample consisting from values of the month: ';
+  rsPDFTitle = 'Probability Density Functions (PDF) - Histogram';
 
 procedure TFrmStatistics.PrepareLineSeries;
 var
@@ -1489,6 +1495,7 @@ begin
     ALogStandardDeviation := FFullDataList.LogStandardDeviation;
     LMomentExist := FFullDataList.LMomentExist;
     ADataList := TDataList(FFullDataList);
+    chartPDF.Title.Text.Text := rsPDFTitle;
   end else begin
     FMonthlyDataList.Months[FMonthShowed].Unbiased := FUnbiased;
     AStandardDeviation :=
@@ -1497,6 +1504,8 @@ begin
       FMonthlyDataList.Months[FMonthShowed].LogStandardDeviation;
     LMomentExist := FMonthlyDataList.Months[FMonthShowed].LMomentExist;
     ADataList := TDataList(FMonthlyDataList.Months[FMonthShowed]);
+    chartPDF.Title.Text.Text := rsPDFTitle + ' - ' + rsSampleConsistingOf +
+      LongMonthNames[FMonthShowed];
   end;
 {Do not plot if StdDev <= 0, occured by exception}
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
@@ -1561,11 +1570,15 @@ begin
         for i := 0 to 119 do
         begin
           AXValue := (FPaperMaxX-ActualMinX)*(i+0.5)/120+ActualMinX;
+{Scale X Values for logarithmic, make the suitable for log. paper}
+          if btnLog.Checked then
+            AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
+              (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
           if ADistribution.IsLowerBounded then
-            if AXValue <= ADistribution.MinX then
+            if AXValue <= ADistribution.MinX+0.05 then
               Continue;
           if ADistribution.IsUpperBounded then
-            if AXValue >= ADistribution.MaxX then
+            if AXValue >= ADistribution.MaxX-0.05 then
               Continue;
           if ADistribution.IsLMomentMethod then
             if not LMomentExist then
