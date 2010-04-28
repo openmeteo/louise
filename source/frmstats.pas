@@ -170,7 +170,7 @@ type
     mnuCopyHistogram: TMenuItem;
     mnuPrintHistogram: TMenuItem;
     Showhistogram1: TMenuItem;
-    TabSheet1: TTabSheet;
+    tbcHistogram: TTabSheet;
     chartPDF: TChart;
     seriesHistogram: TBarSeries;
     procedure IFormCreate(Sender: TObject);
@@ -727,7 +727,7 @@ begin
     if (AInterpolationValue <=0 ) then
       Exit;
   end;
-  pgcPages.ActivePageIndex := 1;
+  pgcPages.ActivePage := tbcParameters;
   if Sender <> mnuToAValue then
     sgrdData.ColCount := 2
   else
@@ -1674,10 +1674,12 @@ begin
   if FMonthShowed = 0 then
   begin
     RecordsCount := FFullDataList.Count;
+    if RecordsCount<1 then Exit;
     XMax := FFullDataList[0].Value;
     XMin := FFullDataList[RecordsCount-1].Value;
   end else begin
     RecordsCount := FMonthlyDataList.Months[FMonthShowed].Count;
+    if RecordsCount<1 then Exit;
     XMax := FMonthlyDataList.Months[FMonthShowed][0].Value;
     XMin := FMonthlyDataList.Months[FMonthShowed][RecordsCount-1].Value;
   end;
@@ -2094,7 +2096,7 @@ begin
   if not LowSampleLimitLine.Active then
     raise Exception.Create(rsInOrderToGetForecastForAConfidence);
   ALineSeries := nil;
-  pgcPages.ActivePageIndex := 1;
+  pgcPages.ActivePage := tbcParameters;
   for i := 5 to Chart.SeriesCount-1 do
   begin
     if Chart.Series[i].Active then
@@ -2268,7 +2270,7 @@ begin
     Max(4, ADataList.Count div 5 +1) ) then
     raise Exception.Create(rsClassNumberShouldBeWithin+
       IntToStr(ADataList.Count div 5 +1));
-  pgcPages.ActivePageIndex := 1;
+  pgcPages.ActivePage := tbcParameters;
   sgrdData.ColCount := 6;
   sgrdData.RowCount := 28;
   if FMonthShowed =0 then
@@ -2361,7 +2363,7 @@ begin
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
     Exit;
   ADataList.CalcWeibull;
-  pgcPages.ActivePageIndex := 1;
+  pgcPages.ActivePage := tbcParameters;
   sgrdData.ColCount := 6;
   sgrdData.RowCount := 28;
   if FMonthShowed =0 then

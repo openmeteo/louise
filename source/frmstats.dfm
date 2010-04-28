@@ -878,7 +878,7 @@ object FrmStatistics: TFrmStatistics
         end
       end
     end
-    object TabSheet1: TTabSheet
+    object tbcHistogram: TTabSheet
       Caption = 'Histogram - Density functions'
       ImageIndex = 2
       object chartPDF: TChart
