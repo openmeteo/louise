@@ -1685,7 +1685,7 @@ begin
   end;
   if Abs(XMax-XMin)<1e-10 then Exit;
   if RecordsCount<2 then Exit;
-  HClassesCount := Ceil(Sqrt(RecordsCount))+1;
+  HClassesCount := Ceil(Sqrt(RecordsCount));
   SetLength(HClasses, HClassesCount);
   AWidth := (XMax-XMin)/HClassesCount;
   for i := 0 to HClassesCount-1 do
