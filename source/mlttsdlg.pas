@@ -73,7 +73,6 @@ type
     ToolButton1: TToolButton;
     tbtnTableView: TToolButton;
     N7: TMenuItem;
-    TimeseriesPropertiesDialog: TTimeseriesPropertiesDialog;
     mnuSeriesProperties: TMenuItem;
     N3: TMenuItem;
     tbtnUndo: TToolButton;
@@ -82,6 +81,7 @@ type
     N8: TMenuItem;
     mnuUndo: TMenuItem;
     mnuRedo: TMenuItem;
+    TimeseriesWizard: TTimeseriesWizard;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnAddRecordEndClick(Sender: TObject);
@@ -124,9 +124,6 @@ type
     FStatisticsVisible: Boolean;
     FCaptionProperty: string;
     FTimeseriesTitle: string;
-    FMUnit: string;
-    FComment: string;
-    FPrecision: Integer;
     procedure SetControlStatus;
     procedure ReformatStatistics;
     procedure ReadMultiTimeseries(AMultiTimeseries: TMultiTimeseries);
@@ -175,7 +172,7 @@ begin
   if FCaptionProperty<>'' then
     Caption := FCaptionProperty else
     if FMultiTimeseries<>nil then
-      Caption := FMultiTimeseries.Name;
+      Caption := FTimeseriesTitle;
   if FModifiedFlag then
     Caption := Caption+rsModified else
   mnuCopyToClipboard.Enabled := (TimeseriesGrid.Count>0);
@@ -265,7 +262,6 @@ begin
     try
       ATimeseries := TTimeseries.Create;
       ATimeseries.Assign(AMultiTimeseries.Sections[i]);
-      ATimeseries.Comment := '';
       TimeseriesGrid.Add(ATimeseries);
       ATimeseries := nil;
     except
@@ -282,11 +278,7 @@ begin
     SetFocusedControl(TimeseriesGrid);
     SetFocus;
   end;
-  FPrecision := AMultiTimeseries.Precision;
   FTimeseriesTitle := AMultiTimeseries.Name;
-  FMUnit := AMultiTimeseries.MUnit;
-  if AMultiTimeseries.SectionCount>0 then
-    FComment := AMultiTimeseries.Sections[1].Comment;
 end;
 
 procedure TFrmMultiTimeseries.WriteMultiTimeseries(
@@ -312,11 +304,7 @@ begin
       raise;
     end;
   end;
-  AMultiTimeseries.MUnit := FMUnit;
   AMultiTimeseries.Name := FTimeseriesTitle;
-  AMultiTimeseries.Precision := FPrecision;
-  if AMultiTimeseries.SectionCount>0 then
-    AMultiTimeseries.Sections[1].Comment := FComment;
 end;
 
 procedure TFrmMultiTimeseries.FormCreate(Sender: TObject);
@@ -329,8 +317,6 @@ begin
   FReadOnly := False;
   FShowStatistics := False;
   FStatisticsVisible := False;
-  FPrecision := 2;
-  FMUnit := '';
   FTimeseriesTitle := '';
 end;
 
@@ -358,7 +344,7 @@ var
   Options: TGetDateFormatOptions;
   StartFromScratchFlag: Boolean;
 begin
-  if TimeseriesGrid.Count<1 then
+ if TimeseriesGrid.Count<1 then
     Exit;
   StartFromScratchFlag := False;
   AStep := 1; {dummy}
@@ -395,17 +381,7 @@ begin
     for j := 0 to ACount-1 do
     begin
       if not StartFromScratchFlag then
-        ADate:= TimeseriesGrid.Data[0].TimeStep.IncStep(ADate);
-{        case TimeseriesGrid.Data[0].TimeStep of
-          tstFiveMinute: ADate := AddDateTime(ADate, AStep*(1/288));
-          tstTenMinute: ADate := AddDateTime(ADate, AStep*(1/144));
-          tstHourly: ADate := AddDateTime(ADate, AStep*(1/24));
-          tstDaily: ADate := AddDateTime(ADate, AStep);
-          tstMonthly: ADate := IncMonth(ADate, AStep);
-          tstAnnual: ADate := IncYear(ADate, AStep);
-        else
-          Assert(False);
-        end;}
+        ADate:= TimeseriesGrid.Data[0].TimeStep.IncStep(ADate, AStep);
       StartFromScratchFlag := False;
       ADateList.Add(ADate);
     end;
@@ -516,11 +492,13 @@ begin
   begin
     try
       ATimeseries := TTimeseries.Create;
-      ATimeseries.TimeStep := FTargetTimestep;
-      if ATimeseries.TimeStep = tstAnnual then
-        ATimeseries.SetHydrologicalYear(FIsHydrologicalYear);
       if TimeseriesGrid.Count>0 then
-        ATimeseries.Assign(TimeseriesGrid.Data[0]);
+        ATimeseries.Assign(TimeseriesGrid.Data[0])
+      else begin
+        ATimeseries.TimeStep := FTargetTimestep;
+        if ATimeseries.TimeStep = tstAnnual then
+          ATimeseries.SetHydrologicalYear(FIsHydrologicalYear);
+      end;
       for i := 0 to ATimeseries.Count-1 do
         ATimeseries[i].SetNull;
       if (TimeseriesGrid.Count< 1) or (TMenuItem(Sender).Tag = 0) then
@@ -578,6 +556,7 @@ begin
     AMultiTimeseries := TMultiTimeseries.Create;
     Screen.Cursor := crHourGlass;
     AMultiTimeseries.LoadFromFile(OpenDialog.FileName);
+    FTimeseriesTitle := AMultiTimeseries.Name;
     ReadMultiTimeseries(AMultiTimeseries);
   finally
     Screen.Cursor := ACursor;
@@ -595,19 +574,22 @@ procedure TFrmMultiTimeseries.mnuWriteToFileClick(Sender: TObject);
 var
   AMultiTimeseries: TMultiTimeseries;
   ACursor: TCursor;
+  AVer: Integer;
 begin
   if not SaveDialog.Execute then Exit;
   if FileExists(SaveDialog.FileName) then
     if MessageDlg(rsOvewriteExistingFile, mtConfirmation, [mbOK,mbCancel], 0) =
       mrCancel then
         Exit;
+  AVer := 2;
+  if SaveDialog.FilterIndex =2 then AVer := 1;
   ACursor := Screen.Cursor;
   AMultiTimeseries := nil;
   try
     AMultiTimeseries := TMultiTimeseries.Create;
     WriteMultiTimeseries(AMultiTimeseries);
     Screen.Cursor := crHourGlass;
-    AMultiTimeseries.WriteToFile(SaveDialog.FileName);
+    AMultiTimeseries.WriteToFile(SaveDialog.FileName, nil, AVer);
   finally
     Screen.Cursor := ACursor;
     AMultiTimeseries.Free;
@@ -867,14 +849,8 @@ begin
   end;
 end;
 
-resourcestring
-  rsOperationPermitedOnMonthlyYearly = 'Operation permited only in '+
-    'time series with monthly or yearly time step';
-
 procedure TFrmMultiTimeseries.mnuStatisticsClick(Sender: TObject);
 begin
-  if not (TimeSeriesGrid.ActiveTimeseries.TimeStep>=tstMonthly) then
-    raise Exception.Create(rsOperationPermitedOnMonthlyYearly);
   StatisticsForm.Timeseries := TimeseriesGrid.ActiveTimeseries;
   StatisticsForm.Execute;
 end;
@@ -909,7 +885,6 @@ begin
   try
     ATimeseries := TTimeseries.Create;
     ATimeseries.TimeStep := tstAnnual;
-    ATimeseries.MUnit := TimeseriesGrid.Data[0].MUnit;
     ADate := EncodeDate(YearOf(TimeseriesGrid.Data[0].Items[0].Date),1,1);
     for i := 0 to TimeseriesGrid.Count-1 do
     begin
@@ -932,46 +907,38 @@ begin
   SetControlStatus;
 end;
 
+resourcestring
+  rsTimeseriesPropertiesCaption = 'Time series properties';
+
 procedure TFrmMultiTimeseries.mnuSeriesPropertiesClick(Sender: TObject);
 var
   i: Integer;
+  SavedTitle: string;
 begin
-  with FMultiTimeseries do
+  with TimeseriesWizard do
   begin
-    TimeseriesPropertiesDialog.TimeStep := TimeStep;
-    TimeseriesPropertiesDialog.Title := FTimeseriesTitle;
-    TimeseriesPropertiesDialog.StrictTimeStep := TimeStepStrict;
-    if TimeStep = tstAnnual then
-      TimeseriesPropertiesDialog.HydrologicalYear := HydrologicalYear;
-    if TimeStep>=tstMonthly then
-      TimeseriesPropertiesDialog.DateOffsetUnspecified := DateOffsetUnspecified;
-    if TimeStep>=tstMonthly then
-      if not DateOffsetUnspecified then
-        TimeseriesPropertiesDialog.DateOffset := DateOffset;
-    TimeseriesPropertiesDialog.MUnit := FMUnit;
-    TimeseriesPropertiesDialog.VariableType := VariableType;
-    TimeseriesPropertiesDialog.Precision := FPrecision;
-    TimeseriesPropertiesDialog.Comment := FComment;
-    if TimeseriesPropertiesDialog.Execute then
-    begin
-      Name := TimeseriesPropertiesDialog.Title;
-      FTimeseriesTitle := Name;
-      MUnit := TimeseriesPropertiesDialog.MUnit;
-      FMUnit := MUnit;
-      Sections[1].Comment := TimeseriesPropertiesDialog.Comment;
-      FComment := Sections[1].Comment;
-      Precision := TimeseriesPropertiesDialog.Precision;
-      FPrecision := Precision;
-      for i := 0 to TimeseriesGrid.Count-1 do
-        with TimeseriesGrid.Data[i] do
-        begin
-          Comment := FComment;
-          Precision := FPrecision;
-        end;
-      TimeseriesGrid.Refresh;
-      SetControlStatus;
+    Caption := rsTimeseriesPropertiesCaption;
+    HYearOrigin := 9;
+    if TimeseriesGrid.Count>0 then
+      MainTimeseries := TimeseriesGrid.Data[0]
+    else
+      Exit;
+    try
+      SavedTitle := TimeseriesGrid.Data[0].Title;
+      MainTimeseries.Title := FTimeseriesTitle;
+      NewTimeseriesMode := False;
+      if not Execute then
+        Exit;
+      FTimeseriesTitle := MainTimeseries.Title;
+      for i := 1 to TimeseriesGrid.Count-1 do
+        TimeseriesGrid.Data[i].AssignMeta(TimeseriesGrid.Data[0]);
+    finally
+      TimeseriesGrid.Data[0].Title := SavedTitle;
     end;
   end;
+  TimeseriesGrid.Reformat;
+  TimeseriesGrid.Refresh;
+  SetControlStatus;
 end;
 
 procedure TFrmMultiTimeseries.mnuUndoClick(Sender: TObject);

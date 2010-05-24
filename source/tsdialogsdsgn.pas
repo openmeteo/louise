@@ -21,7 +21,7 @@ implementation
 procedure Register;
 begin
   RegisterComponents('LoUISE Timeseries', [TRegularizeStepDialog,
-    TAggregationDialog, TTimeseriesPropertiesDialog,
+    TAggregationDialog,
     TRangeCheckDialog, TFlagsDialog, TRegressionDialog, TRegrResultsDialog,
     TPenmanDialog, TLinearCombinationDialog, TTimeSeriesGraphForm,
     TStatisticsForm, TDoubleMassDialog,

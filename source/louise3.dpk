@@ -74,7 +74,6 @@ contains
   idfcurvesdlg in 'idfcurvesdlg.pas' {FrmIDFCurves: TLForm},
   idfsetdlg in 'idfsetdlg.pas' {FrmIDFSet: TLForm},
   lincombdlg in 'lincombdlg.pas' {FrmLinearComb: TLForm},
-  tspropsdlg in 'tspropsdlg.pas' {FrmTimeseriesProperties: TLForm},
   tsdialogs in 'tsdialogs.pas',
   mlttsdlg in 'mlttsdlg.pas' {FrmMultiTimeseries: TLForm},
   tsgraphdlg in 'tsgraphdlg.pas' {FrmTSeriesGraph: TLForm},

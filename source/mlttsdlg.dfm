@@ -27,6 +27,7 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
     FlagsVisible = False
     BgColorForStatistics = 13684944
     HighlightColor = clYellow
+    FilteredColor = 16776428
     HighlightMode = hlNone
     HydrologicalYear = True
     OwnsTimeseries = True
@@ -39,6 +40,9 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
     OnClick = TimeseriesGridClick
     OnColumnMoved = TimeseriesGridColumnMoved
     OnContextPopup = TimeseriesGridContextPopup
+    HYearOrigin = 10
+    ColWidths = (
+      105)
   end
   object ToolBar: TToolBar
     Left = 0
@@ -346,11 +350,20 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
     end
   end
   object OpenDialog: TOpenDialog
+    DefaultExt = 'hts'
+    Filter = 
+      'Time series files (*.hts)|*.hts|Text files (*.txt)|*.txt|All fil' +
+      'es (*.*)|*.*'
     Title = 'Open multi timeseries'
     Left = 416
     Top = 40
   end
   object SaveDialog: TSaveDialog
+    DefaultExt = 'hts'
+    Filter = 
+      'Time series files (*.hts) - openmeteo.org - Hydrognomon 4|*.hts|' +
+      'Old time series files (*.hts) - Hydrognomon 3 and older|*.hts|Al' +
+      'l files (*.*|*.*'
     Title = 'Write multitimeseries'
     Left = 448
     Top = 40
@@ -361,6 +374,7 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
     Top = 40
   end
   object StatisticsForm: TStatisticsForm
+    HYearOrigin = 10
     Left = 512
     Top = 40
   end
@@ -639,16 +653,11 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
       007FF87FFFFFF81F00FFFFFFFFFFFC3F00000000000000000000000000000000
       000000000000}
   end
-  object TimeseriesPropertiesDialog: TTimeseriesPropertiesDialog
-    TimeStep = 4
-    StrictTimeStep = True
-    HydrologicalYear = True
-    DateOffsetUnspecified = True
-    VariableType = 1
-    Title = 'Set title...'
-    MUnit = 'mm'
-    Precision = 2
+  object TimeseriesWizard: TTimeseriesWizard
+    NewTimeseriesMode = False
+    Caption = 'Set caption string'
+    HYearOrigin = 10
     Left = 352
-    Top = 72
+    Top = 80
   end
 end
