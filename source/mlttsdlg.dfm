@@ -350,20 +350,20 @@ object FrmMultiTimeseries: TFrmMultiTimeseries
     end
   end
   object OpenDialog: TOpenDialog
-    DefaultExt = 'hts'
+    DefaultExt = 'sts'
     Filter = 
-      'Time series files (*.hts)|*.hts|Text files (*.txt)|*.txt|All fil' +
-      'es (*.*)|*.*'
+      'Time series files (*.sts; *.hts)|*.sts;*.hts|Text files (*.txt)|' +
+      '*.txt|All files (*.*)|*.*'
     Title = 'Open multi timeseries'
     Left = 416
     Top = 40
   end
   object SaveDialog: TSaveDialog
-    DefaultExt = 'hts'
+    DefaultExt = 'sts'
     Filter = 
-      'Time series files (*.hts) - openmeteo.org - Hydrognomon 4|*.hts|' +
-      'Old time series files (*.hts) - Hydrognomon 3 and older|*.hts|Al' +
-      'l files (*.*|*.*'
+      'Synth series files (*.sts) - openmeteo.org - Hydrognomon 4|*.sts' +
+      '|Old synth series files (*.sts) - Hydrognomon 3 and older|*.sts|' +
+      'All files (*.*|*.*'
     Title = 'Write multitimeseries'
     Left = 448
     Top = 40
