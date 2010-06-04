@@ -1279,6 +1279,7 @@ type
     FCaption: string;
     FIsHydrologicalYear: Boolean;
     FReadOnly: Boolean;
+    FHYearOrigin: Integer;
   public
     {** Displays the multi timeseries dialog.
         Returns (True) when modification have been made to the timeseries.
@@ -1312,6 +1313,9 @@ type
     {** Form caption
     }
     property Caption: string read FCaption write FCaption;
+    {** Hydrological year origin for tabular format
+    }
+    property HYearOrigin: Integer read FHYearOrigin write FHYearOrigin;
   end;
 
   {** A form component allowing making complex calculations with time series.
@@ -2610,6 +2614,7 @@ begin
   FIsHydrologicalYear := False;
   FReadOnly := False;
   FCaption := rsMultiTimeseriesView;
+  FHYearOrigin := 10;
   FMultiTimeseries := nil;
 end;
 
@@ -2631,6 +2636,7 @@ begin
       MultiTimeseries := FMultiTimeseries;
       TargetTimestep := FTargetTimestep;
       IsHydrologicalYear := FIsHydrologicalYear;
+      HydrologicalYearOrigin := FHYearOrigin;
       ReadOnly := FReadOnly;
       Caption := FCaption;
       HelpType := FHelpType;

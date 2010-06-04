@@ -122,6 +122,7 @@ type
     FReadOnly: Boolean;
     FShowStatistics: Boolean;
     FStatisticsVisible: Boolean;
+    FHydrologicalYearOrigin: Integer;
     FCaptionProperty: string;
     FTimeseriesTitle: string;
     procedure SetControlStatus;
@@ -138,6 +139,8 @@ type
     property ReadOnly: Boolean read FReadOnly write FReadOnly;
     property CaptionProperty: string read FCaptionProperty write
       FCaptionProperty;
+    property HydrologicalYearOrigin: Integer read FHydrologicalYearOrigin write
+      FHydrologicalYearOrigin;
   end;
 
 implementation
@@ -162,6 +165,7 @@ var
   StatsCols: Integer;
   ReadWrite: Boolean;
 begin
+  TimeseriesGrid.HYearOrigin := FHydrologicalYearOrigin;
   if FStatisticsVisible then StatsCols := StatsColsCount else StatsCols := 0;
   ReadWrite := (not FReadOnly) and (not FShowStatistics);
   TimeseriesGrid.ReadOnly := (not ReadWrite);
@@ -318,6 +322,7 @@ begin
   FShowStatistics := False;
   FStatisticsVisible := False;
   FTimeseriesTitle := '';
+  FHydrologicalYearOrigin := 10;
 end;
 
 procedure TFrmMultiTimeseries.FormShow(Sender: TObject);
@@ -636,6 +641,7 @@ procedure TFrmMultiTimeseries.LFormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
   CanClose := True;
+  if FReadOnly then Exit;
   ModalResult := mrNo;
   if not FModifiedFlag then Exit;
   case MessageDlg(rsSaveChanges, mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
