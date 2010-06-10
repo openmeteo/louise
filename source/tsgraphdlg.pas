@@ -293,27 +293,36 @@ end;
 procedure TFrmTSeriesGraph.SetDateAxisFormat;
 var
   ATimeStep: TTimeStep;
+  ANominalOffset, AActualOffset: TDateOffset;
   i: Integer;
 begin
   ATimeStep := tstFiveMinute;
   for i := 0 to FTimeseriesList.Count -1 do
   begin
     with FTimeseriesList.Items[i] as TTimeseries do
-      if TimeStep>ATimeStep then ATimeStep := TimeStep;
+      if TimeStep>ATimeStep then
+      begin
+        ATimeStep := TimeStep;
+        ANominalOffset := NominalOffset;
+        AActualOffset := ActualOffset;
+      end;
   end;
   if ATimestep<tstDaily then
-    chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy-mm-dd hh:mm'
+    chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy-mm-dd hh:nn'
   else if ATimeStep<tstMonthly then
-    chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy-mm-dd'
-  else if ATimeStep<tstAnnual then
+  begin
+    if AActualOffset.Minutes=1440 then
+      chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy-mm-dd'
+    else
+      chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy-mm-dd hh:nn';
+  end else if ATimeStep<tstAnnual then
     chartTSGraph.BottomAxis.DateTimeFormat := 'MMM yyyy'
   else
     chartTSGraph.BottomAxis.DateTimeFormat := 'yyyy';
   chartTSGraph.BottomAxis.Increment := 0;
-  chartTSGraph.BottomAxis.Increment := chartTSGraph.BottomAxis.CalcIncrement;
   if ATimeStep<tstMonthly then
-  chartTSGraph.BottomAxis.LabelsAngle := 0 else
-  chartTSGraph.BottomAxis.LabelsAngle := 90;
+    chartTSGraph.BottomAxis.LabelsAngle := 0 else
+    chartTSGraph.BottomAxis.LabelsAngle := 90;
 end;
 
 resourcestring
@@ -569,14 +578,12 @@ begin
   chartTSGraph.LeftAxis.Automatic := True;
   chartTSGraph.Refresh;
   chartTSGraph.BottomAxis.Increment := 0;
-  chartTSGraph.BottomAxis.Increment := chartTSGraph.BottomAxis.CalcIncrement;
 end;
 
 
 procedure TFrmTSeriesGraph.chartTSGraphZoom(Sender: TObject);
 begin
   chartTSGraph.BottomAxis.Increment := 0;
-  chartTSGraph.BottomAxis.Increment := chartTSGraph.BottomAxis.CalcIncrement;
 end;
 
 procedure TFrmTSeriesGraph.mnuRefreshClick(Sender: TObject);
