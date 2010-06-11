@@ -82,6 +82,9 @@ type
     mnuUndo: TMenuItem;
     mnuRedo: TMenuItem;
     TimeseriesWizard: TTimeseriesWizard;
+    ToolButton2: TToolButton;
+    btnPrev: TToolButton;
+    btnNext: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnAddRecordEndClick(Sender: TObject);
@@ -114,6 +117,7 @@ type
     procedure mnuSeriesPropertiesClick(Sender: TObject);
     procedure mnuUndoClick(Sender: TObject);
     procedure mnuRedoClick(Sender: TObject);
+    procedure btnPrevClick(Sender: TObject);
   private
     FMultiTimeseries: TMultiTimeseries;
     FTargetTimestep: TTimeStep;
@@ -209,7 +213,8 @@ begin
   if TimeseriesGrid.Count<1 then
     tbtnTableView.Enabled := False else
     tbtnTableView.Enabled := (TimeseriesGrid.Data[0].Count>0) and
-      (TimeseriesGrid.Data[0].TimeStep = tstMonthly);
+      (TimeseriesGrid.Data[0].TimeStep.TimeStepIn([tstMonthly, tstDaily,
+      tstHourly]));
   if tbtnTableView.Down and tbtnTableView.Enabled then
     TimeseriesGrid.DisplayFormat := dfTable else
     TimeseriesGrid.DisplayFormat := dfSimple;
@@ -218,6 +223,10 @@ begin
      TimeseriesGrid.StatisticsVisible := False;
   mnuAddSection.Enabled := mnuAddSection.Enabled and
     (TimeseriesGrid.DisplayFormat = dfSimple);
+  btnPrev.Enabled := (TimeseriesGrid.Count>0) and
+    (TimeseriesGrid.Data[0].TimeStep.TimeStepIn([tstHourly, tstDaily])) and
+    (TimeseriesGrid.DisplayFormat = dfTable);
+  btnNext.Enabled := btnPrev.Enabled;
   pmnuAddSections.Enabled := mnuAddSection.Enabled;
   mnuInsertSection.Enabled := mnuAddSection.Enabled;
   pmnuInsertSections.Enabled := mnuAddSection.Enabled;
@@ -459,6 +468,20 @@ begin
   SetControlStatus;
 end;
 
+procedure TFrmMultiTimeseries.btnPrevClick(Sender: TObject);
+var
+  MonthDiff: Integer;
+begin
+  if TToolButton(Sender).Tag=1 then MonthDiff := 1 else MonthDiff := -1;
+  if TimeseriesGrid.ActiveTimeseries.TimeStep = tstHourly then
+    MonthDiff := MonthDiff
+  else if TimeseriesGrid.ActiveTimeseries.TimeStep = tstDaily then
+    MonthDiff := 12*MonthDiff
+  else
+    Assert(False);
+  TimeseriesGrid.BaseDate := IncMonth(TimeseriesGrid.BaseDate, MonthDiff);
+end;
+
 procedure TFrmMultiTimeseries.btnDeleteSectionsClick(Sender: TObject);
 
   procedure CloseSingleTimeseries(AIndex: Integer);
@@ -571,9 +594,19 @@ begin
   SetControlStatus;
 end;
 
+type
+  TArrayOfTwoString = array[0..1] of string;
+
 resourcestring
   rsOvewriteExistingFile = 'File already exists. Do you want to overwrite the '+
     'existing file?';
+  rsHtsStsFileFilter = 'Hydrognomon time series (*.hts)|*.hts|'+
+      'Synthetic time series (*.sts)|*.sts|All files (*.*)|*.*';
+  rsStsFileFilter = 'Synthetic time series (*.sts)|*.sts|All files (*.*)|*.*';
+
+const
+  AFilterArray: array[Boolean] of TArrayOfTwoString =
+    ((rsHtsStsFileFilter, 'hts'), (rsStsFileFilter, 'sts'));
 
 procedure TFrmMultiTimeseries.mnuWriteToFileClick(Sender: TObject);
 var
@@ -581,6 +614,8 @@ var
   ACursor: TCursor;
   AVer: Integer;
 begin
+  SaveDialog.Filter := AFilterArray[TimeseriesGrid.Count>1][0];
+  SaveDialog.DefaultExt := AFilterArray[TimeseriesGrid.Count>1][1];
   if not SaveDialog.Execute then Exit;
   if FileExists(SaveDialog.FileName) then
     if MessageDlg(rsOvewriteExistingFile, mtConfirmation, [mbOK,mbCancel], 0) =
