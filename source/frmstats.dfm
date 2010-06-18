@@ -974,6 +974,7 @@ object FrmStatistics: TFrmStatistics
     Height = 101
     Lines.Strings = (
       'Data count'
+      'Non zero percent (%)'
       'Mean value'
       'Standard deviation'
       'Third central moment'

@@ -282,6 +282,21 @@ implementation
 
 uses montecarlo, prob, uiutils, Clipbrd;
 
+function MyFloatToStr(AValue: Real): string;
+var
+  APrecision: Integer;
+begin
+  if Abs(AValue)<1e-5 then
+  begin
+    Result := '';
+    Exit;
+  end;
+  APrecision := Trunc( Log10(Abs(AValue))  );
+  if APrecision<1 then APrecision := 5 else
+    APrecision := Max(0, 5-APrecision);
+  Result := Format('%*.*f', [0, APrecision, AValue]);
+end;
+
 procedure TFrmStatistics.IFormCreate(Sender: TObject);
 var
   i, j: Integer;
@@ -742,23 +757,23 @@ begin
   if Sender = mnuToAProbability then
   begin
     sgrdData.Cells[0,0] := sgrdData.Cells[0,0] +
-      'F= '+FormatFloat('#.##',100-AInterpolationValue*100)+' %';
+      'F= '+MyFloatToStr(100-AInterpolationValue*100)+' %';
     sgrdData.Cells[1,0] := rsValueWord;
   end else if Sender = mnuToAnExceedanceProbability then begin
     sgrdData.Cells[0,0] := sgrdData.Cells[0,0] +
-      'F1= '+FormatFloat('#.##',AInterpolationValue*100)+' %';
+      'F1= '+MyFloatToStr(AInterpolationValue*100)+' %';
     sgrdData.Cells[1,0] := rsValueWord;
   end else if Sender = mnuToAReturnPeriodMax then begin
     sgrdData.Cells[0,0] := sgrdData.Cells[0,0] +
-      'T(Max)= '+FormatFloat('#.##',1/AInterpolationValue)+' y';
+      'T(Max)= '+MyFloatToStr(1/AInterpolationValue)+' y';
     sgrdData.Cells[1,0] := rsValueWord;
   end else if Sender = mnuToAReturnPeriodMin then begin
     sgrdData.Cells[0,0] := sgrdData.Cells[0,0] +
-      'T(Min)= '+FormatFloat('#.##',1/(1-AInterpolationValue))+' y';
+      'T(Min)= '+MyFloatToStr(1/(1-AInterpolationValue))+' y';
     sgrdData.Cells[1,0] := rsValueWord;
   end else if Sender = mnuToAValue then begin
     sgrdData.Cells[0,0] := sgrdData.Cells[0,0] +
-      rsValueWord+'= '+FormatFloat('#.##',AInterpolationValue);
+      rsValueWord+'= '+MyFloatToStr(AInterpolationValue);
     sgrdData.Cells[1,0] := 'F(%)';
     sgrdData.Cells[2,0] := 'F1(%)';
     sgrdData.Cells[3,0] := 'T(Max)(y)';
@@ -796,9 +811,9 @@ begin
       sgrdData.Cells[0,i+1] := AStatisticalDistribution.Name;
       try
         if AStraight then
-          sgrdData.Cells[1,i+1] := FormatFloat('#.##',
+          sgrdData.Cells[1,i+1] := MyFloatToStr(
             AStatisticalDistribution.InvcdfValue(1-AInterpolationValue)) else
-          sgrdData.Cells[1,i+1] := FormatFloat('#.####',
+          sgrdData.Cells[1,i+1] := MyFloatToStr(
             AStatisticalDistribution.cdfValue(AInterpolationValue));
       except
         sgrdData.Cells[1,i+1] := '';
@@ -814,10 +829,10 @@ begin
       for i := 1 to RowCount - 1 do
       begin
         try
-          Cells[2,i] := FormatFloat('#.##',100-StrToFloat(Cells[1,i])*100);
-          Cells[4,i] := FormatFloat('#.##',1/StrToFloat(Cells[1,i]));
-          Cells[3,i] := FormatFloat('#.##',1/(1-StrToFloat(Cells[1,i])));
-          Cells[1,i] := FormatFloat('#.##',StrToFloat(Cells[1,i])*100);
+          Cells[2,i] := MyFloatToStr(100-StrToFloat(Cells[1,i])*100);
+          Cells[4,i] := MyFloatToStr(1/StrToFloat(Cells[1,i]));
+          Cells[3,i] := MyFloatToStr(1/(1-StrToFloat(Cells[1,i])));
+          Cells[1,i] := MyFloatToStr(StrToFloat(Cells[1,i])*100);
         except
           on EConvertError do
           begin
@@ -965,6 +980,7 @@ var
   MaxCount: Integer;
   ALine: Integer;
   RecordsCount: Integer;
+  RecordsNonZeroCount: Integer;
   AMeanValue, ALogMeanValue: Real;
   AStandardDeviation, ALogStandardDeviation: Real;
   AThirdCentralMoment,ALogThirdCentralMoment: Real;
@@ -993,6 +1009,7 @@ begin
     begin
       FFullDataList.Unbiased := FUnbiased;
       RecordsCount := FFullDataList.Count;
+      RecordsNonZeroCount := FFullDataList.CountNonZeros;
       AMeanValue := FFullDataList.MeanValue;
       AStandardDeviation := FFullDataList.StandardDeviation;
       AThirdCentralMoment := FFullDataList.ThirdCentralMoment;
@@ -1012,6 +1029,7 @@ begin
     end else begin
       FMonthlyDataList.Months[i].Unbiased := FUnbiased;
       RecordsCount := FMonthlyDataList.Months[i].Count;
+      RecordsNonZeroCount := FMonthlyDataList.Months[i].CountNonZeros;
       AMeanValue := FMonthlyDataList.Months[i].MeanValue;
       AStandardDeviation :=
         FMonthlyDataList.Months[i].StandardDeviation;
@@ -1054,137 +1072,139 @@ begin
         if AStandardDeviation>0 then
         begin
           case ALine of
-            2: AString := FormatFloat('#.##',AMeanValue);
-            3: AString := FormatFloat('#.##',AStandardDeviation);
-            4: AString := FormatFloat('#.##',AThirdCentralMoment);
-            5: AString := FormatFloat('#.##',AAsymetry);
-            6: AString := FormatFloat('#.##',AKurtosis);
-            11..12:
+            2: AString := MyFloatToStr(100*RecordsNonZeroCount/
+                 RecordsCount);
+            3: AString := MyFloatToStr(AMeanValue);
+            4: AString := MyFloatToStr(AStandardDeviation);
+            5: AString := MyFloatToStr(AThirdCentralMoment);
+            6: AString := MyFloatToStr(AAsymetry);
+            7: AString := MyFloatToStr(AKurtosis);
+            12..13:
             begin
               LogNormalParam(AMeanValue, AStandardDeviation,
                 AParameter1, AParameter2);
               case ALine of
-                11: AString := FormatFloat('#.##',AParameter1);
-                12: AString := FormatFloat('#.##',AParameter2);
+                12: AString := MyFloatToStr(AParameter1);
+                13: AString := MyFloatToStr(AParameter2);
               end;
             end;
-            13..15:
+            14..16:
             begin
               GaltonParam(AMeanValue, AStandardDeviation, AAsymetry,
                 AParameter1, AParameter2, AParameter3);
               case ALine of
-                13: AString := FormatFloat('#.##', AParameter2);
-                14: AString := FormatFloat('#.##', AParameter3);
-                15: AString := FormatFloat('#.##', AParameter1);
+                14: AString := MyFloatToStr( AParameter2);
+                15: AString := MyFloatToStr( AParameter3);
+                16: AString := MyFloatToStr( AParameter1);
               end;
             end;
-            16..17:
+            17..18:
             begin
               ExponentialParam(AMeanValue, AStandardDeviation,
                 AParameter1, AParameter2);
               case ALine of
-                16: AString := FormatFloat('#.##', AParameter1);
-                17: AString := FormatFloat('#.##', AParameter2);
+                17: AString := MyFloatToStr( AParameter1);
+                18: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            18:
-            AString := FormatFloat('#.##', GammaShape(AMeanValue,
+            19:
+            AString := MyFloatToStr( GammaShape(AMeanValue,
               Sqr(AStandardDeviation)));
-            19: AString := FormatFloat('#.##', GammaScale(AMeanValue,
+            20: AString := MyFloatToStr( GammaScale(AMeanValue,
               Sqr(AStandardDeviation)));
-            20..22:
+            21..23:
             begin
               PearsonIIIParam(AMeanValue, AStandardDeviation, AAsymetry,
                 AParameter1, AParameter2, AParameter3);
               case ALine of
-                20: AString := FormatFloat('#.##', AParameter1);
-                21: AString := FormatFloat('#.##', AParameter2);
-                22: AString := FormatFloat('#.##', AParameter3);
+                21: AString := MyFloatToStr( AParameter1);
+                22: AString := MyFloatToStr( AParameter2);
+                23: AString := MyFloatToStr( AParameter3);
               end;
             end;
-            26..27:
+            27..28:
             begin
               EV1MaxParam(AMeanValue, AStandardDeviation,
                 AParameter1, AParameter2);
               case ALine of
-                26: AString := FormatFloat('#.##', AParameter1);
-                27: AString := FormatFloat('#.##', AParameter2);
+                27: AString := MyFloatToStr( AParameter1);
+                28: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            28..29:
+            29..30:
             begin
               EV2MaxParam(AmeanValue,Sqr(AStandardDeviation),AParameter1,
                 AParameter2);
               case ALine of
-                28: AString := FormatFloat('#.##', AParameter1);
-                29: AString := FormatFloat('#.##', AParameter2);
+                29: AString := MyFloatToStr( AParameter1);
+                30: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            30..31:
+            31..32:
             begin
               EV1MinParam(AMeanValue, AStandardDeviation,
                 AParameter1, AParameter2);
               case ALine of
-                30: AString := FormatFloat('#.##', AParameter1);
-                31: AString := FormatFloat('#.##', AParameter2);
+                31: AString := MyFloatToStr( AParameter1);
+                32: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            32..33:
+            33..34:
             begin
               WeibParam(AMeanValue, Sqr(AStandardDeviation), AKappa, AAlpha);
               case ALine of
-                32: AString := FormatFloat('#.##',AKappa);
-                33: AString := FormatFloat('#.##',AAlpha);
+                33: AString := MyFloatToStr(AKappa);
+                34: AString := MyFloatToStr(AAlpha);
               end;
             end;
-            34..36:
+            35..37:
             begin
               GEVMaxParam(AMeanValue,AStandardDeviation,AAsymetry,
                 AKappa, AAlpha,APsi);
               case ALine of
-                34: AString := FormatFloat('#.##', AKappa);
-                35: AString := FormatFloat('#.##', AAlpha);
-                36: AString := FormatFloat('#.##', APsi);
+                35: AString := MyFloatToStr( AKappa);
+                36: AString := MyFloatToStr( AAlpha);
+                37: AString := MyFloatToStr( APsi);
               end;
             end;
-            37..39:
+            38..40:
             begin
               GEVMinParam(AMeanValue,AStandardDeviation,AAsymetry,
                 AKappa, AAlpha,APsi);
               case ALine of
-                37: AString := FormatFloat('#.##', AKappa);
-                38: AString := FormatFloat('#.##', AAlpha);
-                39: AString := FormatFloat('#.##', APsi);
+                38: AString := MyFloatToStr( AKappa);
+                39: AString := MyFloatToStr( AAlpha);
+                40: AString := MyFloatToStr( APsi);
               end;
             end;
-            40..42:
+            41..43:
             begin
               ParetoParam(AMeanValue,AStandardDeviation,AAsymetry,
                 AKappa, AAlpha, APsi);
               case ALine of
-                40: AString := FormatFloat('#.##', AKappa);
-                41: AString := FormatFloat('#.##', AAlpha);
-                42: AString := FormatFloat('#.##', APsi);
+                41: AString := MyFloatToStr( AKappa);
+                42: AString := MyFloatToStr( AAlpha);
+                43: AString := MyFloatToStr( APsi);
               end;
             end;
-            70..72:
+            71..73:
             begin
               GEVMaxParamKS(AMeanValue,AStandardDeviation,FGEVParameter,
                 AAlpha,APsi);
               case ALine of
-                70: AString := FormatFloat('#.##', FGEVParameter);
-                71: AString := FormatFloat('#.##', AAlpha);
-                72: AString := FormatFloat('#.##', APsi);
+                71: AString := MyFloatToStr( FGEVParameter);
+                72: AString := MyFloatToStr( AAlpha);
+                73: AString := MyFloatToStr( APsi);
               end;
             end;
-            73..75:
+            74..76:
             begin
               GEVMinParamKS(AMeanValue,AStandardDeviation,FGEVParameter,
                 AAlpha,APsi);
               case ALine of
-                73: AString := FormatFloat('#.##', FGEVParameter);
-                74: AString := FormatFloat('#.##', AAlpha);
-                75: AString := FormatFloat('#.##', APsi);
+                74: AString := MyFloatToStr( FGEVParameter);
+                75: AString := MyFloatToStr( AAlpha);
+                76: AString := MyFloatToStr( APsi);
               end;
             end;
           end;
@@ -1192,18 +1212,18 @@ begin
         if ALogStandardDeviation>0 then
         begin
           case ALine of
-            7: AString := FormatFloat('#.##',ALogMeanValue);
-            8: AString := FormatFloat('#.##',ALogStandardDeviation);
-            9: AString := FormatFloat('#.##',ALogThirdCentralMoment);
-            10: AString := FormatFloat('#.##',ALogAsymetry);
-            23..25:
+            8: AString := MyFloatToStr(ALogMeanValue);
+            9: AString := MyFloatToStr(ALogStandardDeviation);
+            10: AString := MyFloatToStr(ALogThirdCentralMoment);
+            11: AString := MyFloatToStr(ALogAsymetry);
+            24..26:
             begin
               PearsonIIIParam(ALogMeanValue, ALogStandardDeviation, ALogAsymetry,
                 AParameter1, AParameter2, AParameter3);
               case ALine of
-                23: AString := FormatFloat('#.##', AParameter1);
-                24: AString := FormatFloat('#.##', AParameter2);
-                25: AString := FormatFloat('#.##', AParameter3);
+                24: AString := MyFloatToStr( AParameter1);
+                25: AString := MyFloatToStr( AParameter2);
+                26: AString := MyFloatToStr( AParameter3);
               end;
             end;
           end;
@@ -1211,113 +1231,113 @@ begin
         if LMomentExist then
         begin
           case ALine of
-            43: AString := FormatFloat('#.##', LMoment1);
-            44: AString := FormatFloat('#.##', LMoment2);
-            45: AString := FormatFloat('#.##', LMoment3);
-            46: AString := FormatFloat('#.##', LMoment4);
-            47: AString := FormatFloat('#.##', LSkewness);
-            48: AString := FormatFloat('#.##', LKurtosis);
-            49..50:
+            44: AString := MyFloatToStr( LMoment1);
+            45: AString := MyFloatToStr( LMoment2);
+            46: AString := MyFloatToStr( LMoment3);
+            47: AString := MyFloatToStr( LMoment4);
+            48: AString := MyFloatToStr( LSkewness);
+            49: AString := MyFloatToStr( LKurtosis);
+            50..51:
             begin
               NormalLParam(LMoment1, LMoment2, LMoment3, AParameter1,
                 AParameter2);
               case ALine of
-                49: AString := FormatFloat('#.##', AParameter1);
-                50: AString := FormatFloat('#.##', AParameter2);
+                50: AString := MyFloatToStr( AParameter1);
+                51: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            51..52:
+            52..53:
             begin
               ExponentialLParam(LMoment1, LMoment2, LMoment3,
                 AParameter1, AParameter2);
               case ALine of
-                51: AString := FormatFloat('#.##', AParameter1);
-                52: AString := FormatFloat('#.##', AParameter2);
+                52: AString := MyFloatToStr( AParameter1);
+                53: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            61..63:
+            62..64:
             begin
               GEVMaxLParam(LMoment1,LMoment2,LMoment3,
                 AKappa, AAlpha,APsi);
               case ALine of
-                61: AString := FormatFloat('#.##', AKappa);
-                62: AString := FormatFloat('#.##', AAlpha);
-                63: AString := FormatFloat('#.##', APsi);
+                62: AString := MyFloatToStr( AKappa);
+                63: AString := MyFloatToStr( AAlpha);
+                64: AString := MyFloatToStr( APsi);
               end;
             end;
-            64..66:
+            65..67:
             begin
               GEVMinLParam(LMoment1,LMoment2,LMoment3,
                 AKappa, AAlpha,APsi);
               case ALine of
-                64: AString := FormatFloat('#.##', AKappa);
-                65: AString := FormatFloat('#.##', AAlpha);
-                66: AString := FormatFloat('#.##', APsi);
+                65: AString := MyFloatToStr( AKappa);
+                66: AString := MyFloatToStr( AAlpha);
+                67: AString := MyFloatToStr( APsi);
               end;
             end;
 
-            76..78:
+            77..79:
             begin
               GEVMaxLParamKS(LMoment1,LMoment2,LMoment3,
                 FGEVParameter, AAlpha,APsi);
               case ALine of
-                76: AString := FormatFloat('#.##', FGEVParameter);
-                77: AString := FormatFloat('#.##', AAlpha);
-                78: AString := FormatFloat('#.##', APsi);
+                77: AString := MyFloatToStr( FGEVParameter);
+                78: AString := MyFloatToStr( AAlpha);
+                79: AString := MyFloatToStr( APsi);
               end;
             end;
-            79..81:
+            80..82:
             begin
               GEVMinLParamKS(LMoment1,LMoment2,LMoment3,
                 FGEVParameter, AAlpha,APsi);
               case ALine of
-                79: AString := FormatFloat('#.##', FGEVParameter);
-                80: AString := FormatFloat('#.##', AAlpha);
-                81: AString := FormatFloat('#.##', APsi);
+                80: AString := MyFloatToStr( FGEVParameter);
+                81: AString := MyFloatToStr( AAlpha);
+                82: AString := MyFloatToStr( APsi);
               end;
             end;
-            67..69:
+            68..70:
             begin
               ParetoLParam(LMoment1,LMoment2,LMoment3,
                 AKappa, AAlpha,APsi);
               case ALine of
-                67: AString := FormatFloat('#.##', AKappa);
-                68: AString := FormatFloat('#.##', AAlpha);
-                69: AString := FormatFloat('#.##', APsi);
+                68: AString := MyFloatToStr( AKappa);
+                69: AString := MyFloatToStr( AAlpha);
+                70: AString := MyFloatToStr( APsi);
               end;
             end;
-            53..54:
+            54..55:
             begin
               EV1MaxLParam(LMoment1, LMoment2, LMoment3,
                 AParameter1, AParameter2);
               case ALine of
-                53: AString := FormatFloat('#.##', AParameter1);
-                54: AString := FormatFloat('#.##', AParameter2);
+                54: AString := MyFloatToStr( AParameter1);
+                55: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            55..56:
+            56..57:
             begin
               EV2MaxLParam(LMoment1, LMoment2, LMoment3, AKappa, AAlpha);
               case ALine of
-                55: AString := FormatFloat('#.##', AKappa);
-                56: AString := FormatFloat('#.##', AALpha);
+                56: AString := MyFloatToStr( AKappa);
+                57: AString := MyFloatToStr( AALpha);
               end;
             end;
-            57..58:
+            58..59:
             begin
               EV1MinLParam(LMoment1, LMoment2, LMoment3,
                 AParameter1, AParameter2);
               case ALine of
-                57: AString := FormatFloat('#.##', AParameter1);
-                58: AString := FormatFloat('#.##', AParameter2);
+                58: AString := MyFloatToStr( AParameter1);
+                59: AString := MyFloatToStr( AParameter2);
               end;
             end;
-            59..60:
+            60..61:
             begin
               WeibLParam(LMoment1, LMoment2, LMoment3, AKappa, AAlpha);
               case ALine of
-                59: AString := FormatFloat('#.##', AKappa);
-                60: AString := FormatFloat('#.##', AALpha);
+                60: AString := MyFloatToStr( AKappa);
+                61: AString := MyFloatToStr( AALpha);
               end;
             end;
           end;
@@ -1997,9 +2017,9 @@ begin
       Series[i].Active := True;
     end;
   LowConfidenceLimitLine.Title := rsConfidenceIntervalLimits +
-    FormatFloat('#.##',MCConfidenceLevel*100)+'%';
+    MyFloatToStr(MCConfidenceLevel*100)+'%';
   LowSampleLimitLine.Title := rsSampleLimits +
-    FormatFloat('#.##',MCConfidenceLevel*100)+'%';
+    MyFloatToStr(MCConfidenceLevel*100)+'%';
   with chartPDF do Series[SeriesCount-4].Title := LowSampleLimitLine.Title;
   with chartPDF do Series[SeriesCount-1].Title := LowConfidenceLimitLine.Title;
   HighSampleLimitLine.Active := True;
@@ -2129,22 +2149,22 @@ begin
       AFValue := InvProbabilityPaper(LowSampleLimitLine.XValues[i],
         FPaperType,FGEVParameter);
       sgrdData.Cells[0, AGridRow] := rsPointWord+IntToStr(i+1);
-      sgrdData.Cells[1, AGridRow] := FormatFloat('#.##',AFValue*100)+'%';
-      sgrdData.Cells[2, AGridRow] := FormatFloat('#.##',100-AFValue*100)+'%';
+      sgrdData.Cells[1, AGridRow] := MyFloatToStr(AFValue*100)+'%';
+      sgrdData.Cells[2, AGridRow] := MyFloatToStr(100-AFValue*100)+'%';
       SetLength(XValues, ALineSeries.Count);
       SetLength(YValues, ALineSeries.Count);
       XValues := ChartSeries2XValues(ALineSeries);
       YValues := ChartSeries2YValues(ALineSeries);
-      sgrdData.Cells[3, AGridRow] := FormatFloat('#.##',
+      sgrdData.Cells[3, AGridRow] := MyFloatToStr(
         ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue, FPaperType,
           FGEVParameter));
-      sgrdData.Cells[4, AGridRow] := FormatFloat('#.##',
+      sgrdData.Cells[4, AGridRow] := MyFloatToStr(
         HighSampleLimitLine.YValues[i]);
-      sgrdData.Cells[5, AGridRow] := FormatFloat('#.##',
+      sgrdData.Cells[5, AGridRow] := MyFloatToStr(
         LowSampleLimitLine.YValues[i]);
-      sgrdData.Cells[6, AGridRow] := FormatFloat('#.##',
+      sgrdData.Cells[6, AGridRow] := MyFloatToStr(
         HighConfidenceLimitLine.YValues[i]);
-      sgrdData.Cells[7, AGridRow] := FormatFloat('#.##',
+      sgrdData.Cells[7, AGridRow] := MyFloatToStr(
         LowConfidenceLimitLine.YValues[i]);
       Inc(AGridRow);
     end;
@@ -2155,41 +2175,41 @@ begin
     AFValue := AFValue / 100;
     sgrdData.RowCount := AGridRow+1;
     sgrdData.Cells[0, AGridRow] := rsInterpolatedValue;
-    sgrdData.Cells[1, AGridRow] := FormatFloat('#.##',AFValue*100)+'%';
-    sgrdData.Cells[2, AGridRow] := FormatFloat('#.##',100-AFValue*100)+'%';
+    sgrdData.Cells[1, AGridRow] := MyFloatToStr(AFValue*100)+'%';
+    sgrdData.Cells[2, AGridRow] := MyFloatToStr(100-AFValue*100)+'%';
     SetLength(XValues, ALineSeries.Count);
     SetLength(YValues, ALineSeries.Count);
     XValues := ChartSeries2XValues(ALineSeries);
     YValues := ChartSeries2YValues(ALineSeries);
-    sgrdData.Cells[3, AGridRow] := FormatFloat('#.##',
+    sgrdData.Cells[3, AGridRow] := MyFloatToStr(
       ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue,
         FPaperType, FGEVParameter));
     SetLength(XValues, HighSampleLimitLine.Count);
     SetLength(YValues, HighSampleLimitLine.Count);
     XValues := ChartSeries2XValues(HighSampleLimitLine);
     YValues := ChartSeries2YValues(HighSampleLimitLine);
-    sgrdData.Cells[4, AGridRow] := FormatFloat('#.##',
+    sgrdData.Cells[4, AGridRow] := MyFloatToStr(
       ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue,
         FPaperType, FGEVParameter));
     SetLength(XValues, LowSampleLimitLine.Count);
     SetLength(YValues, LowSampleLimitLine.Count);
     XValues := ChartSeries2XValues(LowSampleLimitLine);
     YValues := ChartSeries2YValues(LowSampleLimitLine);
-    sgrdData.Cells[5, AGridRow] := FormatFloat('#.##',
+    sgrdData.Cells[5, AGridRow] := MyFloatToStr(
       ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue,
         FPaperType, FGEVParameter));
     SetLength(XValues, HighConfidenceLimitLine.Count);
     SetLength(YValues, HighConfidenceLimitLine.Count);
     XValues := ChartSeries2XValues(HighConfidenceLimitLine);
     YValues := ChartSeries2YValues(HighConfidenceLimitLine);
-    sgrdData.Cells[6, AGridRow] := FormatFloat('#.##',
+    sgrdData.Cells[6, AGridRow] := MyFloatToStr(
       ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue,
         FPaperType, FGEVParameter));
     SetLength(XValues, LowConfidenceLimitLine.Count);
     SetLength(YValues, LowConfidenceLimitLine.Count);
     XValues := ChartSeries2XValues(LowConfidenceLimitLine);
     YValues := ChartSeries2YValues(LowConfidenceLimitLine);
-    sgrdData.Cells[7, AGridRow] := FormatFloat('#.##',
+    sgrdData.Cells[7, AGridRow] := MyFloatToStr(
       ProbabilityLinearInterpolate(XValues, YValues, 1-AFValue,
         FPaperType, FGEVParameter));
   finally
@@ -2319,8 +2339,8 @@ begin
           APearsonParam) then
           sgrdData.Cells[3,j+1] := rsPASS else
           sgrdData.Cells[3,j+1] := rsFAIL;
-        sgrdData.Cells[4,j+1] := FormatFloat('0.0',ALevelToFail*100)+'%';
-        sgrdData.Cells[5,j+1] := FormatFloat('0.00', APearsonParam);
+        sgrdData.Cells[4,j+1] := MyFloatToStr(ALevelToFail*100)+'%';
+        sgrdData.Cells[5,j+1] := MyFloatToStr(APearsonParam);
       except
         on EMathError do
           Continue;
@@ -2409,8 +2429,8 @@ begin
         if ADistribution.KolmogorovSmirnovTest(0.10, ALevelToFail, ADMax) then
           sgrdData.Cells[3,j+1] := rsPASS else
           sgrdData.Cells[3,j+1] := rsFAIL;
-        sgrdData.Cells[4,j+1] := FormatFloat('0.0', ALevelToFail*100)+'%';
-        sgrdData.Cells[5,j+1] := FormatFloat('0.00', ADMax);
+        sgrdData.Cells[4,j+1] := MyFloatToStr(ALevelToFail*100)+'%';
+        sgrdData.Cells[5,j+1] := MyFloatToStr(ADMax);
       except
         on EMathError do
           Continue;
