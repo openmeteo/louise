@@ -350,6 +350,7 @@ var
   SavedCursor: TCursor;
   CanSetStrict: Boolean;
   s: string;
+  ANominalOffset: TDateOffset;
 begin
   if FNewTimeseriesMode then
   begin
@@ -363,8 +364,9 @@ begin
     SavedCursor := Screen.Cursor;
     try
       Screen.Cursor := crHourGlass;
-      CanSetStrict := FMainTs.CheckTimeStepStrict(s);
+      CanSetStrict := FMainTs.CheckTimeStepStrict(s, ANominalOffset);
       FTsCopy.TimeStepStrict := CanSetStrict;
+      if CanSetStrict then FTsCopy.NominalOffset := ANominalOffset;
       if not CanSetStrict then
         MessageDlg(s, mtError, [mbOK], 0);
     finally
