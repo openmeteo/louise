@@ -753,9 +753,8 @@ var
   s: string;
   AFloat, AValue: Real;
 begin
+  AFullDataList := nil;
   for i := 0 to FIDFTimeseriesCollection.Count-1 do
-  begin
-    AFullDataList := nil;
     try
       AFullDataList := TFullDataList.Create;
       AFullDataList.SetTS(FIDFTimeseriesCollection[i].Timeseries,True);
@@ -781,9 +780,8 @@ begin
             AValue, '', FWeibullSeries[i].SeriesColor);
       end;
     finally
-      AFullDataList.Clear;
+      FreeAndNil(AFullDataList);
     end;
-  end;
 end;
 
 procedure TFrmIDFCurves.DrawDistribution;

@@ -155,19 +155,23 @@ begin
       FVarsArray[j].value := MinuteOfTheHour(ADateTimeList[i]);
       ACalculus := nil;
       try
-        MathErrorFlag := False;
-        ACalculus := FParser.compile(expr, err);
-        if ACalculus<>nil then
-          AResult := ACalculus.eval;
-      except
-        on EMathError do
-          MathErrorFlag := True;
-        else
-          raise;
-      end;
-      if ACalculus = nil then
-        if err>0 then
-          raise EMathError.Create(rsErrorInExpression);
+        try
+          MathErrorFlag := False;
+          ACalculus := FParser.compile(expr, err);
+          if ACalculus<>nil then
+            AResult := ACalculus.eval;
+        except
+          on EMathError do
+            MathErrorFlag := True;
+          else
+            raise;
+        end;
+        if ACalculus = nil then
+          if err>0 then
+            raise EMathError.Create(rsErrorInExpression);
+        finally
+          ACalculus.Free;
+        end;
       if MathErrorFlag then
         ATimeseries.Last.SetFlag('SUSPECT', True);
         ATimeseries.Last.AsFloat := AResult;

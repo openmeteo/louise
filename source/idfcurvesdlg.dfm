@@ -387,6 +387,10 @@ object FrmIDFCurves: TFrmIDFCurves
     object tabSingle: TTabSheet
       Caption = 'Single curve'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         613
         393)
@@ -792,6 +796,10 @@ object FrmIDFCurves: TFrmIDFCurves
     object tabData: TTabSheet
       Caption = 'Data'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Image: TImage
         Left = 155
         Top = 5
@@ -1047,6 +1055,10 @@ object FrmIDFCurves: TFrmIDFCurves
     object tabDistribution: TTabSheet
       Caption = 'Distribution plot'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         613
         393)
