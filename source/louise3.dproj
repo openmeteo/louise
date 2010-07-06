@@ -204,6 +204,9 @@
 			<DCCReference Include="frmaggr.pas">
 				<Form>FrmAggregationDialog</Form>
 			</DCCReference>
+			<DCCReference Include="frmrose.pas">
+				<Form>FrmRoseDiagram</Form>
+			</DCCReference>
 			<DCCReference Include="tsgrid.dcr"/>
 			<DCCReference Include="strGrdOd.dcr"/>
 			<DCCReference Include="tsdialogs.dcr"/>

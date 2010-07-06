@@ -92,6 +92,7 @@ contains
   frmimpts in 'frmimpts.pas' {FrmImportDataToTimeseries},
   frmflags in 'frmflags.pas' {FrmSetFlagsDialog},
   frmtswiz in 'frmtswiz.pas' {FrmTimeseriesWizard},
-  frmaggr in 'frmaggr.pas' {FrmAggregationDialog};
+  frmaggr in 'frmaggr.pas' {FrmAggregationDialog},
+  frmrose in 'frmrose.pas' {FrmRoseDiagram};
 
 end.

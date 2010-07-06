@@ -29,7 +29,7 @@ begin
     TStageDischargeDialog, TTsprocessSelectionsDialog, TMultiTimeseriesDialog,
     TComplexCalculationsDialog, TDisaggregationDialog, THydrometryDialog,
     TTimeseriesIntegrationDialog, TTimeseriesImportDataDialog,
-    TTimeseriesWizard, TAggregateSeriesDialog]);
+    TTimeseriesWizard, TAggregateSeriesDialog, TRoseDiagramDialog]);
   RegisterComponents('LoUISE Components', [TIMainMenu, TIShape]);
 end;
 

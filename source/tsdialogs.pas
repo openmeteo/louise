@@ -1512,13 +1512,35 @@ type
       FOptions.IgnoreEmptyLines;
   end;
 
+{** Displays a dialog for displaying rose diagrams on time series.
+}
+  TRoseDiagramDialog = class(TIComponent)
+  private
+    FTimeseries: TTimeseries;
+  public
+{** The display time series.
+    Should be a vector time series with values varying from 0 to 360 degrees.
+}
+    property ATimeseries: TTimeseries read FTimeseries write FTimeseries;
+{** Creates and initializes a TTimeseriesIntegrationDialog instance.
+    The Create method generates a TTimeseriesIntegrationDialog instance, but
+    the new dialog does not appear on the form at runtime until the Execute
+    method is called.
+    @SeeAlso <See Method=Execute>
+}
+    constructor Create(AOwner: TComponent); override;
+{** Displays the dialog.
+}
+    function Execute: Boolean;
+  end;
+
 implementation
 
 uses  Dialogs, frmflags, AggrDlg, RegStDlg, RngChkDlg,
   RegrDlg, RgrRsltDlg, PenmDlg, LinCombDlg,
   frmdblmass, evidfdlg, idfsetdlg, tsdblmass, hymoddlg,
   frmsd, frmstats, frmdrgts, mlttsdlg, frmdisaggr, frmtscalcparse, iform,
-  frmhydrm, frmtsarea, frmimpts, frmtswiz, frmaggr;
+  frmhydrm, frmtsarea, frmimpts, frmtswiz, frmaggr, frmrose;
 
 { TRangeCheckDialog }
 
@@ -2864,6 +2886,36 @@ begin
     end;
   finally
     FrmImportDataToTimeseries.Free;
+  end;
+end;
+
+{ TRoseDiagramDialog }
+
+constructor TRoseDiagramDialog.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FTimeseries := nil;
+end;
+
+function TRoseDiagramDialog.Execute: Boolean;
+var
+  FrmRoseDiagram: TFrmRoseDiagram;
+begin
+  FrmRoseDiagram := TFrmRoseDiagram.Create(Self);
+  Assert(FTimeseries<>nil);
+  try
+    Result := False;
+    with FrmRoseDiagram do
+    begin
+      ATimeseries := FTimeseries;
+      HelpType := FHelpType;
+      HelpKeyword := FHelpKeyword;
+      HelpFile := FHelpFile;
+      HelpContext := FHelpContext;
+      Result := (ShowModal = mrOK);
+    end;
+  finally
+    FrmRoseDiagram.Free;
   end;
 end;
 
