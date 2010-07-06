@@ -132,6 +132,7 @@ begin
     FOptions.FirstLine := SavedFirstLine;
     AInStream.Free;
     AOutStream.Free;
+    AStreamReader.Free;
   end;
 end;
 
