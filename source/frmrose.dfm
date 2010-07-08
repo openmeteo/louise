@@ -5,6 +5,8 @@ object FrmRoseDiagram: TFrmRoseDiagram
   ClientHeight = 528
   ClientWidth = 684
   Color = clBtnFace
+  Constraints.MinHeight = 460
+  Constraints.MinWidth = 630
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -29,6 +31,14 @@ object FrmRoseDiagram: TFrmRoseDiagram
     BackWall.Visible = False
     BottomWall.Visible = False
     LeftWall.Visible = False
+    Legend.Alignment = laLeft
+    Legend.Inverted = True
+    Legend.LegendStyle = lsSeries
+    Legend.ResizeChart = False
+    Legend.Shadow.Visible = False
+    Legend.Symbol.Shadow.Visible = False
+    Legend.Symbol.Squared = True
+    Legend.TopPos = 1
     Legend.Visible = False
     Title.Text.Strings = (
       'TChart')
@@ -63,17 +73,16 @@ object FrmRoseDiagram: TFrmRoseDiagram
       15
       25
       15)
-    object Series2: TLineSeries
+    object Series5: TBarSeries
+      Active = False
       Marks.Arrow.Visible = True
       Marks.Callout.Brush.Color = clBlack
       Marks.Callout.Arrow.Visible = True
-      Marks.Visible = False
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      Pointer.Visible = False
+      Marks.Visible = True
+      Gradient.Direction = gdTopBottom
       XValues.Name = 'X'
       XValues.Order = loAscending
-      YValues.Name = 'Y'
+      YValues.Name = 'Bar'
       YValues.Order = loNone
     end
   end
@@ -99,7 +108,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   object btnAlterBrushColor: TButton
     Tag = 1
     Left = 524
-    Top = 254
+    Top = 184
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -109,7 +118,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnAlterPenColor: TButton
     Left = 524
-    Top = 223
+    Top = 153
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -119,7 +128,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object chkAxesOverRose: TCheckBox
     Left = 524
-    Top = 136
+    Top = 130
     Width = 152
     Height = 17
     Anchors = [akTop, akRight]
@@ -131,17 +140,17 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnChangeStyle: TButton
     Left = 524
-    Top = 95
+    Top = 92
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Change style'
+    Caption = '>> Change style >>'
     TabOrder = 5
     OnClick = btnChangeStyleClick
   end
   object btnCopyClipboard: TButton
     Left = 524
-    Top = 448
+    Top = 464
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -151,13 +160,74 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnPrint: TButton
     Left = 524
-    Top = 479
+    Top = 495
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
     Caption = 'Print'
     TabOrder = 7
     OnClick = btnPrintClick
+  end
+  object grpSpeedDistribution: TGroupBox
+    Left = 524
+    Top = 239
+    Width = 152
+    Height = 164
+    Anchors = [akTop, akRight]
+    Caption = 'Speed distribution'
+    TabOrder = 8
+    DesignSize = (
+      152
+      164)
+    object chkLogScales: TCheckBox
+      Tag = 1
+      Left = 8
+      Top = 61
+      Width = 97
+      Height = 17
+      Caption = 'Log scales'
+      TabOrder = 0
+      OnClick = chkLogScalesClick
+    end
+    object rgrpSpeedClasses: TRadioGroup
+      Left = 8
+      Top = 80
+      Width = 132
+      Height = 76
+      Caption = 'Speed classes'
+      Columns = 2
+      ItemIndex = 0
+      Items.Strings = (
+        '5'
+        '8'
+        '12'
+        '16'
+        '20'
+        '25')
+      TabOrder = 1
+      OnClick = rgrpSpeedClassesClick
+    end
+    object chkShowLegend: TCheckBox
+      Left = 8
+      Top = 18
+      Width = 141
+      Height = 39
+      Anchors = [akTop, akRight]
+      Caption = 'Show legend / Changes position in each click'
+      TabOrder = 2
+      WordWrap = True
+      OnClick = chkAxesOverRoseClick
+    end
+  end
+  object chkPenColorSameToBrush: TCheckBox
+    Left = 524
+    Top = 216
+    Width = 152
+    Height = 17
+    Anchors = [akTop, akRight]
+    Caption = 'Pen color same to brush'
+    TabOrder = 9
+    OnClick = chkAxesOverRoseClick
   end
   object ColorDialog: TColorDialog
     Left = 464

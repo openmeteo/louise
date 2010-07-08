@@ -62,10 +62,11 @@ const
 
 type TArrayOfInteger = array of Integer;
 
+type T2DArrayOfInteger = array of TArrayOfInteger;
+
 type
   TFrmRoseDiagram = class(TForm)
     Chart: TChart;
-    Series2: TLineSeries;
     rgrpSectionCount: TRadioGroup;
     ColorDialog: TColorDialog;
     btnAlterBrushColor: TButton;
@@ -75,6 +76,12 @@ type
     btnCopyClipboard: TButton;
     PrintDialog: TPrintDialog;
     btnPrint: TButton;
+    grpSpeedDistribution: TGroupBox;
+    chkLogScales: TCheckBox;
+    chkPenColorSameToBrush: TCheckBox;
+    rgrpSpeedClasses: TRadioGroup;
+    chkShowLegend: TCheckBox;
+    Series5: TBarSeries;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ChartBeforeDrawSeries(Sender: TObject);
@@ -85,17 +92,25 @@ type
     procedure btnChangeStyleClick(Sender: TObject);
     procedure btnCopyClipboardClick(Sender: TObject);
     procedure btnPrintClick(Sender: TObject);
+    procedure chkLogScalesClick(Sender: TObject);
+    procedure rgrpSpeedClassesClick(Sender: TObject);
   private
-    FSectionCount, FMax: Integer;
+    FSectionCount, FMax, FClassesCount: Integer;
+    FMaxSpeed: Real;
     FPenWidth: Integer;
     FBrushColor, FPenColor: TColor;
     FBrushStyle: TBrushStyle;
-    FTimeseries: TTimeseries;
-    FSectionStats: TArrayOfInteger;
+    FDirectionTimeseries, FSpeedTimeseries: TTimeseries;
+    FSectionStats: T2DArrayOfInteger;
     FMode: TDrawingMode;
     FStyleIndex: Integer;
+    FLogScale: Boolean;
+    FSpeedDisplay: Boolean;
+    FLegendPosition: Integer;
+    function ScaleFun(AValue: Real): Real;
     procedure PickDrawingStyle(AStyle: TDrawingStyleRec);
-    procedure SetControlStatus;
+    procedure SetControlStatus; overload;
+    procedure SetControlStatus(FullInvalidate: Boolean); overload;
     function ConvertX(a: Real): Integer;
     function ConvertY(a: Real): Integer;
     function CalcArcPoints(Azimuth, ARadius, AWidth: Real): TArcPoints;
@@ -104,19 +119,68 @@ type
     procedure DrawRectSection(Azimuth, ARadius, AWidth: Real);
     procedure CalcSeriesStats;
     procedure DrawRose;
-    procedure DrawSolidDiagram;
+    procedure DrawSolidDiagram(AClass: Integer);
+    procedure DrawLegend;
   public
-    property ATimeseries: TTimeseries read FTimeseries write FTimeseries;
+    property ATimeseries: TTimeseries read FDirectionTimeseries write
+      FDirectionTimeseries;
+    property SpeedTimeseries: TTimeseries read FSpeedTimeseries write
+      FSpeedTimeseries;
   end;
-
 
 implementation
 
 {$R *.dfm}
 
-uses Math;
+uses Math, tsprocess, Contnrs, Dates;
 
 { Math - General functions }
+
+type
+TRGB=record
+  R, G, B: Byte;
+end;
+
+function HueToRGB(AHue: Real): TRGB;
+begin
+  with Result do
+  begin
+    if AHue<0.2 then
+    begin
+      R := Round(AHue*255/0.2);
+      G := 0;
+      B := 255;
+    end else if AHue<0.4 then begin
+      R := 255;
+      G := 0;
+      B := Round((0.4-AHue)*255/0.2);
+    end else if AHue<0.6 then begin
+      R := 255;
+      G := Round((AHue-0.4)*255/0.2);
+      B := 0;
+    end else if AHue<0.8 then begin
+      R := Round((0.8-AHue)*255/0.2);
+      G := 255;
+      B := 0;
+    end else begin
+      R := 0;
+      G := 255;
+      B := Round((AHue-0.8)*255/0.2);
+    end;
+  end;
+end;
+
+function RGBToColor(ARGB: TRGB): TColor;
+begin
+  Result:=ARGB.B Shl 16 Or
+          ARGB.G Shl 8  Or
+          ARGB.R;
+end;
+
+function HueToColor(AHue: Real): TColor;
+begin
+  Result := RGBToColor(HueToRGB(AHue));
+end;
 
 procedure TFrmRoseDiagram.PickDrawingStyle(AStyle: TDrawingStyleRec);
 begin
@@ -144,6 +208,12 @@ begin
       (Maximum - Minimum) * (IEndPos - IStartPos));
 end;
 
+function TFrmRoseDiagram.ScaleFun(AValue: Real): Real;
+begin
+  if FLogScale then Result := Log10(AValue+0.001) else
+  Result := AValue;
+end;
+
 function TFrmRoseDiagram.CalcArcPoints(Azimuth, ARadius, AWidth: Real):
   TArcPoints;
 begin
@@ -159,33 +229,79 @@ end;
 
 procedure TFrmRoseDiagram.CalcSeriesStats;
 var
-  i, j: Integer;
-  AWidth, AValue: Real;
+  i, j, k, a, b: Integer;
+  AWidth, AValue, ASpeed: Real;
+  ATimeseriesList: TObjectList;
+  ACommonPeriod: TDateTimeList;
 begin
   AWidth := 360/FSectionCount;
-  SetLength(FSectionStats, FSectionCount);
-  for i := 0 to FSectionCount-1 do FSectionStats[i] := 0;
-  for i := 0 to FTimeseries.Count-1 do
+  SetLength(FSectionStats, FClassesCount);
+  for i := 0 to FClassesCount-1 do
   begin
-    if FTimeseries[i].IsNull then Continue;
-    AValue := FTimeseries[i].AsFloat;
-    while AValue<(-0.5*AWidth) do AValue := AValue + 360;
-    while AValue>=(360-0.5*AWidth) do AValue := AValue - 360;
-    j := Floor((AValue+AWidth*0.5)/AWidth);
-    Assert(j>-1);
-    Assert(j<FSectionCount);
-    Inc(FSectionStats[j]);
+    SetLength(FSectionStats[i], FSectionCount);
+    for j := 0 to FSectionCount-1 do FSectionStats[i][j] := 0;
   end;
+  FMaxSpeed := 0;
+  if FSpeedTimeseries <> nil then
+    with FSpeedTimeseries do
+      for i := 0 to Count-1 do
+        if not Items[i].IsNull then if Items[i].AsFloat>FMaxSpeed then
+          FMaxSpeed := Items[i].AsFloat;
+  ATimeseriesList := nil;
+  ACommonPeriod := nil;
+  b := -1;
+  ASpeed := 0;
+  try
+    ATimeseriesList := TObjectList.Create(False);
+    ATimeseriesList.Add(FDirectionTimeseries);
+    if FSpeedTimeseries<>nil then ATimeseriesList.Add(FSpeedTimeseries);
+    ACommonPeriod := GetCommonPeriod(ATimeseriesList, 0);
+    for k := 0 to FClassesCount-1 do
+      for i := 0 to ACommonPeriod.Count-1 do
+      begin
+        a := FDirectionTimeseries.IndexOf(ACommonPeriod[i]);
+        if FSpeedTimeseries<>nil then
+          b := FSpeedTimeseries.IndexOf(ACommonPeriod[i]);
+        AValue := FDirectionTimeseries[a].AsFloat;
+        if FSpeedTimeseries<>nil then ASpeed := FSpeedTimeseries[b].AsFloat;
+        if FSpeedTimeseries<>nil then if ASpeed<0 then
+        begin
+          ASpeed := Abs(ASpeed);
+          AValue := AValue + 180;
+        end;
+        while AValue<(-0.5*AWidth) do AValue := AValue + 360;
+        while AValue>=(360-0.5*AWidth) do AValue := AValue - 360;
+        j := Floor((AValue+AWidth*0.5)/AWidth);
+        Assert(j>-1);
+        Assert(j<FSectionCount);
+        if k>0 then
+        begin
+          if ScaleFun(ASpeed)>
+            ( (FClassesCount-k)*ScaleFun(FMaxSpeed)/FClassesCount ) then
+            Continue;
+        end;
+        Inc(FSectionStats[k][j]);
+      end;
+  finally
+    ATimeseriesList.Free;
+    ACommonPeriod.Free;
+  end;
+  FMax := 0;
+  for i := 0 to Length(FSectionStats[0])-1 do
+    if FSectionStats[0][i]>FMax then FMax := FSectionStats[0][i];
 end;
 
 { Event handlers }
 
 procedure TFrmRoseDiagram.FormCreate(Sender: TObject);
 begin
-  FTimeseries := nil;
+  FDirectionTimeseries := nil;
+  FSpeedTimeseries := nil;
   PickDrawingStyle(DrawingStyles[0]);
   FStyleIndex := 0;
   FSectionCount := 36;
+  FClassesCount := 1;
+  FLegendPosition := 0;
 end;
 
 procedure TFrmRoseDiagram.FormResize(Sender: TObject);
@@ -196,6 +312,8 @@ end;
 
 procedure TFrmRoseDiagram.FormShow(Sender: TObject);
 begin
+  FSpeedDisplay := FSpeedTimeseries<>nil;
+  if FSpeedDisplay then FClassesCount := 8 else FClassesCount := 1;
   SetControlStatus;
 end;
 
@@ -203,7 +321,14 @@ procedure TFrmRoseDiagram.rgrpSectionCountClick(Sender: TObject);
 begin
   with (Sender as TRadioGroup) do
     FSectionCount := StrToInt(Items[ItemIndex]);
-  SetControlStatus;
+  SetControlStatus(True);
+end;
+
+procedure TFrmRoseDiagram.rgrpSpeedClassesClick(Sender: TObject);
+begin
+  with (Sender as TRadioGroup) do
+    FClassesCount := StrToInt(Items[ItemIndex]);
+  SetControlStatus(True);
 end;
 
 procedure TFrmRoseDiagram.btnAlterPenColorClick(Sender: TObject);
@@ -215,7 +340,7 @@ begin
   if (Sender as TButton).Tag = 0 then
     FPenColor := ColorDialog.Color else
     FBrushColor := ColorDialog.Color;
-  SetControlStatus;
+  SetControlStatus(False);
 end;
 
 procedure TFrmRoseDiagram.btnChangeStyleClick(Sender: TObject);
@@ -223,7 +348,7 @@ begin
   Inc(FStyleIndex);
   if FStyleIndex>Length(DrawingStyles)-1 then FStyleIndex := 0;
   PickDrawingStyle(DrawingStyles[FStyleIndex]);
-  SetControlStatus;
+  SetControlStatus(False);
 end;
 
 procedure TFrmRoseDiagram.btnCopyClipboardClick(Sender: TObject);
@@ -244,29 +369,51 @@ begin
   if not chkAxesOverRose.Checked then DrawAxes;
   DrawRose;
   if chkAxesOverRose.Checked then DrawAxes;
+  if (FSpeedDisplay and chkShowLegend.Checked) then DrawLegend;
 end;
 
 procedure TFrmRoseDiagram.chkAxesOverRoseClick(Sender: TObject);
 begin
+  SetControlStatus((Sender as TCheckBox).Tag=1);
+  if Sender = chkShowLegend then
+  begin
+    if chkShowLegend.Checked then Exit;
+    Inc(FLegendPosition);
+    if FLegendPosition>3 then FLegendPosition := 0;
+  end;
+end;
+
+procedure TFrmRoseDiagram.chkLogScalesClick(Sender: TObject);
+begin
+  FLogScale := (Sender as TCheckBox).Checked;
   SetControlStatus;
 end;
 
 { Set control status }
 
 procedure TFrmRoseDiagram.SetControlStatus;
+begin
+  SetControlStatus(True);
+end;
+
+procedure TFrmRoseDiagram.SetControlStatus(FullInvalidate: Boolean);
 var
-  i:Integer;
   ACursor: TCursor;
 begin
+  btnAlterBrushColor.Visible := not FSpeedDisplay;
+  grpSpeedDistribution.Visible := FSpeedDisplay;
+  chkLogScales.Checked := FLogScale;
+  btnAlterPenColor.Visible := not chkPenColorSameToBrush.Checked;
   ACursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
-    FMax := 0;
     with rgrpSectionCount do
       ItemIndex := Items.IndexOf(IntToStr(FSectionCount));
-    CalcSeriesStats;
-    for i := 0 to Length(FSectionStats)-1 do
-      if FSectionStats[i]>FMax then FMax := FSectionStats[i];
+    if FSpeedDisplay then
+      with rgrpSpeedClasses do
+        ItemIndex := Items.IndexOf(IntToStr(FClassesCount));
+    if FullInvalidate then
+      CalcSeriesStats;
     Chart.BottomAxis.Minimum := -FMax-1;
     Chart.LeftAxis.Minimum := -FMax-1;
     Chart.BottomAxis.Maximum := FMax+1;
@@ -281,25 +428,32 @@ end;
 
 procedure TFrmRoseDiagram.DrawRose;
 var
-  i: Integer;
+  i, j: Integer;
 begin
-  case FMode of
-    rdmCircSections:
-      for i := 0 to Length(FSectionStats)-1 do
-        DrawCircSection(i*2*Pi/FSectionCount, FSectionStats[i],
-          2*Pi/FSectionCount);
-    rdmRectSections:
-      for i := 0 to Length(FSectionStats)-1 do
-        DrawRectSection(i*2*Pi/FSectionCount, FSectionStats[i],
-          2*Pi/FSectionCount);
-    rdmHalfRectSections:
-      for i := 0 to Length(FSectionStats)-1 do
-        DrawRectSection(i*2*Pi/FSectionCount, FSectionStats[i],
-          Pi/FSectionCount);
-    rdmSolidDiagram:
-      DrawSolidDiagram;
-    else
-      Assert(False);
+  for j := 0 to FClassesCount-1 do
+  begin
+    if FClassesCount>1 then
+      FBrushColor := HueToColor((FClassesCount-1-j)/(FClassesCount-1));
+    if chkPenColorSameToBrush.Checked then
+      FPenColor := FBrushColor;
+    case FMode of
+      rdmCircSections:
+        for i := 0 to Length(FSectionStats[j])-1 do
+          DrawCircSection(i*2*Pi/FSectionCount, FSectionStats[j][i],
+            2*Pi/FSectionCount);
+      rdmRectSections:
+        for i := 0 to Length(FSectionStats[j])-1 do
+          DrawRectSection(i*2*Pi/FSectionCount, FSectionStats[j][i],
+            2*Pi/FSectionCount);
+      rdmHalfRectSections:
+        for i := 0 to Length(FSectionStats[j])-1 do
+          DrawRectSection(i*2*Pi/FSectionCount, FSectionStats[j][i],
+            Pi/FSectionCount);
+      rdmSolidDiagram:
+        DrawSolidDiagram(j);
+      else
+        Assert(False);
+    end;
   end;
 end;
 
@@ -352,20 +506,20 @@ end;
 type
   TArrayOfTPoint = array of TPoint;
 
-procedure TFrmRoseDiagram.DrawSolidDiagram;
+procedure TFrmRoseDiagram.DrawSolidDiagram(AClass: Integer);
 var
   i: Integer;
   a: TArrayOfTPoint;
   AArcPoints: TArcPoints;
 begin
-  SetLength(a, Length(FSectionStats)+1);
-  for i := 0 to Length(FSectionStats)-1 do
+  SetLength(a, Length(FSectionStats[AClass])+1);
+  for i := 0 to Length(FSectionStats[AClass])-1 do
   begin
-    AArcPoints := CalcArcPoints(i*2*Pi/FSectionCount, FSectionStats[i],
+    AArcPoints := CalcArcPoints(i*2*Pi/FSectionCount, FSectionStats[AClass][i],
     Pi/FSectionCount);
     a[i] := AArcPoints.MidArc;
   end;
-  a[Length(FSectionStats)] := a[0];
+  a[Length(FSectionStats[AClass])] := a[0];
   with Chart.Canvas do
   begin
     Brush.Color := FBrushColor;
@@ -375,6 +529,55 @@ begin
     Pen.Style := psSolid;
     Polygon(a);
   end;
+end;
+
+procedure TFrmRoseDiagram.DrawLegend;
+var
+  i: Integer;
+  x1, x2, y1, y2: Integer;
+  xoffset, yoffset: Integer;
+  rwidth, rheight: Integer;
+  s: string;
+begin
+  x1 := ConvertX(-FMax*1.02);
+  y1 := ConvertY(FMax*1.05);
+  x2 := ConvertX(-FMax*1.02+FMax/5);
+  y2 := ConvertY(FMax*1.00-FClassesCount*FMax/19);
+  rwidth := x2-x1;
+  rheight := y2-y1;
+  with Chart do
+    case FLegendPosition of
+      0: begin xoffset := 0; yoffset := 0; end;
+      1: begin xoffset := Width-rwidth-2*x1; yoffset := 0; end;
+      2: begin xoffset := Width-rwidth-2*x1; yoffset := Height-rheight-2*y1; end;
+      3: begin xoffset := 0; yoffset := Height-rheight-2*y1; end;
+    end;
+  with Chart.Canvas do
+  begin
+    Brush.Color := clWhite;
+    Pen.Color := clBlack;
+    Pen.Style := psSolid;
+    Pen.Width := 1;
+    Brush.Style := bsSolid;
+    Rectangle(xoffset+x1, yoffset+y1, xoffset+x2, yoffset+y2);
+    Font.Orientation := 0;
+    Font.Height := -11;
+    x1 := ConvertX(-FMax);
+    x2 := ConvertX(-FMax+FMax/20);
+    TextOut(x2+2+xoffset, ConvertY(FMax*1.045)+yoffset, '0');
+    for i := 0 to FClassesCount-1 do
+    begin
+      Brush.Color := HueToColor(i/(FClassesCount-1));
+      Pen.Color := Brush.Color;
+      y1 := ConvertY(FMax*1.03 - i*FMax/19);
+      y2 := ConvertY(FMax*1.03 - i*FMax/19 - FMax/20);
+      Rectangle(xoffset+x1, yoffset+y1, xoffset+x2, yoffset+y2);
+      Brush.Color := clWhite;
+      s := FormatFloat('0.00', (i+1)*FMaxSpeed/(FClassesCount));
+      TextOut(x2+2+xoffset, (y1+y2) div 2+yoffset, s);
+    end;
+  end;
+
 end;
 
 procedure TFrmRoseDiagram.DrawAxes;
@@ -388,6 +591,7 @@ begin
     Pen.Style := psSolid;
     Brush.Style := bsClear;
     Pen.Width := 2;
+    Font.Height := Max(-13,Min(-Round(12*Chart.Width/518),-11));
     Line(ConvertX(-FMax*1.05), ConvertY(0), ConvertX(FMax*1.05), ConvertY(0));
     Font.Style := [fsBold];
     Font.Orientation := 900;

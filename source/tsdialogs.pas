@@ -1517,11 +1517,16 @@ type
   TRoseDiagramDialog = class(TIComponent)
   private
     FTimeseries: TTimeseries;
+    FSpeedTimeseries: TTimeseries;
   public
-{** The display time series.
+{** The time series to display (required).
     Should be a vector time series with values varying from 0 to 360 degrees.
 }
     property ATimeseries: TTimeseries read FTimeseries write FTimeseries;
+{** This is an optional timeseries holding the (wind) speed.
+}
+    property ASpeedTimeseries: TTimeseries read FSpeedTimeseries write
+      FSpeedTimeseries;
 {** Creates and initializes a TTimeseriesIntegrationDialog instance.
     The Create method generates a TTimeseriesIntegrationDialog instance, but
     the new dialog does not appear on the form at runtime until the Execute
@@ -2895,6 +2900,7 @@ constructor TRoseDiagramDialog.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FTimeseries := nil;
+  FSpeedTimeseries := nil;
 end;
 
 function TRoseDiagramDialog.Execute: Boolean;
@@ -2908,6 +2914,7 @@ begin
     with FrmRoseDiagram do
     begin
       ATimeseries := FTimeseries;
+      SpeedTimeseries := FSpeedTimeseries;
       HelpType := FHelpType;
       HelpKeyword := FHelpKeyword;
       HelpFile := FHelpFile;
