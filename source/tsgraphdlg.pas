@@ -297,13 +297,15 @@ var
   i: Integer;
 begin
   ATimeStep := tstFiveMinute;
+  ANominalOffset := TDateOffset.Create(0, 0);
   for i := 0 to FTimeseriesList.Count -1 do
   begin
     with FTimeseriesList.Items[i] as TTimeseries do
       if TimeStep>ATimeStep then
       begin
         ATimeStep := TimeStep;
-        ANominalOffset := NominalOffset;
+        if not Timestep.IsVariable then if TimeStepStrict then
+          ANominalOffset := NominalOffset;
         AActualOffset := ActualOffset;
       end;
   end;
