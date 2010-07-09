@@ -107,6 +107,7 @@ type
     FLogScale: Boolean;
     FSpeedDisplay: Boolean;
     FLegendPosition: Integer;
+    FMaximumPercent: Real;
     function ScaleFun(AValue: Real): Real;
     procedure PickDrawingStyle(AStyle: TDrawingStyleRec);
     procedure SetControlStatus; overload;
@@ -233,6 +234,7 @@ var
   AWidth, AValue, ASpeed: Real;
   ATimeseriesList: TObjectList;
   ACommonPeriod: TDateTimeList;
+  ADenominator: Integer;
 begin
   AWidth := 360/FSectionCount;
   SetLength(FSectionStats, FClassesCount);
@@ -287,8 +289,14 @@ begin
     ACommonPeriod.Free;
   end;
   FMax := 0;
+  ADenominator := 0;
   for i := 0 to Length(FSectionStats[0])-1 do
+  begin
     if FSectionStats[0][i]>FMax then FMax := FSectionStats[0][i];
+    ADenominator := ADenominator + FSectionStats[0][i];
+  end;
+  if ADenominator > 0 then FMaximumPercent := FMax / ADenominator else
+    FMaximumPercent := 1;
 end;
 
 { Event handlers }
@@ -414,10 +422,10 @@ begin
         ItemIndex := Items.IndexOf(IntToStr(FClassesCount));
     if FullInvalidate then
       CalcSeriesStats;
-    Chart.BottomAxis.Minimum := -FMax-1;
-    Chart.LeftAxis.Minimum := -FMax-1;
-    Chart.BottomAxis.Maximum := FMax+1;
-    Chart.LeftAxis.Maximum := FMax+1;
+    Chart.BottomAxis.Minimum := -FMax*1.05;
+    Chart.LeftAxis.Minimum := -FMax*1.05;
+    Chart.BottomAxis.Maximum := FMax*1.05;
+    Chart.LeftAxis.Maximum := FMax*1.05;
     Chart.Refresh;
   finally
     Screen.Cursor := ACursor;
@@ -604,6 +612,19 @@ begin
       ConvertY(-FMax*1.05)-FontHeight div 2, 'S');
     TextOut(ConvertX(0)+TextWidth('N') div 2, ConvertY(FMax*1.05), 'N');
     Pen.Width := 1;
+    Pen.Style := psSolid;
+    for i := 1 to 359 do
+    begin
+      if i mod 10 = 0 then
+        ARadius := FMax*1.03 else
+      if i mod 5 =0 then ARadius := FMax*1.02
+        else ARadius := FMax*1.014;
+      Line(ConvertX(FMax*1.01*sin(i*Pi/180)),
+        ConvertY(FMax*1.01*cos(i*Pi/180)),
+        ConvertX(ARadius*sin(i*Pi/180)),
+        ConvertY(ARadius*cos(i*Pi/180)));
+    end;
+    Pen.Width := 1;
     Pen.Style := psDot;
     Font.Style := [];
     Line(ConvertX(-FMax*1.05/sqrt(2)), ConvertY(-FMax*1.05/sqrt(2)),
@@ -623,7 +644,7 @@ begin
         ConvertY(ARadius));
       if i mod 2 = 0 then
       begin
-        ActualRadius := i*100 / (16*FSectionCount);
+        ActualRadius := (i /16) * 100 * FMaximumPercent;
         Font.Orientation := 0;
         TextOut(ConvertX(0), ConvertY(ARadius),
           FormatFloat('0.000', ActualRadius)+'%');
