@@ -22,6 +22,14 @@ object FrmRoseDiagram: TFrmRoseDiagram
     528)
   PixelsPerInch = 96
   TextHeight = 13
+  object lblCalmRatio: TLabel
+    Left = 532
+    Top = 404
+    Width = 58
+    Height = 13
+    Anchors = [akTop, akRight]
+    Caption = 'lblCalmRatio'
+  end
   object Chart: TChart
     Left = 0
     Top = 0
@@ -90,7 +98,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
     Left = 524
     Top = 8
     Width = 152
-    Height = 73
+    Height = 65
     Anchors = [akTop, akRight]
     Caption = 'Sections count'
     Columns = 2
@@ -108,7 +116,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   object btnAlterBrushColor: TButton
     Tag = 1
     Left = 524
-    Top = 184
+    Top = 164
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -118,7 +126,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnAlterPenColor: TButton
     Left = 524
-    Top = 153
+    Top = 133
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -128,7 +136,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object chkAxesOverRose: TCheckBox
     Left = 524
-    Top = 130
+    Top = 110
     Width = 152
     Height = 17
     Anchors = [akTop, akRight]
@@ -140,7 +148,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnChangeStyle: TButton
     Left = 524
-    Top = 92
+    Top = 79
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -151,38 +159,38 @@ object FrmRoseDiagram: TFrmRoseDiagram
   object btnCopyClipboard: TButton
     Left = 524
     Top = 464
-    Width = 109
+    Width = 125
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Copy to clipboard'
+    Caption = 'Copy to clipboard...'
     TabOrder = 6
     OnClick = btnCopyClipboardClick
   end
   object btnPrint: TButton
     Left = 524
     Top = 495
-    Width = 109
+    Width = 78
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Print'
+    Caption = 'Print...'
     TabOrder = 7
     OnClick = btnPrintClick
   end
   object grpSpeedDistribution: TGroupBox
     Left = 524
-    Top = 239
+    Top = 218
     Width = 152
-    Height = 164
+    Height = 157
     Anchors = [akTop, akRight]
     Caption = 'Speed distribution'
     TabOrder = 8
     DesignSize = (
       152
-      164)
+      157)
     object chkLogScales: TCheckBox
       Tag = 1
       Left = 8
-      Top = 61
+      Top = 56
       Width = 97
       Height = 17
       Caption = 'Log scales'
@@ -191,7 +199,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
     end
     object rgrpSpeedClasses: TRadioGroup
       Left = 8
-      Top = 80
+      Top = 76
       Width = 132
       Height = 76
       Caption = 'Speed classes'
@@ -221,13 +229,56 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object chkPenColorSameToBrush: TCheckBox
     Left = 524
-    Top = 216
+    Top = 195
     Width = 152
     Height = 17
     Anchors = [akTop, akRight]
     Caption = 'Pen color same to brush'
     TabOrder = 9
     OnClick = chkAxesOverRoseClick
+  end
+  object chkDisplayCalmRatio: TCheckBox
+    Left = 532
+    Top = 381
+    Width = 144
+    Height = 17
+    Anchors = [akTop, akRight]
+    Caption = 'Display calm conditions'
+    TabOrder = 10
+    OnClick = chkAxesOverRoseClick
+  end
+  object edtCalmRatio: TEdit
+    Left = 553
+    Top = 427
+    Width = 76
+    Height = 21
+    Anchors = [akTop, akRight]
+    TabOrder = 11
+    Text = '5'
+    OnChange = edtCalmRatioChange
+    OnKeyPress = edtCalmThresholdKeyPress
+  end
+  object edtCalmThreshold: TEdit
+    Left = 553
+    Top = 427
+    Width = 76
+    Height = 21
+    Anchors = [akTop, akRight]
+    TabOrder = 12
+    Text = '1'
+    Visible = False
+    OnChange = edtCalmThresholdChange
+    OnKeyPress = edtCalmThresholdKeyPress
+  end
+  object btnSave: TButton
+    Left = 608
+    Top = 495
+    Width = 68
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Save...'
+    TabOrder = 13
+    OnClick = btnSaveClick
   end
   object ColorDialog: TColorDialog
     Left = 464
@@ -236,5 +287,12 @@ object FrmRoseDiagram: TFrmRoseDiagram
   object PrintDialog: TPrintDialog
     Left = 464
     Top = 72
+  end
+  object SaveDialog: TSaveDialog
+    DefaultExt = 'bmp'
+    Filter = 'Windows bitmap file (*.bmp)|*.bmp|All files (*.*)|*.*'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
+    Left = 464
+    Top = 128
   end
 end

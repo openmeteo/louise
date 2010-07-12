@@ -2,7 +2,7 @@
 {                                                                  }
 {  LoUISE library                                                  }
 {                                                                  }
-{  Copyright (c) 2000-09 National Technical University of Athens   }
+{  Copyright (c) 2000-10 National Technical University of Athens   }
 {                                                                  }
 {******************************************************************}
 
@@ -82,6 +82,12 @@ type
     rgrpSpeedClasses: TRadioGroup;
     chkShowLegend: TCheckBox;
     Series5: TBarSeries;
+    chkDisplayCalmRatio: TCheckBox;
+    edtCalmRatio: TEdit;
+    lblCalmRatio: TLabel;
+    edtCalmThreshold: TEdit;
+    btnSave: TButton;
+    SaveDialog: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ChartBeforeDrawSeries(Sender: TObject);
@@ -94,8 +100,12 @@ type
     procedure btnPrintClick(Sender: TObject);
     procedure chkLogScalesClick(Sender: TObject);
     procedure rgrpSpeedClassesClick(Sender: TObject);
+    procedure edtCalmRatioChange(Sender: TObject);
+    procedure edtCalmThresholdChange(Sender: TObject);
+    procedure edtCalmThresholdKeyPress(Sender: TObject; var Key: Char);
+    procedure btnSaveClick(Sender: TObject);
   private
-    FSectionCount, FMax, FClassesCount: Integer;
+    FSectionCount, FMax, FClassesCount, FTotalCount: Integer;
     FMaxSpeed: Real;
     FPenWidth: Integer;
     FBrushColor, FPenColor: TColor;
@@ -108,6 +118,7 @@ type
     FSpeedDisplay: Boolean;
     FLegendPosition: Integer;
     FMaximumPercent: Real;
+    FCalmPercent, FCalmThreshold: Real;
     function ScaleFun(AValue: Real): Real;
     procedure PickDrawingStyle(AStyle: TDrawingStyleRec);
     procedure SetControlStatus; overload;
@@ -122,6 +133,7 @@ type
     procedure DrawRose;
     procedure DrawSolidDiagram(AClass: Integer);
     procedure DrawLegend;
+    procedure DrawCalm;
   public
     property ATimeseries: TTimeseries read FDirectionTimeseries write
       FDirectionTimeseries;
@@ -243,12 +255,6 @@ begin
     SetLength(FSectionStats[i], FSectionCount);
     for j := 0 to FSectionCount-1 do FSectionStats[i][j] := 0;
   end;
-  FMaxSpeed := 0;
-  if FSpeedTimeseries <> nil then
-    with FSpeedTimeseries do
-      for i := 0 to Count-1 do
-        if not Items[i].IsNull then if Items[i].AsFloat>FMaxSpeed then
-          FMaxSpeed := Items[i].AsFloat;
   ATimeseriesList := nil;
   ACommonPeriod := nil;
   b := -1;
@@ -258,6 +264,20 @@ begin
     ATimeseriesList.Add(FDirectionTimeseries);
     if FSpeedTimeseries<>nil then ATimeseriesList.Add(FSpeedTimeseries);
     ACommonPeriod := GetCommonPeriod(ATimeseriesList, 0);
+    FMaxSpeed := 0;
+    if FSpeedTimeseries <> nil then
+    begin
+      FCalmPercent := 0;
+      for i := 0 to ACommonPeriod.Count-1 do
+        with FSpeedTimeseries[FSpeedTimeseries.IndexOf(ACommonPeriod[i])] do
+        begin
+          if AsFloat>FMaxSpeed then
+            FMaxSpeed := AsFloat;
+          if AsFloat<=FCalmThreshold then
+            FCalmPercent := FCalmPercent+1;
+        end;
+      FCalmPercent := FCalmPercent / ACommonPeriod.Count;
+    end;
     for k := 0 to FClassesCount-1 do
       for i := 0 to ACommonPeriod.Count-1 do
       begin
@@ -295,6 +315,7 @@ begin
     if FSectionStats[0][i]>FMax then FMax := FSectionStats[0][i];
     ADenominator := ADenominator + FSectionStats[0][i];
   end;
+  FTotalCount := ADenominator;
   if ADenominator > 0 then FMaximumPercent := FMax / ADenominator else
     FMaximumPercent := 1;
 end;
@@ -310,6 +331,8 @@ begin
   FSectionCount := 36;
   FClassesCount := 1;
   FLegendPosition := 0;
+  FCalmPercent := 0.05;
+  FCalmThreshold := 1;
 end;
 
 procedure TFrmRoseDiagram.FormResize(Sender: TObject);
@@ -318,10 +341,19 @@ begin
   Chart.Width := Chart.Height;
 end;
 
+resourcestring
+  rsCalmThreshold = 'Calm speed threshold';
+  rsCalmRatio = 'Calm ratio (%)';
+
 procedure TFrmRoseDiagram.FormShow(Sender: TObject);
 begin
   FSpeedDisplay := FSpeedTimeseries<>nil;
   if FSpeedDisplay then FClassesCount := 8 else FClassesCount := 1;
+  edtCalmThreshold.Visible := FSpeedDisplay;
+  edtCalmRatio.Visible := not FSpeedDisplay;
+  if FSpeedDisplay then
+    lblCalmRatio.Caption := rsCalmThreshold else
+    lblCalmRatio.Caption := rsCalmRatio;
   SetControlStatus;
 end;
 
@@ -370,6 +402,12 @@ begin
     Chart.Print;
 end;
 
+procedure TFrmRoseDiagram.btnSaveClick(Sender: TObject);
+begin
+  if SaveDialog.Execute then
+    Chart.SaveToBitmapFile(SaveDialog.FileName);
+end;
+
 procedure TFrmRoseDiagram.ChartBeforeDrawSeries(Sender: TObject);
 begin
   with Chart.Canvas do
@@ -378,6 +416,7 @@ begin
   DrawRose;
   if chkAxesOverRose.Checked then DrawAxes;
   if (FSpeedDisplay and chkShowLegend.Checked) then DrawLegend;
+  if chkDisplayCalmRatio.Checked then DrawCalm;
 end;
 
 procedure TFrmRoseDiagram.chkAxesOverRoseClick(Sender: TObject);
@@ -397,6 +436,29 @@ begin
   SetControlStatus;
 end;
 
+procedure TFrmRoseDiagram.edtCalmRatioChange(Sender: TObject);
+begin
+  if edtCalmRatio.Text<>'' then
+    FCalmPercent := StrToFloat(edtCalmRatio.Text)/100 else
+        FCalmPercent := 0;
+  SetControlStatus(False);
+end;
+
+procedure TFrmRoseDiagram.edtCalmThresholdChange(Sender: TObject);
+begin
+  if edtCalmThreshold.Text<>'' then
+    FCalmThreshold := StrToFloat(edtCalmThreshold.Text) else
+      FCalmThreshold := 0;
+  SetControlStatus(True);
+end;
+
+procedure TFrmRoseDiagram.edtCalmThresholdKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if not (Key in ['0', '9', '1', '2', '3', '4', '5', '6', '7', '8', #08,
+    SysUtils.DecimalSeparator]) then Key := #0;
+end;
+
 { Set control status }
 
 procedure TFrmRoseDiagram.SetControlStatus;
@@ -412,6 +474,8 @@ begin
   grpSpeedDistribution.Visible := FSpeedDisplay;
   chkLogScales.Checked := FLogScale;
   btnAlterPenColor.Visible := not chkPenColorSameToBrush.Checked;
+  edtCalmRatio.Enabled := chkDisplayCalmRatio.Checked;
+  edtCalmThreshold.Enabled := edtCalmRatio.Enabled;
   ACursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
@@ -553,12 +617,15 @@ begin
   y2 := ConvertY(FMax*1.00-FClassesCount*FMax/19);
   rwidth := x2-x1;
   rheight := y2-y1;
+  xoffset := 0;
+  yoffset := 0;
   with Chart do
     case FLegendPosition of
       0: begin xoffset := 0; yoffset := 0; end;
       1: begin xoffset := Width-rwidth-2*x1; yoffset := 0; end;
-      2: begin xoffset := Width-rwidth-2*x1; yoffset := Height-rheight-2*y1; end;
+      2: begin xoffset := Width-rwidth-2*x1; yoffset := Height-rheight-2*y1;end;
       3: begin xoffset := 0; yoffset := Height-rheight-2*y1; end;
+    else Assert(False);
     end;
   with Chart.Canvas do
   begin
@@ -647,14 +714,14 @@ begin
         ActualRadius := (i /16) * 100 * FMaximumPercent;
         Font.Orientation := 0;
         TextOut(ConvertX(0), ConvertY(ARadius),
-          FormatFloat('0.000', ActualRadius)+'%');
+          FormatFloat('0.00', ActualRadius)+'%');
         TextOut(ConvertX(0), ConvertY(-ARadius),
-          FormatFloat('0.000', ActualRadius)+'%');
+          FormatFloat('0.00', ActualRadius)+'%');
         Font.Orientation := 900;
         TextOut(ConvertX(-ARadius), ConvertY(0),
-          FormatFloat('0.000', ActualRadius)+'%');
+          FormatFloat('0.00', ActualRadius)+'%');
         TextOut(ConvertX(ARadius), ConvertY(0),
-          FormatFloat('0.000', ActualRadius)+'%');
+          FormatFloat('0.00', ActualRadius)+'%');
         Pen.Style := psDot;
       end else
       begin
@@ -662,6 +729,52 @@ begin
       end;
     end;
   end;
+end;
+
+resourcestring
+  rsCalmConditionRatio = 'Calm conditions ratio: ';
+  rsCalmConditionThreshold = '(Speed threshold: ';
+
+procedure TFrmRoseDiagram.DrawCalm;
+var
+  ARadius: Real;
+  x1, y1: Integer;
+  xoffset: Integer;
+  rwidth: Integer;
+  s: string;
+begin
+  with Chart.Canvas do
+  begin
+    Pen.Color := clBlack;
+    Pen.Style := psSolid;
+    Pen.Width := 1;
+    Brush.Color := clWhite;
+    Brush.Style := bsSolid;
+    Font.Height := -12;
+    Font.Orientation := 0;
+    Font.Style := [];
+    ARadius := FCalmPercent*FTotalCount/FSectionCount;
+    Ellipse(ConvertX(-ARadius), ConvertY(-ARadius),
+      ConvertX(ARadius), ConvertY(ARadius));
+    x1 := ConvertX(-FMax*0.99);
+    y1 := ConvertY(FMax*1.05);
+    rwidth := TextWidth(rsCalmThreshold+'99.9%');
+    xoffset := 0;
+    with Chart do
+      case FLegendPosition of
+        0,3: xoffset := Width-rwidth-2*x1;
+        1,2: xoffset := 0;
+      else Assert(False);
+      end;
+    s := rsCalmConditionRatio + FormatFloat('0.0', FCalmPercent*100)+'%';
+    TextOut(x1+xoffset, y1, s);
+    if FSpeedDisplay then
+    begin
+      s := rsCalmConditionThreshold +
+        FormatFloat('0.0', FCalmThreshold)+')';
+      TextOut(x1+xoffset, y1+TextHeight(rsCalmConditionThreshold), s);
+    end;
+end;
 end;
 
 end.
