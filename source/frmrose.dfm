@@ -12,6 +12,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Menu = MainMenu
   OldCreateOrder = False
   Position = poDesktopCenter
   OnCreate = FormCreate
@@ -23,12 +24,20 @@ object FrmRoseDiagram: TFrmRoseDiagram
   PixelsPerInch = 96
   TextHeight = 13
   object lblCalmRatio: TLabel
-    Left = 532
-    Top = 404
+    Left = 524
+    Top = 358
     Width = 58
     Height = 13
     Anchors = [akTop, akRight]
     Caption = 'lblCalmRatio'
+  end
+  object Label1: TLabel
+    Left = 524
+    Top = 404
+    Width = 102
+    Height = 13
+    Anchors = [akTop, akRight]
+    Caption = 'Mark sections (drag):'
   end
   object Chart: TChart
     Left = 0
@@ -96,12 +105,12 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object rgrpSectionCount: TRadioGroup
     Left = 524
-    Top = 8
+    Top = 2
     Width = 152
-    Height = 65
+    Height = 55
     Anchors = [akTop, akRight]
     Caption = 'Sections count'
-    Columns = 2
+    Columns = 3
     ItemIndex = 0
     Items.Strings = (
       '8'
@@ -116,7 +125,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   object btnAlterBrushColor: TButton
     Tag = 1
     Left = 524
-    Top = 164
+    Top = 144
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -126,7 +135,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnAlterPenColor: TButton
     Left = 524
-    Top = 133
+    Top = 113
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -136,7 +145,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object chkAxesOverRose: TCheckBox
     Left = 524
-    Top = 110
+    Top = 92
     Width = 152
     Height = 17
     Anchors = [akTop, akRight]
@@ -148,7 +157,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object btnChangeStyle: TButton
     Left = 524
-    Top = 79
+    Top = 61
     Width = 109
     Height = 25
     Anchors = [akTop, akRight]
@@ -156,41 +165,21 @@ object FrmRoseDiagram: TFrmRoseDiagram
     TabOrder = 5
     OnClick = btnChangeStyleClick
   end
-  object btnCopyClipboard: TButton
-    Left = 524
-    Top = 464
-    Width = 125
-    Height = 25
-    Anchors = [akTop, akRight]
-    Caption = 'Copy to clipboard...'
-    TabOrder = 6
-    OnClick = btnCopyClipboardClick
-  end
-  object btnPrint: TButton
-    Left = 524
-    Top = 495
-    Width = 78
-    Height = 25
-    Anchors = [akTop, akRight]
-    Caption = 'Print...'
-    TabOrder = 7
-    OnClick = btnPrintClick
-  end
   object grpSpeedDistribution: TGroupBox
     Left = 524
-    Top = 218
+    Top = 196
     Width = 152
-    Height = 157
+    Height = 133
     Anchors = [akTop, akRight]
     Caption = 'Speed distribution'
-    TabOrder = 8
+    TabOrder = 6
     DesignSize = (
       152
-      157)
+      133)
     object chkLogScales: TCheckBox
       Tag = 1
       Left = 8
-      Top = 56
+      Top = 50
       Width = 97
       Height = 17
       Caption = 'Log scales'
@@ -199,11 +188,11 @@ object FrmRoseDiagram: TFrmRoseDiagram
     end
     object rgrpSpeedClasses: TRadioGroup
       Left = 8
-      Top = 76
-      Width = 132
-      Height = 76
+      Top = 69
+      Width = 141
+      Height = 60
       Caption = 'Speed classes'
-      Columns = 2
+      Columns = 3
       ItemIndex = 0
       Items.Strings = (
         '5'
@@ -217,7 +206,7 @@ object FrmRoseDiagram: TFrmRoseDiagram
     end
     object chkShowLegend: TCheckBox
       Left = 8
-      Top = 18
+      Top = 12
       Width = 141
       Height = 39
       Anchors = [akTop, akRight]
@@ -229,56 +218,66 @@ object FrmRoseDiagram: TFrmRoseDiagram
   end
   object chkPenColorSameToBrush: TCheckBox
     Left = 524
-    Top = 195
+    Top = 175
     Width = 152
     Height = 17
     Anchors = [akTop, akRight]
     Caption = 'Pen color same to brush'
-    TabOrder = 9
+    TabOrder = 7
     OnClick = chkAxesOverRoseClick
   end
   object chkDisplayCalmRatio: TCheckBox
-    Left = 532
-    Top = 381
+    Left = 524
+    Top = 335
     Width = 144
     Height = 17
     Anchors = [akTop, akRight]
     Caption = 'Display calm conditions'
-    TabOrder = 10
+    TabOrder = 8
     OnClick = chkAxesOverRoseClick
   end
   object edtCalmRatio: TEdit
     Left = 553
-    Top = 427
+    Top = 377
     Width = 76
     Height = 21
     Anchors = [akTop, akRight]
-    TabOrder = 11
+    TabOrder = 9
     Text = '5'
     OnChange = edtCalmRatioChange
     OnKeyPress = edtCalmThresholdKeyPress
   end
   object edtCalmThreshold: TEdit
     Left = 553
-    Top = 427
+    Top = 377
     Width = 76
     Height = 21
     Anchors = [akTop, akRight]
-    TabOrder = 12
+    TabOrder = 10
     Text = '1'
     Visible = False
     OnChange = edtCalmThresholdChange
     OnKeyPress = edtCalmThresholdKeyPress
   end
-  object btnSave: TButton
-    Left = 608
+  object lstMarkSection: TListBox
+    Left = 524
+    Top = 423
+    Width = 152
+    Height = 69
+    Anchors = [akTop, akRight]
+    ItemHeight = 13
+    MultiSelect = True
+    TabOrder = 11
+    OnClick = lstMarkSectionClick
+  end
+  object Button1: TButton
+    Left = 524
     Top = 495
-    Width = 68
+    Width = 109
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Save...'
-    TabOrder = 13
-    OnClick = btnSaveClick
+    Caption = 'Button1'
+    TabOrder = 12
   end
   object ColorDialog: TColorDialog
     Left = 464
@@ -294,5 +293,27 @@ object FrmRoseDiagram: TFrmRoseDiagram
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 464
     Top = 128
+  end
+  object MainMenu: TMainMenu
+    Left = 464
+    Top = 192
+    object mnuFile: TMenuItem
+      Caption = 'File'
+      object mnuSaveBitmap: TMenuItem
+        Caption = 'Save as bitmap...'
+        OnClick = btnSaveClick
+      end
+      object mnuPrint: TMenuItem
+        Caption = 'Print diagram...'
+        OnClick = btnPrintClick
+      end
+    end
+    object mnuEdit: TMenuItem
+      Caption = 'Edit'
+      object mnuCopyClipboard: TMenuItem
+        Caption = 'Copy to clipboard...'
+        OnClick = btnCopyClipboardClick
+      end
+    end
   end
 end

@@ -12,7 +12,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Series, TeEngine, TeeShape, ExtCtrls, TeeProcs, Chart, ts, StdCtrls;
+  Dialogs, Series, TeEngine, TeeShape, ExtCtrls, TeeProcs, Chart, ts, StdCtrls,
+  Menus;
 
 type
   TArcPoints = record
@@ -73,9 +74,7 @@ type
     btnAlterPenColor: TButton;
     chkAxesOverRose: TCheckBox;
     btnChangeStyle: TButton;
-    btnCopyClipboard: TButton;
     PrintDialog: TPrintDialog;
-    btnPrint: TButton;
     grpSpeedDistribution: TGroupBox;
     chkLogScales: TCheckBox;
     chkPenColorSameToBrush: TCheckBox;
@@ -86,8 +85,16 @@ type
     edtCalmRatio: TEdit;
     lblCalmRatio: TLabel;
     edtCalmThreshold: TEdit;
-    btnSave: TButton;
     SaveDialog: TSaveDialog;
+    MainMenu: TMainMenu;
+    mnuFile: TMenuItem;
+    mnuSaveBitmap: TMenuItem;
+    mnuPrint: TMenuItem;
+    mnuEdit: TMenuItem;
+    mnuCopyClipboard: TMenuItem;
+    lstMarkSection: TListBox;
+    Label1: TLabel;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ChartBeforeDrawSeries(Sender: TObject);
@@ -104,6 +111,7 @@ type
     procedure edtCalmThresholdChange(Sender: TObject);
     procedure edtCalmThresholdKeyPress(Sender: TObject; var Key: Char);
     procedure btnSaveClick(Sender: TObject);
+    procedure lstMarkSectionClick(Sender: TObject);
   private
     FSectionCount, FMax, FClassesCount, FTotalCount: Integer;
     FMaxSpeed: Real;
@@ -134,6 +142,8 @@ type
     procedure DrawSolidDiagram(AClass: Integer);
     procedure DrawLegend;
     procedure DrawCalm;
+    procedure DrawMarkedArea;
+    procedure DisplayMarkedStats;
   public
     property ATimeseries: TTimeseries read FDirectionTimeseries write
       FDirectionTimeseries;
@@ -357,6 +367,11 @@ begin
   SetControlStatus;
 end;
 
+procedure TFrmRoseDiagram.lstMarkSectionClick(Sender: TObject);
+begin
+  SetControlStatus(False);
+end;
+
 procedure TFrmRoseDiagram.rgrpSectionCountClick(Sender: TObject);
 begin
   with (Sender as TRadioGroup) do
@@ -412,11 +427,13 @@ procedure TFrmRoseDiagram.ChartBeforeDrawSeries(Sender: TObject);
 begin
   with Chart.Canvas do
     Font.PixelsPerInch := Chart.PrintResolution;
+  if lstMarkSection.SelCount>0 then DrawMarkedArea;
   if not chkAxesOverRose.Checked then DrawAxes;
   DrawRose;
   if chkAxesOverRose.Checked then DrawAxes;
   if (FSpeedDisplay and chkShowLegend.Checked) then DrawLegend;
   if chkDisplayCalmRatio.Checked then DrawCalm;
+  if lstMarkSection.SelCount>0 then DisplayMarkedStats;
 end;
 
 procedure TFrmRoseDiagram.chkAxesOverRoseClick(Sender: TObject);
@@ -466,9 +483,14 @@ begin
   SetControlStatus(True);
 end;
 
+resourcestring
+  rsSection = 'Section ';
+
 procedure TFrmRoseDiagram.SetControlStatus(FullInvalidate: Boolean);
 var
   ACursor: TCursor;
+  i: Integer;
+  AWidth: Real;
 begin
   btnAlterBrushColor.Visible := not FSpeedDisplay;
   grpSpeedDistribution.Visible := FSpeedDisplay;
@@ -476,6 +498,14 @@ begin
   btnAlterPenColor.Visible := not chkPenColorSameToBrush.Checked;
   edtCalmRatio.Enabled := chkDisplayCalmRatio.Checked;
   edtCalmThreshold.Enabled := edtCalmRatio.Enabled;
+  if FSectionCount<>lstMarkSection.Count then
+  begin
+    lstMarkSection.Clear;
+    AWidth := 360/FSectionCount;
+    for i := 0 to FSectionCount-1 do
+      lstMarkSection.Items.Add(rsSection+IntToStr(i+1)+': '+
+        FloatToStr((i-0.5)*AWidth)+'° - '+ FloatToStr((i+0.5)*AWidth)+'°'  );
+  end;
   ACursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
@@ -775,6 +805,85 @@ begin
       TextOut(x1+xoffset, y1+TextHeight(rsCalmConditionThreshold), s);
     end;
 end;
+end;
+
+procedure TFrmRoseDiagram.DrawMarkedArea;
+var
+  i, FSavedPenWidth: Integer;
+  FSavedBrushColor, FSavedPenColor: TColor;
+  FSavedBrushStyle: TBrushStyle;
+begin
+  Assert(lstMarkSection.Count = FSectionCount);
+  FSavedBrushColor := FBrushColor;
+  FSavedPenColor := FPenColor;
+  FSavedBrushStyle := FBrushStyle;
+  FSavedPenWidth := FPenWidth;
+  try
+    FBrushColor := $00FDFAEA;
+    FPenColor := FBrushColor;
+    FBrushStyle := bsSolid;
+    FPenWidth := 1;
+    for i := 0 to lstMarkSection.Count-1 do
+      if lstMarkSection.Selected[i] then
+        DrawCircSection((i*2*Pi/FSectionCount), FMax*1.04, 2*Pi/FSectionCount);
+  finally
+    FBrushColor := FSavedBrushColor;
+    FPenColor := FSavedPenColor;
+  end;
+end;
+
+procedure TFrmRoseDiagram.DisplayMarkedStats;
+var
+  i, ATotalCount, ACount: Integer;
+  APercent, Xm, Ym, AAzim, ADist: Real;
+  x1, y1: Integer;
+  xoffset: Integer;
+  rwidth: Integer;
+begin
+  ATotalCount := 0;
+  ACount := 0;
+  Assert(lstMarkSection.Count = FSectionCount);
+  Assert(Length(FSectionStats[0]) = FSectionCount);
+  Xm := 0;
+  Ym := 0;
+  for i := 0 to FSectionCount - 1 do
+  begin
+    ATotalCount := ATotalCount + FSectionStats[0][i];
+    if lstMarkSection.Selected[i] then
+    begin
+      ACount := ACount + FSectionStats[0][i];
+      Xm := Xm + FSectionStats[0][i]*sin(i*2*Pi/FSectionCount);
+      Ym := Ym + FSectionStats[0][i]*cos(i*2*Pi/FSectionCount);
+    end;
+  end;
+  if ATotalCount>0 then APercent := ACount / ATotalCount else
+    APercent := 1;
+  ADist := Sqrt(Sqr(Xm)+Sqr(Ym));
+  if Abs(ADist)<1e-37 then ADist := 1;
+  Xm := Xm * FMax / ADist;
+  Ym := Ym * FMax / ADist;
+  with Chart.Canvas do
+  begin
+    Pen.Width := 2;
+    Pen.Color := clNavy;
+    Line(ConvertX(0), ConvertY(0), ConvertX(Xm), ConvertY(Ym));
+    //Arrow
+    Font.Height := -12;
+    Font.Orientation := 0;
+    Font.Style := [];
+    x1 := ConvertX(-FMax*0.99);
+    y1 := ConvertY(-FMax*1.05);
+    rwidth := TextWidth(rsCalmThreshold+'99.9%');
+    xoffset := 0;
+    with Chart do
+      case FLegendPosition of
+        0,3: xoffset := Width-rwidth-2*x1;
+        1,2: xoffset := 0;
+      else Assert(False);
+      end;
+    TextOut(x1+xoffset, y1, FormatFloat('0.0', APercent*100)+ ' %');
+  end;
+
 end;
 
 end.
