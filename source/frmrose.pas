@@ -13,7 +13,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Series, TeEngine, TeeShape, ExtCtrls, TeeProcs, Chart, ts, StdCtrls,
-  Menus;
+  Menus, icomponent, tsdialogs;
 
 type
   TArcPoints = record
@@ -93,8 +93,9 @@ type
     mnuEdit: TMenuItem;
     mnuCopyClipboard: TMenuItem;
     lstMarkSection: TListBox;
-    Label1: TLabel;
-    Button1: TButton;
+    lblMarkSectors: TLabel;
+    btnSpeedStats: TButton;
+    StatisticsForm: TStatisticsForm;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ChartBeforeDrawSeries(Sender: TObject);
@@ -112,6 +113,9 @@ type
     procedure edtCalmThresholdKeyPress(Sender: TObject; var Key: Char);
     procedure btnSaveClick(Sender: TObject);
     procedure lstMarkSectionClick(Sender: TObject);
+    procedure lstMarkSectionKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure btnSpeedStatsClick(Sender: TObject);
   private
     FSectionCount, FMax, FClassesCount, FTotalCount: Integer;
     FMaxSpeed: Real;
@@ -286,7 +290,9 @@ begin
           if AsFloat<=FCalmThreshold then
             FCalmPercent := FCalmPercent+1;
         end;
-      FCalmPercent := FCalmPercent / ACommonPeriod.Count;
+      if ACommonPeriod.Count<>0 then
+        FCalmPercent := FCalmPercent / ACommonPeriod.Count else
+        FCalmPercent := 0;
     end;
     for k := 0 to FClassesCount-1 do
       for i := 0 to ACommonPeriod.Count-1 do
@@ -372,6 +378,17 @@ begin
   SetControlStatus(False);
 end;
 
+procedure TFrmRoseDiagram.lstMarkSectionKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+  i: Integer;
+begin
+  if not (Key in [VK_DELETE, VK_BACK]) then Exit;
+  with lstMarkSection do
+    for i := 0 to Count-1 do Selected[i] := False;
+  SetControlStatus(False);
+end;
+
 procedure TFrmRoseDiagram.rgrpSectionCountClick(Sender: TObject);
 begin
   with (Sender as TRadioGroup) do
@@ -423,6 +440,64 @@ begin
     Chart.SaveToBitmapFile(SaveDialog.FileName);
 end;
 
+procedure TFrmRoseDiagram.btnSpeedStatsClick(Sender: TObject);
+var
+  a, b, i: Integer;
+  FromAz, ToAz, AWidth, AAz: Real;
+  ATimeseries: TTimeseries;
+  ATimeseriesList: TObjectList;
+  ACommonPeriod: TDateTimeList;
+begin
+  Assert(FSpeedDisplay);
+  if lstMarkSection.SelCount<1 then Exit;
+  ATimeseries := nil;
+  ATimeseriesList := nil;
+  ACommonPeriod := nil;
+  AWidth := 360/FSectionCount;
+  try
+    ATimeseries := TTimeseries.Create;
+    ATimeseriesList := TObjectList.Create(False);
+    ATimeseriesList.Add(FDirectionTimeseries);
+    if FSpeedTimeseries<>nil then ATimeseriesList.Add(FSpeedTimeseries);
+    ACommonPeriod := GetCommonPeriod(ATimeseriesList, 0);
+    a := 0;
+    while a<FSectionCount do
+    begin
+      if lstMarkSection.Selected[a] then
+      begin
+        b := a+1;
+        while b<FSectionCount do
+          if lstMarkSection.Selected[b] then
+            Inc(b) else
+            begin
+              Dec(b);
+              Break;
+            end;
+        if b>=FSectionCount then Dec(b);
+        FromAz := (a-0.5)*AWidth;
+        ToAz := (b+0.5)*AWidth;
+        for i := 0 to ACommonPeriod.Count-1 do
+        begin
+          with FDirectionTimeseries do
+            AAz := Items[IndexOf(ACommonPeriod[i])].AsFloat;
+          if AAz>=360-AWidth/2 then AAz := AAz-360;
+          if (AAz<ToAz) and (AAz>=FromAz) then
+            with FSpeedTimeseries do
+              ATimeseries.Add(ACommonPeriod[i], False,
+                Items[IndexOf(ACommonPeriod[i])].AsFloat, '', msNew);
+        end;
+        a := b+1;
+      end else Inc(a);
+    end;
+    StatisticsForm.Timeseries := ATimeseries;
+    StatisticsForm.Execute;
+  finally
+    ATimeseries.Free;
+    ATimeseriesList.Free;
+    ACommonPeriod.Free;
+  end;
+end;
+
 procedure TFrmRoseDiagram.ChartBeforeDrawSeries(Sender: TObject);
 begin
   with Chart.Canvas do
@@ -432,8 +507,8 @@ begin
   DrawRose;
   if chkAxesOverRose.Checked then DrawAxes;
   if (FSpeedDisplay and chkShowLegend.Checked) then DrawLegend;
-  if chkDisplayCalmRatio.Checked then DrawCalm;
   if lstMarkSection.SelCount>0 then DisplayMarkedStats;
+  if chkDisplayCalmRatio.Checked then DrawCalm;
 end;
 
 procedure TFrmRoseDiagram.chkAxesOverRoseClick(Sender: TObject);
@@ -484,7 +559,7 @@ begin
 end;
 
 resourcestring
-  rsSection = 'Section ';
+  rsSection = 'Sector ';
 
 procedure TFrmRoseDiagram.SetControlStatus(FullInvalidate: Boolean);
 var
@@ -498,6 +573,7 @@ begin
   btnAlterPenColor.Visible := not chkPenColorSameToBrush.Checked;
   edtCalmRatio.Enabled := chkDisplayCalmRatio.Checked;
   edtCalmThreshold.Enabled := edtCalmRatio.Enabled;
+  btnSpeedStats.Visible := FSpeedDisplay;
   if FSectionCount<>lstMarkSection.Count then
   begin
     lstMarkSection.Clear;
@@ -506,6 +582,7 @@ begin
       lstMarkSection.Items.Add(rsSection+IntToStr(i+1)+': '+
         FloatToStr((i-0.5)*AWidth)+'° - '+ FloatToStr((i+0.5)*AWidth)+'°'  );
   end;
+  btnSpeedStats.Enabled := lstMarkSection.SelCount>0;
   ACursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
@@ -666,6 +743,7 @@ begin
     Brush.Style := bsSolid;
     Rectangle(xoffset+x1, yoffset+y1, xoffset+x2, yoffset+y2);
     Font.Orientation := 0;
+    Font.Color := clBlack;
     Font.Height := -11;
     x1 := ConvertX(-FMax);
     x2 := ConvertX(-FMax+FMax/20);
@@ -682,7 +760,6 @@ begin
       TextOut(x2+2+xoffset, (y1+y2) div 2+yoffset, s);
     end;
   end;
-
 end;
 
 procedure TFrmRoseDiagram.DrawAxes;
@@ -699,6 +776,7 @@ begin
     Font.Height := Max(-13,Min(-Round(12*Chart.Width/518),-11));
     Line(ConvertX(-FMax*1.05), ConvertY(0), ConvertX(FMax*1.05), ConvertY(0));
     Font.Style := [fsBold];
+    Font.Color := clBlack;
     Font.Orientation := 900;
     TextOut(ConvertX(-FMax*1.05), ConvertY(0)-TextWidth('W') div 2, 'W');
     TextOut(ConvertX(FMax*1.05)-FontHeight, ConvertY(0)+
@@ -743,14 +821,14 @@ begin
       begin
         ActualRadius := (i /16) * 100 * FMaximumPercent;
         Font.Orientation := 0;
-        TextOut(ConvertX(0), ConvertY(ARadius),
+        TextOut(ConvertX(0)+TextWidth('.'), ConvertY(ARadius),
           FormatFloat('0.00', ActualRadius)+'%');
-        TextOut(ConvertX(0), ConvertY(-ARadius),
+        TextOut(ConvertX(0)+TextWidth('.'), ConvertY(-ARadius),
           FormatFloat('0.00', ActualRadius)+'%');
         Font.Orientation := 900;
-        TextOut(ConvertX(-ARadius), ConvertY(0),
+        TextOut(ConvertX(-ARadius), ConvertY(0)-TextWidth('.'),
           FormatFloat('0.00', ActualRadius)+'%');
-        TextOut(ConvertX(ARadius), ConvertY(0),
+        TextOut(ConvertX(ARadius), ConvertY(0)-TextWidth('.'),
           FormatFloat('0.00', ActualRadius)+'%');
         Pen.Style := psDot;
       end else
@@ -783,6 +861,7 @@ begin
     Font.Height := -12;
     Font.Orientation := 0;
     Font.Style := [];
+    Font.Color := clBlack;
     ARadius := FCalmPercent*FTotalCount/FSectionCount;
     Ellipse(ConvertX(-ARadius), ConvertY(-ARadius),
       ConvertX(ARadius), ConvertY(ARadius));
@@ -820,8 +899,13 @@ begin
   FSavedPenWidth := FPenWidth;
   try
     FBrushColor := $00FDFAEA;
-    FPenColor := FBrushColor;
     FBrushStyle := bsSolid;
+    FPenColor := $00DACDC0;
+    FPenWidth := 3;
+    for i := 0 to lstMarkSection.Count-1 do
+      if lstMarkSection.Selected[i] then
+        DrawCircSection((i*2*Pi/FSectionCount), FMax*1.04, 2*Pi/FSectionCount);
+    FPenColor := FBrushColor;
     FPenWidth := 1;
     for i := 0 to lstMarkSection.Count-1 do
       if lstMarkSection.Selected[i] then
@@ -829,16 +913,28 @@ begin
   finally
     FBrushColor := FSavedBrushColor;
     FPenColor := FSavedPenColor;
+    FPenWidth := FSavedPenWidth;
+    FBrushStyle := FSavedBrushStyle;
   end;
 end;
 
+resourcestring
+  rsMarkedSectionPercent = 'Marked sectors percentage: ';
+  rsMeanAzimuth = 'mean azimuth: ';
+  rsSpeedWeightedPercent = 'Speed weighted percentage: ';
+  rsMeanSpeed = 'mean speed value: ';
+  rsMeanSpeedAzim = ', azim: ';
+
 procedure TFrmRoseDiagram.DisplayMarkedStats;
 var
-  i, ATotalCount, ACount: Integer;
-  APercent, Xm, Ym, AAzim, ADist: Real;
+  i, j, ATotalCount, ACount: Integer;
+  APercent, Xm, Ym, AAzim, ADist, Vm, Vtot, VComponent, VComponentTemp,
+    VXm, VYm, VAzim: Real;
   x1, y1: Integer;
   xoffset: Integer;
   rwidth: Integer;
+  FromPoint, ToPoint: TPoint;
+  s: string;
 begin
   ATotalCount := 0;
   ACount := 0;
@@ -846,14 +942,36 @@ begin
   Assert(Length(FSectionStats[0]) = FSectionCount);
   Xm := 0;
   Ym := 0;
+  Vm := 0;
+  VTot := 0;
+  VXm := 0;
+  VYm := 0;
   for i := 0 to FSectionCount - 1 do
   begin
     ATotalCount := ATotalCount + FSectionStats[0][i];
+    VComponent := 0;
+    for j := 1 to FClassesCount do
+    begin
+      if j<FClassesCount then
+        VComponentTemp := (FSectionStats[j-1][i] - FSectionStats[j][i])
+      else
+        VComponentTemp := FSectionStats[j-1][i];
+      VComponent := VComponent + VComponentTemp*
+        (FClassesCount-j+0.5) * FMaxSpeed / FClassesCount;
+    end;
+    if FSpeedDisplay then
+      Vtot := Vtot + VComponent;
     if lstMarkSection.Selected[i] then
     begin
       ACount := ACount + FSectionStats[0][i];
       Xm := Xm + FSectionStats[0][i]*sin(i*2*Pi/FSectionCount);
       Ym := Ym + FSectionStats[0][i]*cos(i*2*Pi/FSectionCount);
+      if FSpeedDisplay then
+      begin
+        Vm := Vm + VComponent;
+        VXm := VXm + VComponent*sin(i*2*Pi/FSectionCount);
+        VYm := VYm + VComponent*cos(i*2*Pi/FSectionCount);
+      end;
     end;
   end;
   if ATotalCount>0 then APercent := ACount / ATotalCount else
@@ -862,18 +980,57 @@ begin
   if Abs(ADist)<1e-37 then ADist := 1;
   Xm := Xm * FMax / ADist;
   Ym := Ym * FMax / ADist;
+  AAzim := 0;
+  if Ym<>0 then AAzim := ArcTan2(Xm, Ym)*180/Pi else
+  begin
+    if Xm>=0 then AAzim := 90 else if Xm<0 then AAzim := 270;
+  end;
+  while AAzim<0 do AAzim := AAzim +360;
+  if FSpeedDisplay then
+  begin
+    ADist := Sqrt(Sqr(VXm)+Sqr(VYm));
+    if Abs(ADist)<1e-37 then ADist := 1;
+    VXm := VXm * FMax / ADist;
+    VYm := VYm * FMax / ADist;
+    VAzim := 0;
+    if VYm<>0 then VAzim := ArcTan2(VXm, VYm)*180/Pi else
+    begin
+      if VXm>=0 then VAzim := 90 else if VXm<0 then VAzim := 270;
+    end;
+    while VAzim<0 do VAzim := VAzim +360;
+  end;
   with Chart.Canvas do
   begin
     Pen.Width := 2;
     Pen.Color := clNavy;
-    Line(ConvertX(0), ConvertY(0), ConvertX(Xm), ConvertY(Ym));
-    //Arrow
+    FromPoint.X := ConvertX(0);
+    FromPoint.Y := ConvertY(0);
+    ToPoint.X := ConvertX(Xm*1.01);
+    ToPoint.Y := ConvertY(Ym*1.01);
+    Arrow(False, FromPoint, ToPoint, 7, 16, 0);
+    if FSpeedDisplay then
+    begin
+      Pen.Width := 2;
+      Pen.Color := clMaroon;
+      FromPoint.X := ConvertX(0);
+      FromPoint.Y := ConvertY(0);
+      ToPoint.X := ConvertX(VXm*1.01);
+      ToPoint.Y := ConvertY(VYm*1.01);
+      Arrow(False, FromPoint, ToPoint, 7, 16, 0);
+    end;
+    Brush.Color := clWhite;
+    Brush.Style := bsSolid;
     Font.Height := -12;
     Font.Orientation := 0;
     Font.Style := [];
-    x1 := ConvertX(-FMax*0.99);
-    y1 := ConvertY(-FMax*1.05);
-    rwidth := TextWidth(rsCalmThreshold+'99.9%');
+    Font.Color := clNavy;
+    x1 := ConvertX(-FMax*1.025);
+    y1 := ConvertY(-FMax*1.04);
+    if not FSpeedDisplay then
+    s := rsMarkedSectionPercent+'99.9%, '+rsMeanAzimuth+'180.0°' else
+      s := rsSpeedWeightedPercent+'99.9%, '+rsMeanSpeed+'9.9'+
+        rsMeanSpeedAzim+'180.0'+'°';
+    rwidth := TextWidth(s);
     xoffset := 0;
     with Chart do
       case FLegendPosition of
@@ -881,7 +1038,18 @@ begin
         1,2: xoffset := 0;
       else Assert(False);
       end;
-    TextOut(x1+xoffset, y1, FormatFloat('0.0', APercent*100)+ ' %');
+    s := rsMarkedSectionPercent+FormatFloat('0.0', APercent*100)+ '%, '+
+      rsMeanAzimuth+FormatFloat('0.0', AAzim)+'°';
+    TextOut(x1+xoffset, y1, s);
+    if FSpeedDisplay then
+    begin
+      Font.Color := clMaroon;
+      if (Vtot=0) or (ACount=0) then s := '' else
+        s := rsSpeedWeightedPercent+FormatFloat('0.0', Vm*100/Vtot)+'%, '+
+          rsMeanSpeed+FormatFloat('0.0', Vm/ACount)+ rsMeanSpeedAzim+
+          FormatFloat('0.0', VAzim)+'°';
+      TextOut(x1+xoffset, y1+TextHeight(s), s);
+    end;
   end;
 
 end;

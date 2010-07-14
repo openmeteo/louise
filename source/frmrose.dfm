@@ -31,13 +31,13 @@ object FrmRoseDiagram: TFrmRoseDiagram
     Anchors = [akTop, akRight]
     Caption = 'lblCalmRatio'
   end
-  object Label1: TLabel
+  object lblMarkSectors: TLabel
     Left = 524
     Top = 404
-    Width = 102
+    Width = 98
     Height = 13
     Anchors = [akTop, akRight]
-    Caption = 'Mark sections (drag):'
+    Caption = 'Mark sectors (drag):'
   end
   object Chart: TChart
     Left = 0
@@ -269,15 +269,17 @@ object FrmRoseDiagram: TFrmRoseDiagram
     MultiSelect = True
     TabOrder = 11
     OnClick = lstMarkSectionClick
+    OnKeyDown = lstMarkSectionKeyDown
   end
-  object Button1: TButton
+  object btnSpeedStats: TButton
     Left = 524
     Top = 495
-    Width = 109
+    Width = 152
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Button1'
+    Caption = 'Speed stats on marked...'
     TabOrder = 12
+    OnClick = btnSpeedStatsClick
   end
   object ColorDialog: TColorDialog
     Left = 464
@@ -315,5 +317,10 @@ object FrmRoseDiagram: TFrmRoseDiagram
         OnClick = btnCopyClipboardClick
       end
     end
+  end
+  object StatisticsForm: TStatisticsForm
+    HYearOrigin = 10
+    Left = 464
+    Top = 256
   end
 end
