@@ -317,6 +317,14 @@ object FrmRoseDiagram: TFrmRoseDiagram
         OnClick = btnCopyClipboardClick
       end
     end
+    object mnuOptions: TMenuItem
+      Caption = 'Options'
+      object mnuBellowThresholdStats: TMenuItem
+        Caption = 'Use bellow threshold speeds for marked sectors stats'
+        Checked = True
+        OnClick = mnuBellowThresholdStatsClick
+      end
+    end
   end
   object StatisticsForm: TStatisticsForm
     HYearOrigin = 10

@@ -96,6 +96,8 @@ type
     lblMarkSectors: TLabel;
     btnSpeedStats: TButton;
     StatisticsForm: TStatisticsForm;
+    mnuOptions: TMenuItem;
+    mnuBellowThresholdStats: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ChartBeforeDrawSeries(Sender: TObject);
@@ -116,6 +118,7 @@ type
     procedure lstMarkSectionKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure btnSpeedStatsClick(Sender: TObject);
+    procedure mnuBellowThresholdStatsClick(Sender: TObject);
   private
     FSectionCount, FMax, FClassesCount, FTotalCount: Integer;
     FMaxSpeed: Real;
@@ -225,7 +228,7 @@ function TFrmRoseDiagram.ConvertX(a: Real): Integer;
 begin
   with Chart.BottomAxis do
     Result := Round((a - Minimum) / (Maximum - Minimum) *
-      (IEndPos - IStartPos)) + IStartPos;
+      (IEndPos - IStartPos)) + IStartPos
 end;
 
 function TFrmRoseDiagram.ConvertY(a: Real): Integer;
@@ -278,6 +281,7 @@ begin
     ATimeseriesList.Add(FDirectionTimeseries);
     if FSpeedTimeseries<>nil then ATimeseriesList.Add(FSpeedTimeseries);
     ACommonPeriod := GetCommonPeriod(ATimeseriesList, 0);
+    if ACommonPeriod.Count<1 then Exit;
     FMaxSpeed := 0;
     if FSpeedTimeseries <> nil then
     begin
@@ -443,7 +447,7 @@ end;
 procedure TFrmRoseDiagram.btnSpeedStatsClick(Sender: TObject);
 var
   a, b, i: Integer;
-  FromAz, ToAz, AWidth, AAz: Real;
+  FromAz, ToAz, AWidth, AAz, ASpeed: Real;
   ATimeseries: TTimeseries;
   ATimeseriesList: TObjectList;
   ACommonPeriod: TDateTimeList;
@@ -482,9 +486,14 @@ begin
             AAz := Items[IndexOf(ACommonPeriod[i])].AsFloat;
           if AAz>=360-AWidth/2 then AAz := AAz-360;
           if (AAz<ToAz) and (AAz>=FromAz) then
+          begin
             with FSpeedTimeseries do
-              ATimeseries.Add(ACommonPeriod[i], False,
-                Items[IndexOf(ACommonPeriod[i])].AsFloat, '', msNew);
+              ASpeed := Items[IndexOf(ACommonPeriod[i])].AsFloat;
+            if (mnuBellowThresholdStats.Enabled)and
+              (not mnuBellowThresholdStats.Checked) then
+              if ASpeed <= FCalmThreshold then Continue;
+            ATimeseries.Add(ACommonPeriod[i], False, ASpeed, '', msNew);
+          end;
         end;
         a := b+1;
       end else Inc(a);
@@ -500,6 +509,13 @@ end;
 
 procedure TFrmRoseDiagram.ChartBeforeDrawSeries(Sender: TObject);
 begin
+  if FMax<1 then
+  begin
+    with Chart.Canvas do
+      TextOut(Chart.Width div 2 - TextWidth('No data to display...') div 2,
+      Chart.Height div 2, 'No data to display...');
+    Exit;
+  end;
   with Chart.Canvas do
     Font.PixelsPerInch := Chart.PrintResolution;
   if lstMarkSection.SelCount>0 then DrawMarkedArea;
@@ -551,6 +567,12 @@ begin
     SysUtils.DecimalSeparator]) then Key := #0;
 end;
 
+procedure TFrmRoseDiagram.mnuBellowThresholdStatsClick(Sender: TObject);
+begin
+  with Sender as TMenuItem do
+    Checked := not Checked;
+end;
+
 { Set control status }
 
 procedure TFrmRoseDiagram.SetControlStatus;
@@ -583,6 +605,8 @@ begin
         FloatToStr((i-0.5)*AWidth)+'° - '+ FloatToStr((i+0.5)*AWidth)+'°'  );
   end;
   btnSpeedStats.Enabled := lstMarkSection.SelCount>0;
+  mnuBellowThresholdStats.Enabled := FSpeedDisplay and
+    chkDisplayCalmRatio.Enabled and chkDisplayCalmRatio.Checked;
   ACursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
@@ -593,10 +617,18 @@ begin
         ItemIndex := Items.IndexOf(IntToStr(FClassesCount));
     if FullInvalidate then
       CalcSeriesStats;
-    Chart.BottomAxis.Minimum := -FMax*1.05;
-    Chart.LeftAxis.Minimum := -FMax*1.05;
-    Chart.BottomAxis.Maximum := FMax*1.05;
-    Chart.LeftAxis.Maximum := FMax*1.05;
+    if FMax>0 then
+    begin
+      Chart.BottomAxis.Minimum := -FMax*1.05;
+      Chart.LeftAxis.Minimum := -FMax*1.05;
+      Chart.BottomAxis.Maximum := FMax*1.05;
+      Chart.LeftAxis.Maximum := FMax*1.05;
+    end else begin
+      Chart.BottomAxis.Minimum := -10;
+      Chart.LeftAxis.Minimum := -10;
+      Chart.BottomAxis.Maximum := 10;
+      Chart.LeftAxis.Maximum := 10;
+    end;
     Chart.Refresh;
   finally
     Screen.Cursor := ACursor;
