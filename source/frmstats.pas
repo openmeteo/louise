@@ -1946,7 +1946,8 @@ resourcestring
 
 procedure TFrmStatistics.DoMonteCarloSimul(ADistributionType: TStatisticalDistributionType);
 var
-  i, j: Integer;
+  i, j, k: Integer;
+  paramlim: array[0..11] of Real;
   AFValue, AZValue, APrevFValue: Real;
   Upper, Lower: Real;
   TrueUpper, TrueLower: Real;
@@ -1956,6 +1957,7 @@ var
   MaxXValue, MinXValue: Real;
   ADistribution: TStatisticalDistribution;
   ADataList: TDataList;
+  s: string;
 begin
 {Set the basic parameters from the settings form}
   MCCount := 60000;
@@ -2050,8 +2052,11 @@ begin
       AFValue := InvProbabilityPaper(AZValue, FPaperType,FGEVParameter);
       Application.ProcessMessages;
       MonteCarloLimits(AFValue, ADistribution,  MCCount,
+        ADistribution.DataList.Count,
         MCConfidenceLevel, Upper, Lower, TrueUpper, TrueLower,
-        MCLimitsProgress);
+        paramlim[0], paramlim[1], paramlim[2], paramlim[3], paramlim[4],
+        paramlim[5], paramlim[6], paramlim[7], paramlim[8], paramlim[9],
+        paramlim[10], paramlim[11], MCLimitsProgress);
       HighConfidenceLimitLine.AddXY(AZValue,TrueUpper,'',
         HighConfidenceLimitLine.SeriesColor);
       LowConfidenceLimitLine.AddXY(AZValue,TrueLower,'',
@@ -2059,6 +2064,14 @@ begin
       HighSampleLimitLine.AddXY(AZValue,Upper,'',
         HighSampleLimitLine.SeriesColor);
       LowSampleLimitLine.AddXY(AZValue,Lower,'',LowSampleLimitLine.SeriesColor);
+      s := '';
+      for k := 0 to 11 do
+      begin
+        s := s + FloatToStr(paramlim[k])+ ' ';
+        if (k+1) mod 2 = 0 then s := s+#13#10;
+        if (k+1) mod 6 = 0 then s := s+#13#10;
+      end;
+      ShowMessage(s);
       if i <> 0 then
       begin
         for j := 1 to 4 do
