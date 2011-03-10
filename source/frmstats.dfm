@@ -881,6 +881,10 @@ object FrmStatistics: TFrmStatistics
     object tbcHistogram: TTabSheet
       Caption = 'Histogram - Density functions'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object chartPDF: TChart
         Left = 3
         Top = 3
@@ -939,6 +943,10 @@ object FrmStatistics: TFrmStatistics
     object tbcParameters: TTabSheet
       Caption = 'Parameter evaluation - Forecasts'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         540
         456)

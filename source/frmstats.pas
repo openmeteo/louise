@@ -2067,11 +2067,11 @@ begin
       s := '';
       for k := 0 to 11 do
       begin
-        s := s + FloatToStr(paramlim[k])+ ' ';
-        if (k+1) mod 2 = 0 then s := s+#13#10;
-        if (k+1) mod 6 = 0 then s := s+#13#10;
+        s := s + FloatToStr(paramlim[k])+#9;
+        if (k+1) mod 2 = 0 then s := s+#13;
+        if (k+1) mod 6 = 0 then s := s+#13;
       end;
-      ShowMessage(s);
+      Clipboard.AsText := s;
       if i <> 0 then
       begin
         for j := 1 to 4 do
