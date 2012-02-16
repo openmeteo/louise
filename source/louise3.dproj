@@ -21,7 +21,7 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_OutputDRCFile>true</DCC_OutputDRCFile>
-			<DCC_DependencyCheckOutputName>..\..\..\..\..\All Users\Documents\RAD Studio\6.0\Bpl\louise3.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\6.0\Bpl\louise3.bpl</DCC_DependencyCheckOutputName>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Description>LoUISE - Library of User Interface Special Edition</DCC_Description>
 			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>
@@ -206,6 +206,9 @@
 			</DCCReference>
 			<DCCReference Include="frmrose.pas">
 				<Form>FrmRoseDiagram</Form>
+			</DCCReference>
+			<DCCReference Include="mledlg.pas">
+				<Form>FrmMLEDialog</Form>
 			</DCCReference>
 			<DCCReference Include="tsgrid.dcr"/>
 			<DCCReference Include="strGrdOd.dcr"/>

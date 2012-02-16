@@ -173,6 +173,11 @@ type
     tbcHistogram: TTabSheet;
     chartPDF: TChart;
     seriesHistogram: TBarSeries;
+    mnuMLE: TMenuItem;
+    mnuMLENormal: TMenuItem;
+    mnuMLEGamma: TMenuItem;
+    mnuMLELogNormal: TMenuItem;
+    MLELine: TLineSeries;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -219,6 +224,7 @@ type
     procedure mnuCopyHistogramClick(Sender: TObject);
     procedure mnuPrintHistogramClick(Sender: TObject);
     procedure Showhistogram1Click(Sender: TObject);
+    procedure mnuMLEGammaClick(Sender: TObject);
   private
     FPaperType: TProbabilityPaperType;
     FTimeStep: TTimeStep;
@@ -243,6 +249,7 @@ type
     SettingMCPointsCount: Integer;
     SettingMCConfidence: Integer;
     FHYearOrigin: Integer;
+    FMLEp1, FMLEp2, FMLEp3: Real;
     procedure ResetAllButtons;
     procedure Refresh(RefreshStatus: Boolean);
     procedure FillTheGrid;
@@ -268,19 +275,19 @@ type
     (0.0005,0.001,0.002,0.005,0.01,0.02,0.05,0.10,0.20,0.30,0.40,0.50,0.60,0.70,
     0.80,0.90,0.95,0.98,0.99,0.995,0.998,0.999,0.9995);
 
-  const pl_Distributions: array [0..26] of TStatisticalDistributionType =
+  const pl_Distributions: array [0..27] of TStatisticalDistributionType =
     (sdtNormal, sdtLNormal, sdtLogNormal, sdtGalton, sdtExponential,
       sdtLExponential, sdtGamma, sdtPearsonIII, sdtLogPearsonIII,
       sdtEV1Max, sdtEV2Max, sdtEV1Min, sdtEV3Min, sdtGEVMax, sdtGEVMin,
       sdtPareto, sdtLGEVMax, sdtLGEVMin, sdtLEV1Max, sdtLEV2Max,
       sdtLEV1Min, sdtLEV3Min, sdtLPareto, sdtGEVMaxK, sdtGEVMinK,
-      sdtLGEVMaxK, sdtLGEVMinK);
+      sdtLGEVMaxK, sdtLGEVMinK, sdtGamma);
 
 implementation
 
 {$R *.DFM}
 
-uses montecarlo, prob, uiutils, Clipbrd;
+uses montecarlo, prob, uiutils, Clipbrd, mledlg;
 
 function MyFloatToStr(AValue: Real): string;
 var
@@ -337,6 +344,9 @@ begin
   FMonthShowed := 0;
   FUnbiased := True;
   FGEVParameter := 0.15;
+  FMLEp1 := 0;
+  FMLEp2 := 0;
+  FMLEp3 := 0;
   for i := 0 to 22 do
     FProbabilityList[i] := pl_ProbabilityList[i];
 {These for the drawing of the distribution curves}
@@ -875,6 +885,76 @@ begin
       SettingMCConfidence := rgrpMCConfidence.ItemIndex;
     end;
   end;
+end;
+
+procedure TFrmStatistics.mnuMLEGammaClick(Sender: TObject);
+var
+  AStatisticalDistribution: TStatisticalDistribution;
+  FrmMLEDialog: TFrmMLEDialog;
+  ADataList: TDataList;
+  p1, p2, p3: Real;
+begin
+    if FMonthShowed = 0 then
+    begin
+      FFullDataList.Unbiased := FUnbiased;
+      ADataList := TDataList (FFullDataList);
+    end else begin
+      FMonthlyDataList.Months[FMonthShowed].Unbiased := FUnbiased;
+      ADataList := FMonthlyDataList.Months[FMonthShowed];
+    end;
+    AStatisticalDistribution := nil;
+    FrmMLEDialog := nil;
+    try
+      try
+        FrmMLEDialog := TFrmMLEDialog.Create(nil);
+        AStatisticalDistribution :=
+          TStatisticalDistribution.Create(sdtGamma, ADataList,
+            FGEVParameter);
+        with FrmMLEDialog, AStatisticalDistribution do
+        begin
+          DistributionName := Name;
+          ParamCount := ParameterCount;
+          ParamNames[0] := Param1Name;
+          ParamNames[1] := Param2Name;
+          ParamNames[2] := Param3Name;
+          MomentValues[0] := Parameter1;
+          MomentValues[1] := Parameter2;
+          MomentValues[2] := Parameter3;
+          SampleMax := DataList[0].Value;
+          SampleMin := DataList[DataList.Count-1].Value;
+        end;
+
+        if FrmMLEDialog.ShowModal = mrCancel then
+          Exit;
+        with FrmMLEDialog do
+        begin
+          p1 := ParamInivalues[0];
+          p2 := ParamInivalues[1];
+          p3 := ParamInivalues[2];
+          RandSeed := 1973;
+          AStatisticalDistribution.CalculateMaxLikelihoodParams(
+            ParamMinValues[0],ParamMinValues[1],ParamMinValues[2],
+            ParamMaxValues[0],ParamMaxValues[1],ParamMaxValues[2],
+            p1, p2, p3);
+        end;
+        with AStatisticalDistribution do
+          ShowMessage(FloatToStr(Parameter1)+' '+FloatToStr(Parameter2)+' '+FloatToStr(Parameter3)+  #13#10+FloatToStr(p1)+' '+FloatToStr(p2)+' '+FloatToStr(p3));
+        FMLEp1 := p1;
+        FMLEp2 := p2;
+        FMLEp3 := p3;
+      except
+        on EMathError do
+        begin
+          raise;
+        end;
+        else
+          raise;
+      end;
+    finally
+      AStatisticalDistribution.Free;
+      FrmMLEDialog.Free;
+    end;
+    Refresh(False);
 end;
 
 {Basic points - lines checkboxes interaction}
@@ -1495,7 +1575,7 @@ resourcestring
 procedure TFrmStatistics.PrepareLineSeries;
 var
   i: Integer;
-  j: Integer;
+  j, t: Integer;
   ADataList: TDataList;
   AStandardDeviation, ALogStandardDeviation: Real;
   AXValue: Real;
@@ -1530,8 +1610,12 @@ begin
 {Do not plot if StdDev <= 0, occured by exception}
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
     Exit;
-  for j := 0 to 26 do
+  for t := 0 to 27 do
   begin
+    if t<27 then
+      j := t
+    else
+      j := t+4;
     ADistribution := nil;
     Chart.SeriesList[j+5].Clear;
     ChartPDF.SeriesList[j+1].Clear;
@@ -1539,7 +1623,7 @@ begin
       Continue;
     try
       try
-        ADistribution := TStatisticalDistribution.Create(pl_Distributions[j],
+        ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
           ADataList, FGEVParameter);
         ADistribution.SetGEVShape(FGEVParameter);
       except
@@ -1567,7 +1651,12 @@ begin
           if ADistribution.IsLMomentMethod then
             if not LMomentExist then
               Continue;
-          AZValue := 1-ADistribution.cdfValue(AXValue);
+          if t<27 then
+            AZValue := 1-ADistribution.cdfValue(AXValue)
+          else
+            if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+              AZValue := 1-ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
+                                                  AXValue);
 {Do this, to avoid numerical errors for Extreme XValues}
           if (AZValue>=FMinProbability) and (AZValue<=FMaxProbability) then
           begin

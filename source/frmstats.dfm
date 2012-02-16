@@ -875,6 +875,23 @@ object FrmStatistics: TFrmStatistics
             YValues.Name = 'Y'
             YValues.Order = loNone
           end
+          object MLELine: TLineSeries
+            Tag = 128
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
+            Marks.Visible = False
+            SeriesColor = 16384
+            Title = 'MLE Line'
+            LinePen.Style = psDash
+            Pointer.InflateMargins = True
+            Pointer.Style = psRectangle
+            Pointer.Visible = False
+            XValues.Name = 'X'
+            XValues.Order = loNone
+            YValues.Name = 'Y'
+            YValues.Order = loNone
+          end
         end
       end
     end
@@ -1497,6 +1514,19 @@ object FrmStatistics: TFrmStatistics
       object mnuHideConfidenceForcasts: TMenuItem
         Caption = 'Hide forecasts'
         OnClick = mnuHideForecastsClick
+      end
+    end
+    object mnuMLE: TMenuItem
+      Caption = 'MLE'
+      object mnuMLENormal: TMenuItem
+        Caption = 'Normal'
+      end
+      object mnuMLELogNormal: TMenuItem
+        Caption = 'Log Normal'
+      end
+      object mnuMLEGamma: TMenuItem
+        Caption = 'Gamma'
+        OnClick = mnuMLEGammaClick
       end
     end
     object mnuTests: TMenuItem

@@ -93,6 +93,7 @@ contains
   frmflags in 'frmflags.pas' {FrmSetFlagsDialog},
   frmtswiz in 'frmtswiz.pas' {FrmTimeseriesWizard},
   frmaggr in 'frmaggr.pas' {FrmAggregationDialog},
-  frmrose in 'frmrose.pas' {FrmRoseDiagram};
+  frmrose in 'frmrose.pas' {FrmRoseDiagram},
+  mledlg in 'mledlg.pas' {FrmMLEDialog};
 
 end.
