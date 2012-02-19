@@ -898,10 +898,6 @@ object FrmStatistics: TFrmStatistics
     object tbcHistogram: TTabSheet
       Caption = 'Histogram - Density functions'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object chartPDF: TChart
         Left = 3
         Top = 3
@@ -960,10 +956,6 @@ object FrmStatistics: TFrmStatistics
     object tbcParameters: TTabSheet
       Caption = 'Parameter evaluation - Forecasts'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         540
         456)
@@ -1519,14 +1511,69 @@ object FrmStatistics: TFrmStatistics
     object mnuMLE: TMenuItem
       Caption = 'MLE'
       object mnuMLENormal: TMenuItem
+        Tag = 1
         Caption = 'Normal'
+        OnClick = mnuMLEMenuClick
       end
       object mnuMLELogNormal: TMenuItem
+        Tag = 2
         Caption = 'Log Normal'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEExponential: TMenuItem
+        Tag = 3
+        Caption = 'Exponential'
+        OnClick = mnuMLEMenuClick
       end
       object mnuMLEGamma: TMenuItem
+        Tag = 4
         Caption = 'Gamma'
-        OnClick = mnuMLEGammaClick
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEPearsonIII: TMenuItem
+        Tag = 5
+        Caption = 'Pearson III'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLELogPearsonIII: TMenuItem
+        Tag = 6
+        Caption = 'Log Pearson III'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEEV1Max: TMenuItem
+        Tag = 7
+        Caption = 'EV1 (Gumbel) Max'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEEV2Max: TMenuItem
+        Tag = 8
+        Caption = 'EV2 Max'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEEV1Min: TMenuItem
+        Tag = 9
+        Caption = 'EV1 (Gumbel) Min'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEEV3Min: TMenuItem
+        Tag = 10
+        Caption = 'EV3 Min (Weibull)'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEGEVMax: TMenuItem
+        Tag = 11
+        Caption = 'GEV Max'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEGEVMin: TMenuItem
+        Tag = 12
+        Caption = 'GEV Min'
+        OnClick = mnuMLEMenuClick
+      end
+      object mnuMLEPareto: TMenuItem
+        Tag = 13
+        Caption = 'Pareto'
+        OnClick = mnuMLEMenuClick
       end
     end
     object mnuTests: TMenuItem

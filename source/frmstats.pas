@@ -178,6 +178,16 @@ type
     mnuMLEGamma: TMenuItem;
     mnuMLELogNormal: TMenuItem;
     MLELine: TLineSeries;
+    mnuMLEExponential: TMenuItem;
+    mnuMLEPearsonIII: TMenuItem;
+    mnuMLELogPearsonIII: TMenuItem;
+    mnuMLEEV1Max: TMenuItem;
+    mnuMLEEV2Max: TMenuItem;
+    mnuMLEEV1Min: TMenuItem;
+    mnuMLEEV3Min: TMenuItem;
+    mnuMLEGEVMax: TMenuItem;
+    mnuMLEGEVMin: TMenuItem;
+    mnuMLEPareto: TMenuItem;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -224,7 +234,7 @@ type
     procedure mnuCopyHistogramClick(Sender: TObject);
     procedure mnuPrintHistogramClick(Sender: TObject);
     procedure Showhistogram1Click(Sender: TObject);
-    procedure mnuMLEGammaClick(Sender: TObject);
+    procedure mnuMLEMenuClick(Sender: TObject);
   private
     FPaperType: TProbabilityPaperType;
     FTimeStep: TTimeStep;
@@ -250,6 +260,7 @@ type
     SettingMCConfidence: Integer;
     FHYearOrigin: Integer;
     FMLEp1, FMLEp2, FMLEp3: Real;
+    FMLEDistribution: TStatisticalDistributionType;
     procedure ResetAllButtons;
     procedure Refresh(RefreshStatus: Boolean);
     procedure FillTheGrid;
@@ -275,13 +286,13 @@ type
     (0.0005,0.001,0.002,0.005,0.01,0.02,0.05,0.10,0.20,0.30,0.40,0.50,0.60,0.70,
     0.80,0.90,0.95,0.98,0.99,0.995,0.998,0.999,0.9995);
 
-  const pl_Distributions: array [0..27] of TStatisticalDistributionType =
+  const pl_Distributions: array [0..26] of TStatisticalDistributionType =
     (sdtNormal, sdtLNormal, sdtLogNormal, sdtGalton, sdtExponential,
       sdtLExponential, sdtGamma, sdtPearsonIII, sdtLogPearsonIII,
       sdtEV1Max, sdtEV2Max, sdtEV1Min, sdtEV3Min, sdtGEVMax, sdtGEVMin,
       sdtPareto, sdtLGEVMax, sdtLGEVMin, sdtLEV1Max, sdtLEV2Max,
       sdtLEV1Min, sdtLEV3Min, sdtLPareto, sdtGEVMaxK, sdtGEVMinK,
-      sdtLGEVMaxK, sdtLGEVMinK, sdtGamma);
+      sdtLGEVMaxK, sdtLGEVMinK);
 
 implementation
 
@@ -347,6 +358,7 @@ begin
   FMLEp1 := 0;
   FMLEp2 := 0;
   FMLEp3 := 0;
+  FMLEDistribution := sdtNormal;
   for i := 0 to 22 do
     FProbabilityList[i] := pl_ProbabilityList[i];
 {These for the drawing of the distribution curves}
@@ -887,7 +899,13 @@ begin
   end;
 end;
 
-procedure TFrmStatistics.mnuMLEGammaClick(Sender: TObject);
+const
+  DistributionTypes: array [1..13] of TStatisticalDistributionType =
+    (sdtNormal, sdtLogNormal, sdtExponential, sdtGamma, sdtPearsonIII,
+     sdtLogPearsonIII, sdtEV1Max, sdtEV2Max, sdtEV1Min, sdtEV3Min,
+     sdtGEVMax, sdtGEVMin, sdtPareto);
+
+procedure TFrmStatistics.mnuMLEMenuClick(Sender: TObject);
 var
   AStatisticalDistribution: TStatisticalDistribution;
   FrmMLEDialog: TFrmMLEDialog;
@@ -908,7 +926,8 @@ begin
       try
         FrmMLEDialog := TFrmMLEDialog.Create(nil);
         AStatisticalDistribution :=
-          TStatisticalDistribution.Create(sdtGamma, ADataList,
+          TStatisticalDistribution.Create(
+            DistributionTypes[(Sender as TMenuItem).Tag], ADataList,
             FGEVParameter);
         with FrmMLEDialog, AStatisticalDistribution do
         begin
@@ -942,6 +961,7 @@ begin
         FMLEp1 := p1;
         FMLEp2 := p2;
         FMLEp3 := p3;
+        FMLEDistribution := AStatisticalDistribution.DistributionType;
       except
         on EMathError do
         begin
@@ -1623,8 +1643,12 @@ begin
       Continue;
     try
       try
-        ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
-          ADataList, FGEVParameter);
+        if t<27 then
+          ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
+            ADataList, FGEVParameter)
+        else
+          ADistribution := TStatisticalDistribution.Create(FMLEDistribution,
+            ADataList, FGEVParameter);
         ADistribution.SetGEVShape(FGEVParameter);
       except
         on EMathError do
@@ -1692,8 +1716,15 @@ begin
           if ADistribution.IsLMomentMethod then
             if not LMomentExist then
               Continue;
-          AZValue := (ADistribution.cdfValue(AXValue+0.05)-
-            ADistribution.cdfValue(AXValue-0.05))/0.10;
+          if t<27 then
+            AZValue := (ADistribution.cdfValue(AXValue+0.05)-
+              ADistribution.cdfValue(AXValue-0.05))/0.10
+          else
+            if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+              AZValue := (ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
+                                                 AXValue+0.05)-
+                ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
+                                       AXValue-0.05))/0.10;
           ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
             ChartPDF.Series[j+1].SeriesColor);
         end; {i := 0..119}

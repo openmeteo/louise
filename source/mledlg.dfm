@@ -13,6 +13,7 @@ object FrmMLEDialog: TFrmMLEDialog
   Font.Style = []
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   DesignSize = (
     451
@@ -137,7 +138,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 16
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 0
       Text = '0'
     end
@@ -147,7 +147,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 16
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 1
       Text = '0'
     end
@@ -157,7 +156,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 16
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 2
       Text = '0'
     end
@@ -255,7 +253,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 35
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 0
       Text = '0'
     end
@@ -265,7 +262,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 35
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 1
       Text = '0'
     end
@@ -275,7 +271,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 35
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 2
       Text = '0'
     end
@@ -285,7 +280,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 62
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 3
       Text = '0'
     end
@@ -295,7 +289,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 62
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 4
       Text = '0'
     end
@@ -305,7 +298,6 @@ object FrmMLEDialog: TFrmMLEDialog
       Top = 62
       Width = 71
       Height = 21
-      NumbersOnly = True
       TabOrder = 5
       Text = '0'
     end

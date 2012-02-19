@@ -52,6 +52,7 @@ type
     btnCalculate: TButton;
     btnCancel: TButton;
     procedure FormCreate(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     FParamNames: array[0..2] of string;
     FMomentValues: array[0..2] of Real;
@@ -110,8 +111,24 @@ begin
   FParamNames[Index] := Value;
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TLabel then
-      if Components[i].Tag = i+1 then
+      if Components[i].Tag = Index+1 then
         (Components[i] as TLabel).Caption := FParamNames[Index]
+end;
+
+procedure TFrmMLEDialog.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+var
+  i: Integer;
+begin
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TEdit then
+      with (Components[i] as TEdit) do
+        if not ReadOnly then
+          try
+            StrToFloat(Text);
+          except
+            SetFocus;
+            raise;
+          end;
 end;
 
 procedure TFrmMLEDialog.FormCreate(Sender: TObject);
