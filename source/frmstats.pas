@@ -188,6 +188,7 @@ type
     mnuMLEGEVMax: TMenuItem;
     mnuMLEGEVMin: TMenuItem;
     mnuMLEPareto: TMenuItem;
+    mnuMLEGalton: TMenuItem;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -900,10 +901,10 @@ begin
 end;
 
 const
-  DistributionTypes: array [1..13] of TStatisticalDistributionType =
+  DistributionTypes: array [1..14] of TStatisticalDistributionType =
     (sdtNormal, sdtLogNormal, sdtExponential, sdtGamma, sdtPearsonIII,
      sdtLogPearsonIII, sdtEV1Max, sdtEV2Max, sdtEV1Min, sdtEV3Min,
-     sdtGEVMax, sdtGEVMin, sdtPareto);
+     sdtGEVMax, sdtGEVMin, sdtPareto, sdtGalton);
 
 procedure TFrmStatistics.mnuMLEMenuClick(Sender: TObject);
 var
@@ -1679,8 +1680,16 @@ begin
             AZValue := 1-ADistribution.cdfValue(AXValue)
           else
             if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+            begin
+              if ADistribution.IsLowerBounded then
+                if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3) then
+                  Continue;
+              if ADistribution.IsUpperBounded then
+                if AXValue >= ADistribution.GetMaxXAtP(FMLEp1, FMLEp2,FMLEp3) then
+                  Continue;
               AZValue := 1-ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
                                                   AXValue);
+            end;
 {Do this, to avoid numerical errors for Extreme XValues}
           if (AZValue>=FMinProbability) and (AZValue<=FMaxProbability) then
           begin
@@ -1721,10 +1730,18 @@ begin
               ADistribution.cdfValue(AXValue-0.05))/0.10
           else
             if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+            begin
+              if ADistribution.IsLowerBounded then
+                if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3)+0.05 then
+                  Continue;
+              if ADistribution.IsUpperBounded then
+                if AXValue >= ADistribution.GetMaxXAtP(FMLEp1, FMLEp2,FMLEp3)-0.05 then
+                  Continue;
               AZValue := (ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
                                                  AXValue+0.05)-
                 ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
                                        AXValue-0.05))/0.10;
+            end;
           ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
             ChartPDF.Series[j+1].SeriesColor);
         end; {i := 0..119}

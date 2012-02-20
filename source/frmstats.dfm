@@ -1520,6 +1520,11 @@ object FrmStatistics: TFrmStatistics
         Caption = 'Log Normal'
         OnClick = mnuMLEMenuClick
       end
+      object mnuMLEGalton: TMenuItem
+        Tag = 14
+        Caption = 'Galton'
+        OnClick = mnuMLEMenuClick
+      end
       object mnuMLEExponential: TMenuItem
         Tag = 3
         Caption = 'Exponential'
