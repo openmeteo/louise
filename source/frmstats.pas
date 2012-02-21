@@ -262,6 +262,10 @@ type
     FHYearOrigin: Integer;
     FMLEp1, FMLEp2, FMLEp3: Real;
     FMLEDistribution: TStatisticalDistributionType;
+    FMLEEstimationExists: Boolean;
+    FMLEDistributionName, FMLEParam1Name, FMLEParam2Name,
+      FMLEParam3Name: string;
+    FMLEMonth: Integer;
     procedure ResetAllButtons;
     procedure Refresh(RefreshStatus: Boolean);
     procedure FillTheGrid;
@@ -377,6 +381,7 @@ begin
     chartPDF.AddSeries(ALineSeries);
   end;
   ChartPDF.Align := alClient;
+  FMLEEstimationExists := False;
 end;
 
 procedure TFrmStatistics.IFormDestroy(Sender: TObject);
@@ -905,6 +910,13 @@ const
     (sdtNormal, sdtLogNormal, sdtExponential, sdtGamma, sdtPearsonIII,
      sdtLogPearsonIII, sdtEV1Max, sdtEV2Max, sdtEV1Min, sdtEV3Min,
      sdtGEVMax, sdtGEVMin, sdtPareto, sdtGalton);
+  ff = '0.00000';
+
+resourcestring
+  rsMaxLike = 'Maximum Likelihood Estimation of Distribution Parameters: '+
+              'p1=%s, p2=%s, p3=%s. For comparison, parameters estimated '+
+              'with moments method are: p1=%s, p2=%s, p3=%s. Results are '+
+              'included in parameters table as well.';
 
 procedure TFrmStatistics.mnuMLEMenuClick(Sender: TObject);
 var
@@ -912,6 +924,8 @@ var
   FrmMLEDialog: TFrmMLEDialog;
   ADataList: TDataList;
   p1, p2, p3: Real;
+  ASavedCursor: TCursor;
+  s: string;
 begin
     if FMonthShowed = 0 then
     begin
@@ -923,8 +937,10 @@ begin
     end;
     AStatisticalDistribution := nil;
     FrmMLEDialog := nil;
+    ASavedCursor := Screen.Cursor;
     try
       try
+        Screen.Cursor := crHourGlass;
         FrmMLEDialog := TFrmMLEDialog.Create(nil);
         AStatisticalDistribution :=
           TStatisticalDistribution.Create(
@@ -943,7 +959,6 @@ begin
           SampleMax := DataList[0].Value;
           SampleMin := DataList[DataList.Count-1].Value;
         end;
-
         if FrmMLEDialog.ShowModal = mrCancel then
           Exit;
         with FrmMLEDialog do
@@ -958,11 +973,29 @@ begin
             p1, p2, p3);
         end;
         with AStatisticalDistribution do
-          ShowMessage(FloatToStr(Parameter1)+' '+FloatToStr(Parameter2)+' '+FloatToStr(Parameter3)+  #13#10+FloatToStr(p1)+' '+FloatToStr(p2)+' '+FloatToStr(p3));
+          if ParameterCount=3 then
+            FmtStr(s, rsMaxLike, [FormatFloat(ff, p1),
+              FormatFloat(ff, p2), FormatFloat(ff, p3),
+              FormatFloat(ff, Parameter1), FormatFloat(ff, Parameter2),
+              FormatFloat(ff, Parameter3)])
+          else
+            FmtStr(s, rsMaxLike, [FormatFloat(ff, p1),
+              FormatFloat(ff, p2), '-',
+              FormatFloat(ff, Parameter1), FormatFloat(ff, Parameter2),
+              '-']);
+        MessageDlg(s, mtInformation, [mbOK], 0);
         FMLEp1 := p1;
         FMLEp2 := p2;
         FMLEp3 := p3;
         FMLEDistribution := AStatisticalDistribution.DistributionType;
+        FMLEEstimationExists := True;
+        FMLEDistributionName := AStatisticalDistribution.Name;
+        FMLEParam1Name := AStatisticalDistribution.Param1Name;
+        FMLEParam2Name := AStatisticalDistribution.Param2Name;
+        FMLEParam3Name := AStatisticalDistribution.Param3Name;
+        FMLEMonth := FMonthShowed;
+        lstDistributions.Items[27] := 'MLE - '+FMLEDistributionName;
+        lstDistributions.Selected[27] := True;
       except
         on EMathError do
         begin
@@ -972,6 +1005,7 @@ begin
           raise;
       end;
     finally
+      Screen.Cursor := ASavedCursor;
       AStatisticalDistribution.Free;
       FrmMLEDialog.Free;
     end;
@@ -1094,7 +1128,10 @@ var
   AString: string;
   AKappa, AAlpha, APsi: Real;
 begin
-  sgrdData.RowCount := 81;
+  if FMLEEstimationExists then
+    sgrdData.RowCount := 86
+  else
+    sgrdData.RowCount := 83;
   if FTimeStep < tstAnnual then
     sgrdData.ColCount := 14
   else
@@ -1104,6 +1141,15 @@ begin
   if FTimeStep < tstAnnual then
     MaxCount := 12 else
     MaxCount := 0;
+  if FMLEEstimationExists then
+  begin
+    Memo.Lines[82] := 'MLE-'+FMLEDistributionName+' '+FMLEParam1Name;
+    Memo.Lines[83] := 'MLE-'+FMLEDistributionName+' '+FMLEParam2Name;
+    if FMLEParam3Name<>'' then
+      Memo.Lines[84] := 'MLE-'+FMLEDistributionName+' '+FMLEParam2Name
+    else
+      Memo.Lines[84] := '-'
+  end;
   for i := 0 to MaxCount do
   begin
     if i = 0 then
@@ -1170,6 +1216,22 @@ begin
       if ALine = 1 then AString := IntToStr(RecordsCount);
 {Print the parameters}
       try
+        if FMLEEstimationExists then
+        begin
+          case ALine of
+            83..85:
+            begin
+              if FMLEMonth=i then
+                case ALine of
+                  83: AString := MyFloatToStr(FMLEp1);
+                  84: AString := MyFloatToStr(FMLEp2);
+                  85: AString := MyFloatToStr(FMLEp3);
+                end
+              else
+                AString := '';
+            end;
+          end;
+        end;
         if AStandardDeviation>0 then
         begin
           case ALine of
@@ -1679,7 +1741,7 @@ begin
           if t<27 then
             AZValue := 1-ADistribution.cdfValue(AXValue)
           else
-            if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+            if FMLEEstimationExists and (FMLEMonth = FMonthShowed) then
             begin
               if ADistribution.IsLowerBounded then
                 if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3) then
@@ -1729,7 +1791,7 @@ begin
             AZValue := (ADistribution.cdfValue(AXValue+0.05)-
               ADistribution.cdfValue(AXValue-0.05))/0.10
           else
-            if (FMLEp1<>0) or (FMLEp2<>0) or (FMLEp3<>0) then
+            if FMLEEstimationExists and (FMLEMonth = FMonthShowed) then
             begin
               if ADistribution.IsLowerBounded then
                 if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3)+0.05 then
@@ -2211,7 +2273,7 @@ begin
       Clipboard.AsText := s;
       if i <> 0 then
       begin
-        for j := 1 to 4 do
+        for j := 2 to 5 do
           with chart do
             if Abs(Series[SeriesCount-j].YValue[i]-
                   Series[SeriesCount-j].YValue[i-1])>1e-6 then

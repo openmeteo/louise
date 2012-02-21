@@ -115,10 +115,16 @@ begin
         (Components[i] as TLabel).Caption := FParamNames[Index]
 end;
 
+resourcestring
+  rsInitParamNotInBounds = 'Initialization value not in parameter bounds, '+
+                           'please enter a value between min and max';
+
 procedure TFrmMLEDialog.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   i: Integer;
 begin
+  if Self.ModalResult=mrCancel then
+    Exit;
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TEdit then
       with (Components[i] as TEdit) do
@@ -129,6 +135,13 @@ begin
             SetFocus;
             raise;
           end;
+  for i := 0 to 2 do
+    if (StrToFloat(FMinComponents[i].Text)> StrToFloat(FIniComponents[i].Text)) or
+      (StrToFloat(FMaxComponents[i].Text)< StrToFloat(FIniComponents[i].Text)) then
+    begin
+      FIniComponents[i].SetFocus;
+      raise Exception.Create(rsInitParamNotInBounds);
+    end;
 end;
 
 procedure TFrmMLEDialog.FormCreate(Sender: TObject);
@@ -147,32 +160,35 @@ begin
   FMomComponents[2] := edtMomentsParam3;
 end;
 
+const
+ ff = '0.0000';
+
 procedure TFrmMLEDialog.SetMomentValues(Index: Integer; Value: Real);
 begin
   Assert((Index>=0) and (Index<=2));
   FMomentValues[Index] := Value;
-  FMomComponents[Index].Text := FormatFloat('0.0000', Value);
-  FIniComponents[Index].Text := FormatFloat('0.0000', Value);
+  FMomComponents[Index].Text := FormatFloat(ff, Value);
+  FIniComponents[Index].Text := FormatFloat(ff, Value);
   if Value>0 then
   begin
-    FMinComponents[Index].Text := FormatFloat('0.000', Value*0.2);
-    FMaxComponents[Index].Text := FormatFloat('0.000', Value*5);
+    FMinComponents[Index].Text := FormatFloat(ff, Value*0.5);
+    FMaxComponents[Index].Text := FormatFloat(ff, Value*2);
   end else begin
-    FMinComponents[Index].Text := FormatFloat('0.000', Value*5);
-    FMaxComponents[Index].Text := FormatFloat('0.000', Value*0.2);
+    FMinComponents[Index].Text := FormatFloat(ff, Value*2);
+    FMaxComponents[Index].Text := FormatFloat(ff, Value*0.5);
   end;
 end;
 
 procedure TFrmMLEDialog.SetSampleMin(Value: Real);
 begin
   FSampleMin := Value;
-  edtSampleMin.Text := FormatFloat('0.000', Value);
+  edtSampleMin.Text := FormatFloat(ff, Value);
 end;
 
 procedure TFrmMLEDialog.SetSampleMax(Value: Real);
 begin
   FSampleMax := Value;
-  edtSampleMax.Text := FormatFloat('0.000', Value);
+  edtSampleMax.Text := FormatFloat(ff, Value);
 end;
 
 procedure TFrmMLEDialog.SetDistributionName(Value: string);

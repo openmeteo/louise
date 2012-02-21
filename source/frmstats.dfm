@@ -877,6 +877,7 @@ object FrmStatistics: TFrmStatistics
           end
           object MLELine: TLineSeries
             Tag = 128
+            Active = False
             Marks.Arrow.Visible = True
             Marks.Callout.Brush.Color = clBlack
             Marks.Callout.Arrow.Visible = True
@@ -1071,7 +1072,10 @@ object FrmStatistics: TFrmStatistics
       'LM-GEV Max (k spc.) Psi '
       'LM-GEV Min (k spc.) Kappa'
       'LM-GEV Min (k spc.) Lambda'
-      'LM-GEV Min (k spc.) Psi ')
+      'LM-GEV Min (k spc.) Psi '
+      'MLE1'
+      'MLE2'
+      'MLE3')
     TabOrder = 2
     Visible = False
   end
