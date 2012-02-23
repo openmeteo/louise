@@ -716,12 +716,13 @@ procedure TFrmStatistics.mnuToAProbabilityClick(Sender: TObject);
 var
   AInterpolationValue: Real;
   AStatisticalDistribution: TStatisticalDistribution;
-  AStraight: Boolean;
+  AStraight, AMLEExists: Boolean;
   ADataList: TDataList;
-  i: Integer;
+  i, ACount: Integer;
   AString: string;
 begin
   AStraight := True;
+  AMLEExists := FMLEEstimationExists and (FMLEMonth=FMonthShowed);
   {dummy initialization, to avoid compiler warnings}
   AInterpolationValue := 0.50;
   if Sender = mnuToAProbability then
@@ -775,7 +776,10 @@ begin
     sgrdData.ColCount := 2
   else
     sgrdData.ColCount := 5;
-  sgrdData.RowCount := 28;
+  if AMLEExists then
+    sgrdData.RowCount := 29
+  else
+    sgrdData.RowCount := 28;
   sgrdData.DefaultColWidth := 60;
   sgrdData.ColWidths[0] := 200;
   if FMonthShowed>0 then
@@ -807,7 +811,10 @@ begin
     sgrdData.Cells[3,0] := 'T(Max)(y)';
     sgrdData.Cells[4,0] := 'T(Min)(y)';
   end;
-  for i := Low(pl_Distributions) to High(pl_Distributions) do
+  ACount := High(pl_Distributions);
+  if AMLEExists then
+    Inc(ACount);
+  for i := Low(pl_Distributions) to ACount do
   begin
     if FMonthShowed = 0 then
     begin
@@ -820,9 +827,14 @@ begin
     AStatisticalDistribution := nil;
     try
       try
-        AStatisticalDistribution :=
-          TStatisticalDistribution.Create(pl_Distributions[i], ADataList,
-            FGEVParameter);
+        if i<=High(pl_Distributions) then
+          AStatisticalDistribution :=
+            TStatisticalDistribution.Create(pl_Distributions[i], ADataList,
+              FGEVParameter)
+        else
+          AStatisticalDistribution :=
+            TStatisticalDistribution.Create(FMLEDistribution, ADataList,
+              FGEVParameter);
       except
         on EMathError do
         begin
@@ -837,12 +849,25 @@ begin
           raise;
       end;
       sgrdData.Cells[0,i+1] := AStatisticalDistribution.Name;
+      if i>High(pl_Distributions) then
+        sgrdData.Cells[0,i+1] := 'MLE '+sgrdData.Cells[0,i+1];
       try
-        if AStraight then
-          sgrdData.Cells[1,i+1] := MyFloatToStr(
-            AStatisticalDistribution.InvcdfValue(1-AInterpolationValue)) else
-          sgrdData.Cells[1,i+1] := MyFloatToStr(
-            AStatisticalDistribution.cdfValue(AInterpolationValue));
+        if i<=High(pl_Distributions) then
+        begin
+          if AStraight then
+            sgrdData.Cells[1,i+1] := MyFloatToStr(
+              AStatisticalDistribution.InvcdfValue(1-AInterpolationValue)) else
+            sgrdData.Cells[1,i+1] := MyFloatToStr(
+              AStatisticalDistribution.cdfValue(AInterpolationValue));
+        end else begin
+          if AStraight then
+            sgrdData.Cells[1,i+1] := MyFloatToStr(
+              AStatisticalDistribution.InvcdfValue(FMLEp1, FMLEp2, FMLEp3,
+                                                   1-AInterpolationValue)) else
+            sgrdData.Cells[1,i+1] := MyFloatToStr(
+              AStatisticalDistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
+                                                AInterpolationValue));
+        end;
       except
         sgrdData.Cells[1,i+1] := '';
       end;

@@ -63,6 +63,7 @@ type
     FMinComponents: array[0..2] of TEdit;
     FMaxComponents: array[0..2] of TEdit;
     FIniComponents: array[0..2] of TEdit;
+    FSimulationMin, FSimulationMax: Real;
     procedure SetParamNames(Index: Integer; Value: string);
     procedure SetParamCount(Value: Integer);
     procedure SetMomentValues(Index: Integer; Value: Real);
@@ -99,7 +100,7 @@ begin
     for i := 0 to ComponentCount - 1 do
       if (Components[i] is TLabel) or (Components[i] is TEdit) then
         if Components[i].Tag=3 then
-          (Components[i] as TControl).Enabled := False;
+          (Components[i] as TControl).Visible := False;
   end;
 end;
 
