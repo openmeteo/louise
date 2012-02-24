@@ -961,6 +961,10 @@ object FrmStatistics: TFrmStatistics
     object tbcParameters: TTabSheet
       Caption = 'Parameter evaluation - Forecasts'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         540
         456)

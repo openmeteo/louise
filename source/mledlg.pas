@@ -12,7 +12,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+  Dialogs, StdCtrls, statprocesses;
+
+type
+  TArrayOfReal2 = array[0..1] of Real;
 
 type
   TFrmMLEDialog = class(TForm)
@@ -51,19 +54,25 @@ type
     Label14: TLabel;
     btnCalculate: TButton;
     btnCancel: TButton;
+    GroupBox5: TGroupBox;
+    Label2: TLabel;
+    Label3: TLabel;
+    edtOptMin: TEdit;
+    edtOptMax: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure edtParam1MinChange(Sender: TObject);
   private
     FParamNames: array[0..2] of string;
     FMomentValues: array[0..2] of Real;
     FParamCount: Integer;
     FSampleMin, FSampleMax: Real;
     FDistributionName: string;
+    FDistributionType: TStatisticalDistributionType;
     FMomComponents: array[0..2] of TEdit;
     FMinComponents: array[0..2] of TEdit;
     FMaxComponents: array[0..2] of TEdit;
     FIniComponents: array[0..2] of TEdit;
-    FSimulationMin, FSimulationMax: Real;
     procedure SetParamNames(Index: Integer; Value: string);
     procedure SetParamCount(Value: Integer);
     procedure SetMomentValues(Index: Integer; Value: Real);
@@ -73,7 +82,12 @@ type
     function GetParamInivalues(Index: Integer): Real;
     function GetParamMinvalues(Index: Integer): Real;
     function GetParamMaxvalues(Index: Integer): Real;
+    function GetOptimMin(p1, p2, p3: TArrayOfReal2): Real;
+    function GetOptimMax(p1, p2, p3: TArrayOfReal2): Real;
+    procedure CalcOptimLimits(var amin, amax: Real);
   public
+    property DistributionType: TStatisticalDistributionType
+      read FDistributionType write FDistributionType;
     property ParamCount: Integer read FParamCount write SetParamCount;
     property ParamNames[Index: Integer]: string write SetParamNames;
     property MomentValues[Index: Integer]: Real write SetMomentValues;
@@ -88,6 +102,11 @@ type
 implementation
 
 {$R *.dfm}
+
+const
+  inf=1e34;
+  err=-1.23456e38;
+  ff = '0.0000';
 
 procedure TFrmMLEDialog.SetParamCount(Value: Integer);
 var
@@ -117,8 +136,42 @@ begin
 end;
 
 resourcestring
-  rsInitParamNotInBounds = 'Initialization value not in parameter bounds, '+
+  rsInitParamNotInBounds = 'Initialization value not in parameter bounds; '+
                            'please enter a value between min and max';
+
+procedure TFrmMLEDialog.edtParam1MinChange(Sender: TObject);
+var
+  AMin, AMax: Real;
+  sMin, sMax: string;
+begin
+  CalcOptimLimits(AMin, AMax);
+  if Abs(AMin-err)<0.00001e38 then
+    sMin := 'Error'
+  else if Abs(AMin+inf)<0.00001e34 then
+    sMin := ''
+  else
+    sMin := FormatFloat(ff, AMin);
+  if Abs(AMax-err)<0.00001e38 then
+    sMax := 'Error'
+  else if Abs(AMax-inf)<0.00001e34 then
+    sMax := ''
+  else
+    sMax := FormatFloat(ff, AMax);
+  edtOptMin.Text := sMin;
+  edtOptMax.Text := sMax;
+  if FSampleMin<=AMin then
+    edtOptMin.Font.Color := clRed
+  else
+    edtOptMin.Font.Color := clBlack;
+  if FSampleMax>=AMax then
+    edtOptMax.Font.Color := clRed
+  else
+    edtOptMax.Font.Color := clBlack;
+end;
+
+resourcestring
+  rsMinError = 'Minimum bound set incorectly to a value greater than the '+
+               'Maximum bound; please correct.';
 
 procedure TFrmMLEDialog.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
@@ -137,12 +190,19 @@ begin
             raise;
           end;
   for i := 0 to 2 do
+  begin
+    if StrToFloat(FMinComponents[i].Text)>StrToFloat(FMaxComponents[i].Text) then
+    begin
+      FMinComponents[i].SetFocus;
+      raise Exception.Create(rsMinError);
+    end;
     if (StrToFloat(FMinComponents[i].Text)> StrToFloat(FIniComponents[i].Text)) or
       (StrToFloat(FMaxComponents[i].Text)< StrToFloat(FIniComponents[i].Text)) then
     begin
       FIniComponents[i].SetFocus;
       raise Exception.Create(rsInitParamNotInBounds);
     end;
+  end;
 end;
 
 procedure TFrmMLEDialog.FormCreate(Sender: TObject);
@@ -160,9 +220,6 @@ begin
   FMomComponents[1] := edtMomentsParam2;
   FMomComponents[2] := edtMomentsParam3;
 end;
-
-const
- ff = '0.0000';
 
 procedure TFrmMLEDialog.SetMomentValues(Index: Integer; Value: Real);
 begin
@@ -214,6 +271,75 @@ function TFrmMLEDialog.GetParamMaxvalues(Index: Integer): Real;
 begin
   Assert((Index>=0) and (Index<=2));
   Result := StrToFloat(FMaxComponents[Index].Text);
+end;
+
+function TFrmMLEDialog.GetOptimMin(p1, p2, p3: TArrayOfReal2): Real;
+var
+  ADistribution: TStatisticalDistribution;
+  i, j, k: Integer;
+  AMin: Real;
+begin
+  try
+    Result := -inf;
+    ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
+    for i := 0 to 1 do
+      for j := 0 to 1 do
+        for k := 0 to 1 do
+        begin
+          AMin := ADistribution.GetMinXAtP(p1[i], p2[j], p3[k]);
+          if AMin>Result then
+            Result := AMin;
+        end;
+  finally
+    ADistribution.Free;
+  end;
+end;
+
+function TFrmMLEDialog.GetOptimMax(p1, p2, p3: TArrayOfReal2): Real;
+var
+  ADistribution: TStatisticalDistribution;
+  i, j, k: Integer;
+  AMax: Real;
+begin
+  try
+    Result := inf;
+    ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
+    for i := 0 to 1 do
+      for j := 0 to 1 do
+        for k := 0 to 1 do
+        begin
+          AMax := ADistribution.GetMaxXAtP(p1[i], p2[j], p3[k]);
+          if AMax<Result then
+            Result := AMax;
+        end;
+  finally
+    ADistribution.Free;
+  end;
+end;
+
+procedure TFrmMLEDialog.CalcOptimLimits(var amin, amax: Real);
+var
+  p1, p2, p3: TArrayOfReal2;
+begin
+  try
+    p1[0] := StrToFloat(FMinComponents[0].Text);
+    p2[0] := StrToFloat(FMinComponents[1].Text);
+    p3[0] := StrToFloat(FMinComponents[2].Text);
+    p1[1] := StrToFloat(FMaxComponents[0].Text);
+    p2[1] := StrToFloat(FMaxComponents[1].Text);
+    p3[1] := StrToFloat(FMaxComponents[2].Text);
+  except
+    on EConvertError do
+    begin
+      amin := err;
+      amax := err;
+      Exit;
+    end;
+    else
+      raise;
+  end;
+  amin := GetOptimMin(p1, p2, p3);
+  amax := GetOptimMax(p1, p2, p3);
 end;
 
 end.

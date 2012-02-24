@@ -984,6 +984,7 @@ begin
           SampleMax := DataList[0].Value;
           SampleMin := DataList[DataList.Count-1].Value;
         end;
+        FrmMLEDialog.DistributionType := AStatisticalDistribution.DistributionType;
         if FrmMLEDialog.ShowModal = mrCancel then
           Exit;
         with FrmMLEDialog do

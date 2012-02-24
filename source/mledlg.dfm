@@ -3,7 +3,7 @@ object FrmMLEDialog: TFrmMLEDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = 'MLE Estimation parameters'
-  ClientHeight = 372
+  ClientHeight = 415
   ClientWidth = 451
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object FrmMLEDialog: TFrmMLEDialog
   OnCreate = FormCreate
   DesignSize = (
     451
-    372)
+    415)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -207,7 +207,7 @@ object FrmMLEDialog: TFrmMLEDialog
     Top = 223
     Width = 435
     Height = 98
-    Caption = 'Optimization,  limits of parameters'
+    Caption = 'Optimization, limits of parameters'
     TabOrder = 4
     object lblLimitsParam1: TLabel
       Tag = 1
@@ -255,6 +255,7 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 0
       Text = '0'
+      OnChange = edtParam1MinChange
     end
     object edtParam2Min: TEdit
       Tag = 2
@@ -264,6 +265,7 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 1
       Text = '0'
+      OnChange = edtParam1MinChange
     end
     object edtParam3Min: TEdit
       Tag = 3
@@ -273,6 +275,7 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 2
       Text = '0'
+      OnChange = edtParam1MinChange
     end
     object edtParam1Max: TEdit
       Tag = 1
@@ -282,6 +285,7 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 3
       Text = '0'
+      OnChange = edtParam1MinChange
     end
     object edtParam2Max: TEdit
       Tag = 2
@@ -291,6 +295,7 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 4
       Text = '0'
+      OnChange = edtParam1MinChange
     end
     object edtParam3Max: TEdit
       Tag = 3
@@ -300,11 +305,12 @@ object FrmMLEDialog: TFrmMLEDialog
       Height = 21
       TabOrder = 5
       Text = '0'
+      OnChange = edtParam1MinChange
     end
   end
   object btnCalculate: TButton
     Left = 8
-    Top = 336
+    Top = 382
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -312,10 +318,11 @@ object FrmMLEDialog: TFrmMLEDialog
     Default = True
     ModalResult = 1
     TabOrder = 5
+    ExplicitTop = 401
   end
   object btnCancel: TButton
-    Left = 366
-    Top = 336
+    Left = 368
+    Top = 382
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -323,5 +330,50 @@ object FrmMLEDialog: TFrmMLEDialog
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 6
+    ExplicitTop = 401
+  end
+  object GroupBox5: TGroupBox
+    Left = 8
+    Top = 327
+    Width = 435
+    Height = 50
+    Caption = 
+      'Expected random value bounds according to the optimization limit' +
+      's of parameters'
+    TabOrder = 7
+    object Label2: TLabel
+      Left = 12
+      Top = 16
+      Width = 40
+      Height = 13
+      Caption = 'Minimum'
+    end
+    object Label3: TLabel
+      Left = 144
+      Top = 16
+      Width = 44
+      Height = 13
+      Caption = 'Maximum'
+    end
+    object edtOptMin: TEdit
+      Left = 58
+      Top = 16
+      Width = 71
+      Height = 21
+      NumbersOnly = True
+      ReadOnly = True
+      TabOrder = 0
+      Text = '0'
+    end
+    object edtOptMax: TEdit
+      Left = 194
+      Top = 16
+      Width = 71
+      Height = 21
+      NumbersOnly = True
+      ReadOnly = True
+      TabOrder = 1
+      Text = '0'
+    end
   end
 end
