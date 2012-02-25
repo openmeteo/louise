@@ -62,6 +62,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure edtParam1MinChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FParamNames: array[0..2] of string;
     FMomentValues: array[0..2] of Real;
@@ -135,10 +136,6 @@ begin
         (Components[i] as TLabel).Caption := FParamNames[Index]
 end;
 
-resourcestring
-  rsInitParamNotInBounds = 'Initialization value not in parameter bounds; '+
-                           'please enter a value between min and max';
-
 procedure TFrmMLEDialog.edtParam1MinChange(Sender: TObject);
 var
   AMin, AMax: Real;
@@ -172,10 +169,28 @@ end;
 resourcestring
   rsMinError = 'Minimum bound set incorectly to a value greater than the '+
                'Maximum bound; please correct.';
+  rsInitParamNotInBounds = 'Initialization value not in parameter bounds; '+
+                           'please enter a value between min and max';
+  rsProblemOptim = 'Optimization limits specified have some problems:';
+  rsMinLessThanMin = '- Sample Minimum is less or equal than expected minima '+
+                     'according to the optimization limits of parameters.';
+  rsMaxGreatThanMax = '- Sample Maximum is greater or equal than expected maxima '+
+                     'according to the optimization limits of parameters.';
+  rsExplanation = 'With these limits, some of the solutions for the parameters, '+
+                  'as well as the calculated optimal solution, may discard some '+
+                  'of the sample values. In this case the calculated parameters '+
+                  'will not take account the discarded values and this is could be '+
+                  'a serious error.'#13#10'Press Yes to continue in any way, No to ' +
+                  'return and to correct the limits, or, Cancel to close the window. '+
+                  #13#10#13#10'[Note than in some distributions an absolute limit for the '+
+                  'random value exists whatever the parameters are, e.g. for the Gamma ' +
+                  'CDF, random value should be always greater than zero (0).]';
 
 procedure TFrmMLEDialog.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   i: Integer;
+  AMin, AMax: Real;
+  s: string;
 begin
   if Self.ModalResult=mrCancel then
     Exit;
@@ -203,6 +218,22 @@ begin
       raise Exception.Create(rsInitParamNotInBounds);
     end;
   end;
+  CalcOptimLimits(AMin, AMax);
+  if (FSampleMin<=AMin) or (FSampleMax>=AMax) then
+  begin
+    s := rsProblemOptim;
+    if FSampleMin<=AMin then
+      s := s+#13#10+rsMinLessThanMin;
+    if FSampleMax>=AMax then
+      s := s+#13#10+rsMaxGreatThanMax;
+    s := s+#13#10+#13#10+rsExplanation;
+    case MessageDlg(s, mtWarning, mbYesNoCancel, 0, mbNo) of
+      mrNo:
+        CanClose := False;
+      mrCancel:
+        Self.ModalResult := mrCancel;
+    end;
+  end;
 end;
 
 procedure TFrmMLEDialog.FormCreate(Sender: TObject);
@@ -219,6 +250,11 @@ begin
   FMomComponents[0] := edtMomentsParam1;
   FMomComponents[1] := edtMomentsParam2;
   FMomComponents[2] := edtMomentsParam3;
+end;
+
+procedure TFrmMLEDialog.FormShow(Sender: TObject);
+begin
+  edtParam1MinChange(Sender);
 end;
 
 procedure TFrmMLEDialog.SetMomentValues(Index: Integer; Value: Real);
@@ -279,9 +315,9 @@ var
   i, j, k: Integer;
   AMin: Real;
 begin
+  ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
   try
     Result := -inf;
-    ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
     for i := 0 to 1 do
       for j := 0 to 1 do
         for k := 0 to 1 do
@@ -301,9 +337,9 @@ var
   i, j, k: Integer;
   AMax: Real;
 begin
+  ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
   try
     Result := inf;
-    ADistribution := TStatisticalDistribution.Create(FDistributionType, nil, 0);
     for i := 0 to 1 do
       for j := 0 to 1 do
         for k := 0 to 1 do

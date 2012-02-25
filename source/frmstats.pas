@@ -938,10 +938,12 @@ const
   ff = '0.00000';
 
 resourcestring
-  rsMaxLike = 'Maximum Likelihood Estimation of Distribution Parameters: '+
-              'p1=%s, p2=%s, p3=%s. For comparison, parameters estimated '+
-              'with moments method are: p1=%s, p2=%s, p3=%s. Results are '+
-              'included in parameters table as well.';
+  rsMaxLike = 'Maximum Likelihood Estimation of Distribution Parameters:'#13#10+
+              '  %s=%s, %s=%s%s'#13#10'For comparison, parameters estimated '+
+              'with moments method are: %s=%s, %s=%s%s.'#13#10+
+              '%s value(s) from the sample are discarded out '+
+              'of %s in this solution.'#13#10+
+              'Above parameters are included in parameters table as well.';
 
 procedure TFrmStatistics.mnuMLEMenuClick(Sender: TObject);
 var
@@ -949,6 +951,8 @@ var
   FrmMLEDialog: TFrmMLEDialog;
   ADataList: TDataList;
   p1, p2, p3: Real;
+  s1, s2, s3: string;
+  discarded: Integer;
   ASavedCursor: TCursor;
   s: string;
 begin
@@ -971,6 +975,8 @@ begin
           TStatisticalDistribution.Create(
             DistributionTypes[(Sender as TMenuItem).Tag], ADataList,
             FGEVParameter);
+        if ADataList.Count<=AStatisticalDistribution.ParameterCount then
+          Exit;
         with FrmMLEDialog, AStatisticalDistribution do
         begin
           DistributionName := Name;
@@ -978,6 +984,9 @@ begin
           ParamNames[0] := Param1Name;
           ParamNames[1] := Param2Name;
           ParamNames[2] := Param3Name;
+          s1 := Param1Name;
+          s2 := Param2Name;
+          s3 := Param3Name;
           MomentValues[0] := Parameter1;
           MomentValues[1] := Parameter2;
           MomentValues[2] := Parameter3;
@@ -996,19 +1005,20 @@ begin
           AStatisticalDistribution.CalculateMaxLikelihoodParams(
             ParamMinValues[0],ParamMinValues[1],ParamMinValues[2],
             ParamMaxValues[0],ParamMaxValues[1],ParamMaxValues[2],
-            p1, p2, p3);
+            p1, p2, p3, discarded);
         end;
         with AStatisticalDistribution do
           if ParameterCount=3 then
-            FmtStr(s, rsMaxLike, [FormatFloat(ff, p1),
-              FormatFloat(ff, p2), FormatFloat(ff, p3),
-              FormatFloat(ff, Parameter1), FormatFloat(ff, Parameter2),
-              FormatFloat(ff, Parameter3)])
+            FmtStr(s, rsMaxLike, [s1,FormatFloat(ff, p1), s2,
+              FormatFloat(ff, p2), ', '+s3+'='+FormatFloat(ff, p3), s1,
+              FormatFloat(ff, Parameter1), s2, FormatFloat(ff, Parameter2),
+              ', '+s3+'='+FormatFloat(ff, Parameter3), IntToStr(discarded),
+              IntToStr(ADataList.Count)])
           else
-            FmtStr(s, rsMaxLike, [FormatFloat(ff, p1),
-              FormatFloat(ff, p2), '-',
-              FormatFloat(ff, Parameter1), FormatFloat(ff, Parameter2),
-              '-']);
+            FmtStr(s, rsMaxLike, [s1, FormatFloat(ff, p1), s2,
+              FormatFloat(ff, p2), '', s1,
+              FormatFloat(ff, Parameter1), s2, FormatFloat(ff, Parameter2),
+              '', IntToStr(discarded), IntToStr(ADataList.Count)]);
         MessageDlg(s, mtInformation, [mbOK], 0);
         FMLEp1 := p1;
         FMLEp2 := p2;
@@ -1692,6 +1702,7 @@ var
   LMomentExist: Boolean;
   ADistribution: TStatisticalDistribution;
   ActualMinX: Real;
+  p1, p2, p3: Real;
 begin
   if not FAutoLeftAxisMin then
     ActualMinX := FPaperMinX else
@@ -1733,11 +1744,21 @@ begin
     try
       try
         if t<27 then
+        begin
           ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
-            ADataList, FGEVParameter)
-        else
+            ADataList, FGEVParameter);
+          p1 := ADistribution.Parameter1;
+          p2 := ADistribution.Parameter2;
+          p3 := ADistribution.Parameter3;
+        end else begin
+          if not (FMLEEstimationExists and (FMLEMonth = FMonthShowed)) then
+            Continue;
           ADistribution := TStatisticalDistribution.Create(FMLEDistribution,
             ADataList, FGEVParameter);
+          p1 := FMLEp1;
+          p2 := FMLEp2;
+          p3 := FMLEp3;
+        end;
         ADistribution.SetGEVShape(FGEVParameter);
       except
         on EMathError do
@@ -1756,28 +1777,15 @@ begin
           if (not FAutoLeftAxisMin) and (AXValue <0) then
             Continue;
           if ADistribution.IsLowerBounded then
-            if AXValue <= ADistribution.MinX then
+            if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3) then
               Continue;
           if ADistribution.IsUpperBounded then
-            if AXValue >= ADistribution.MaxX then
+            if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3) then
               Continue;
           if ADistribution.IsLMomentMethod then
             if not LMomentExist then
               Continue;
-          if t<27 then
-            AZValue := 1-ADistribution.cdfValue(AXValue)
-          else
-            if FMLEEstimationExists and (FMLEMonth = FMonthShowed) then
-            begin
-              if ADistribution.IsLowerBounded then
-                if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3) then
-                  Continue;
-              if ADistribution.IsUpperBounded then
-                if AXValue >= ADistribution.GetMaxXAtP(FMLEp1, FMLEp2,FMLEp3) then
-                  Continue;
-              AZValue := 1-ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
-                                                  AXValue);
-            end;
+          AZValue := 1-ADistribution.cdfValue(p1, p2, p3, AXValue);
 {Do this, to avoid numerical errors for Extreme XValues}
           if (AZValue>=FMinProbability) and (AZValue<=FMaxProbability) then
           begin
@@ -1805,31 +1813,16 @@ begin
             AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
               (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
           if ADistribution.IsLowerBounded then
-            if AXValue <= ADistribution.MinX+0.05 then
+            if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3)+0.05 then
               Continue;
           if ADistribution.IsUpperBounded then
-            if AXValue >= ADistribution.MaxX-0.05 then
+            if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3)-0.05 then
               Continue;
           if ADistribution.IsLMomentMethod then
             if not LMomentExist then
               Continue;
-          if t<27 then
-            AZValue := (ADistribution.cdfValue(AXValue+0.05)-
-              ADistribution.cdfValue(AXValue-0.05))/0.10
-          else
-            if FMLEEstimationExists and (FMLEMonth = FMonthShowed) then
-            begin
-              if ADistribution.IsLowerBounded then
-                if AXValue <= ADistribution.GetMinXAtP(FMLEp1, FMLEp2,FMLEp3)+0.05 then
-                  Continue;
-              if ADistribution.IsUpperBounded then
-                if AXValue >= ADistribution.GetMaxXAtP(FMLEp1, FMLEp2,FMLEp3)-0.05 then
-                  Continue;
-              AZValue := (ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
-                                                 AXValue+0.05)-
-                ADistribution.cdfValue(FMLEp1, FMLEp2, FMLEp3,
-                                       AXValue-0.05))/0.10;
-            end;
+          AZValue := (ADistribution.cdfValue(p1, p2, p3, AXValue+0.05)-
+            ADistribution.cdfValue(p1, p2, p3, AXValue-0.05))/0.10;
           ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
             ChartPDF.Series[j+1].SeriesColor);
         end; {i := 0..119}

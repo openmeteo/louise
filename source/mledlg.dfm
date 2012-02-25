@@ -15,6 +15,7 @@ object FrmMLEDialog: TFrmMLEDialog
   Position = poDesktopCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnShow = FormShow
   DesignSize = (
     451
     415)
@@ -318,7 +319,6 @@ object FrmMLEDialog: TFrmMLEDialog
     Default = True
     ModalResult = 1
     TabOrder = 5
-    ExplicitTop = 401
   end
   object btnCancel: TButton
     Left = 368
@@ -330,7 +330,6 @@ object FrmMLEDialog: TFrmMLEDialog
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 6
-    ExplicitTop = 401
   end
   object GroupBox5: TGroupBox
     Left = 8
