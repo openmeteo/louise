@@ -21,14 +21,14 @@ object FrmProcessingDialog: TFrmProcessingDialog
   object lblProcessing: TLabel
     Left = 206
     Top = 5
-    Width = 52
+    Width = 51
     Height = 13
     Caption = 'Processing'
   end
   object Label1: TLabel
     Left = 16
     Top = 64
-    Width = 55
+    Width = 57
     Height = 13
     Caption = 'Completion:'
   end
@@ -42,63 +42,63 @@ object FrmProcessingDialog: TFrmProcessingDialog
   object Label2: TLabel
     Left = 153
     Top = 64
-    Width = 3
+    Width = 4
     Height = 13
     Caption = '('
   end
   object lblCompleted: TLabel
     Left = 161
     Top = 64
-    Width = 60
+    Width = 61
     Height = 13
     Caption = 'lblCompleted'
   end
   object Label3: TLabel
     Left = 226
     Top = 64
-    Width = 100
+    Width = 66
     Height = 13
-    Caption = 'steps completed from'
+    Caption = 'steps done of'
   end
   object lblTotal: TLabel
-    Left = 344
+    Left = 312
     Top = 64
     Width = 34
     Height = 13
     Caption = 'lblTotal'
   end
   object Label4: TLabel
-    Left = 398
+    Left = 352
     Top = 64
-    Width = 3
+    Width = 9
     Height = 13
     Caption = ')'
   end
   object Label5: TLabel
     Left = 16
     Top = 83
-    Width = 116
+    Width = 121
     Height = 13
     Caption = 'Elapsed time (hh:mm:ss):'
   end
   object lblElapsed: TLabel
     Left = 206
     Top = 83
-    Width = 48
+    Width = 47
     Height = 13
     Caption = 'lblElapsed'
   end
   object Label7: TLabel
     Left = 16
     Top = 102
-    Width = 177
+    Width = 183
     Height = 13
     Caption = 'Estimated Remaining time (hh:mm:ss):'
   end
   object lblRemaining: TLabel
     Left = 206
     Top = 102
-    Width = 60
+    Width = 59
     Height = 13
     Caption = 'lblRemaining'
   end

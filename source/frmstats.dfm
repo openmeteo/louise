@@ -100,7 +100,7 @@ object FrmStatistics: TFrmStatistics
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 3
     object tbcPlots: TTabSheet
-      Caption = 'Distribution functions'
+      Caption = 'Distribution functions plots'
       DesignSize = (
         540
         456)
@@ -812,7 +812,7 @@ object FrmStatistics: TFrmStatistics
             Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clBlack
-            Title = 'Low sample limit'
+            Title = 'Prediction interval lower limit'
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -830,7 +830,7 @@ object FrmStatistics: TFrmStatistics
             Marks.Visible = False
             SeriesColor = clBlack
             ShowInLegend = False
-            Title = 'High sample limit'
+            Title = 'Prediction interval upper limit'
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -848,7 +848,7 @@ object FrmStatistics: TFrmStatistics
             Marks.Visible = False
             SeriesColor = clMaroon
             ShowInLegend = False
-            Title = 'High confidence limit'
+            Title = 'Confidence interval upper limit'
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -865,7 +865,7 @@ object FrmStatistics: TFrmStatistics
             Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clMaroon
-            Title = 'Low confidence limit'
+            Title = 'Confidence interval lower limit'
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -897,12 +897,8 @@ object FrmStatistics: TFrmStatistics
       end
     end
     object tbcHistogram: TTabSheet
-      Caption = 'Histogram - Density functions'
+      Caption = 'Histogram - Density functions plots'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object chartPDF: TChart
         Left = 3
         Top = 3
@@ -959,12 +955,8 @@ object FrmStatistics: TFrmStatistics
       end
     end
     object tbcParameters: TTabSheet
-      Caption = 'Parameter evaluation - Forecasts'
+      Caption = 'Parameter values - Forecasts'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         540
         456)
@@ -1355,7 +1347,7 @@ object FrmStatistics: TFrmStatistics
     end
     object mnuConfidence: TMenuItem
       Tag = 1
-      Caption = 'Confidence'
+      Caption = 'P&&C Intervals'
       object mnuNormalFamily: TMenuItem
         Tag = 2
         Caption = 'Normal family'
@@ -1521,7 +1513,7 @@ object FrmStatistics: TFrmStatistics
       end
     end
     object mnuMLE: TMenuItem
-      Caption = 'MLE'
+      Caption = 'Parameters MLE'
       object mnuMLENormal: TMenuItem
         Tag = 1
         Caption = 'Normal'

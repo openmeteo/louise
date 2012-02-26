@@ -1045,7 +1045,7 @@ begin
       AStatisticalDistribution.Free;
       FrmMLEDialog.Free;
     end;
-    Refresh(False);
+    Refresh(False); 
 end;
 
 {Basic points - lines checkboxes interaction}
@@ -2157,10 +2157,15 @@ end;
 
 resourcestring
   rsConfidenceIntervalLimits = 'Confidence interval limits ';
-  rsSampleLimits = 'Sample limits ';
+  rsSampleLimits = 'Prediction interval limits ';
   rsAtLeastFiveValues = 'A sample containing at least five values is required'+
     ' in order to calculate confindence limits';
   rsLMomentsUndefined = 'L moments not defined';
+  rsMCResults = '%s%% prediction interval limits for parameters are:'#13#10+
+                '%s<%s<%s, %s<%s<%s%s'#13#10#13#10+
+                '%s%% confidence interval limits for distribution parameters are:'#13#10+
+                '%s<%s<%s, %s<%s<%s%s'#13#10#13#10+
+                'Press OK if you wish to copy these values to the clipboard';
 
 procedure TFrmStatistics.DoMonteCarloSimul(ADistributionType: TStatisticalDistributionType);
 var
@@ -2175,7 +2180,7 @@ var
   MaxXValue, MinXValue: Real;
   ADistribution: TStatisticalDistribution;
   ADataList: TDataList;
-  s: string;
+  s, s1, s2, s3: string;
 begin
 {Set the basic parameters from the settings form}
   MCCount := 60000;
@@ -2231,17 +2236,17 @@ begin
   HighConfidenceLimitLine.Clear;
   LowConfidenceLimitLine.Clear;
   with chartPDF do
-    for i := SeriesCount-1 downto SeriesCount-4 do
+    for i := SeriesCount-2 downto SeriesCount-5 do
     begin
       Series[i].Clear;
       Series[i].Active := True;
     end;
   LowConfidenceLimitLine.Title := rsConfidenceIntervalLimits +
-    MyFloatToStr(MCConfidenceLevel*100)+'%';
+    FormatFloat('#.##', MCConfidenceLevel*100)+'%';
   LowSampleLimitLine.Title := rsSampleLimits +
-    MyFloatToStr(MCConfidenceLevel*100)+'%';
-  with chartPDF do Series[SeriesCount-4].Title := LowSampleLimitLine.Title;
-  with chartPDF do Series[SeriesCount-1].Title := LowConfidenceLimitLine.Title;
+    FormatFloat('#.##', MCConfidenceLevel*100)+'%';
+  with chartPDF do Series[SeriesCount-5].Title := LowSampleLimitLine.Title;
+  with chartPDF do Series[SeriesCount-2].Title := LowConfidenceLimitLine.Title;
   HighSampleLimitLine.Active := True;
   LowSampleLimitLine.Active := True;
   HighConfidenceLimitLine.Active := True;
@@ -2282,14 +2287,6 @@ begin
       HighSampleLimitLine.AddXY(AZValue,Upper,'',
         HighSampleLimitLine.SeriesColor);
       LowSampleLimitLine.AddXY(AZValue,Lower,'',LowSampleLimitLine.SeriesColor);
-      s := '';
-      for k := 0 to 11 do
-      begin
-        s := s + FloatToStr(paramlim[k])+#9;
-        if (k+1) mod 2 = 0 then s := s+#13;
-        if (k+1) mod 6 = 0 then s := s+#13;
-      end;
-      Clipboard.AsText := s;
       if i <> 0 then
       begin
         for j := 2 to 5 do
@@ -2305,8 +2302,46 @@ begin
       end;
       APrevFValue := AFValue;
     end;
+
+    with ADistribution do
+    begin
+      s1 := Param1Name;
+      s2 := Param2Name;
+      s3 := Param3Name;
+      if ParameterCount=3 then
+        FmtStr(s, rsMCResults, [FormatFloat('#.##', 100*MCConfidenceLevel),
+          FormatFloat(ff, paramlim[1]),s1,
+          FormatFloat(ff, paramlim[0]), FormatFloat(ff, paramlim[3]), s2,
+          FormatFloat(ff, paramlim[2]), ', '+FormatFloat(ff, paramlim[5])+'<'+
+          s3+'<'+FormatFloat(ff, paramlim[4]),
+          FormatFloat('#.##', 100*MCConfidenceLevel),
+          FormatFloat(ff, paramlim[7]), s1,
+          FormatFloat(ff, paramlim[6]), FormatFloat(ff, paramlim[9]), s2,
+          FormatFloat(ff, paramlim[8]), ', '+FormatFloat(ff, paramlim[11])+'<'+
+          s3+'<'+FormatFloat(ff, paramlim[10])])
+      else
+        FmtStr(s, rsMCResults, [FormatFloat('#.##', 100*MCConfidenceLevel),
+          FormatFloat(ff, paramlim[1]),s1,
+          FormatFloat(ff, paramlim[0]), FormatFloat(ff, paramlim[3]), s2,
+          FormatFloat(ff, paramlim[2]), '',
+          FormatFloat('#.##', 100*MCConfidenceLevel),
+          FormatFloat(ff, paramlim[7]), s1,
+          FormatFloat(ff, paramlim[6]), FormatFloat(ff, paramlim[9]), s2,
+          FormatFloat(ff, paramlim[8]), '']);
+    end;
+    if MessageDlg(s, mtInformation, mbOKCancel, 0, mbCancel)=mrOk then
+    begin
+      s := '';
+      for k := 0 to 11 do
+      begin
+        s := s + FloatToStr(paramlim[k])+#9;
+        if (k+1) mod 2 = 0 then s := s+#13;
+        if (k+1) mod 6 = 0 then s := s+#13;
+      end;
+      Clipboard.AsText := s;
+    end;
   except
-    for i := 1 to 4 do
+    for i := 2 to 5 do
     begin
       with Chart do Series[SeriesCount-i].Clear;
       with Chart do Series[SeriesCount-i].Active := False;
