@@ -189,6 +189,8 @@ type
     mnuMLEGEVMin: TMenuItem;
     mnuMLEPareto: TMenuItem;
     mnuMLEGalton: TMenuItem;
+    N11: TMenuItem;
+    mnuBottomAxis: TMenuItem;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure btnLogClick(Sender: TObject);
@@ -236,6 +238,7 @@ type
     procedure mnuPrintHistogramClick(Sender: TObject);
     procedure Showhistogram1Click(Sender: TObject);
     procedure mnuMLEMenuClick(Sender: TObject);
+    procedure mnuBottomAxisClick(Sender: TObject);
   private
     FPaperType: TProbabilityPaperType;
     FTimeStep: TTimeStep;
@@ -2102,6 +2105,12 @@ begin
   finally
     Screen.Cursor := ACursor;
   end;
+end;
+
+procedure TFrmStatistics.mnuBottomAxisClick(Sender: TObject);
+begin
+  (Sender as TMenuItem).Checked := not (Sender as TMenuItem).Checked;
+  Chart.BottomAxis.Labels := (Sender as TMenuItem).Checked;
 end;
 
 procedure TFrmStatistics.mnuConfidenceClick(Sender: TObject);

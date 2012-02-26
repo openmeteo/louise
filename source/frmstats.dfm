@@ -156,14 +156,15 @@ object FrmStatistics: TFrmStatistics
           BottomAxis.Automatic = False
           BottomAxis.AutomaticMaximum = False
           BottomAxis.AutomaticMinimum = False
+          BottomAxis.ExactDateTime = False
           BottomAxis.Grid.Visible = False
-          BottomAxis.Labels = False
-          BottomAxis.LabelsAngle = 90
-          BottomAxis.LabelStyle = talMark
+          BottomAxis.Increment = 1.000000000000000000
+          BottomAxis.LabelStyle = talValue
           BottomAxis.Maximum = 24.000000000000000000
           BottomAxis.MinorTickCount = 2
           BottomAxis.MinorTickLength = 0
           BottomAxis.MinorTicks.Visible = False
+          BottomAxis.Title.Visible = False
           LeftAxis.Automatic = False
           LeftAxis.AutomaticMaximum = False
           LeftAxis.AutomaticMinimum = False
@@ -184,6 +185,7 @@ object FrmStatistics: TFrmStatistics
           RightAxis.Labels = False
           RightAxis.MinorTickCount = 2
           RightAxis.MinorTicks.Visible = False
+          RightAxis.Title.Visible = False
           TopAxis.Automatic = False
           TopAxis.AutomaticMaximum = False
           TopAxis.AutomaticMinimum = False
@@ -1247,6 +1249,16 @@ object FrmStatistics: TFrmStatistics
         GroupIndex = 15
         RadioItem = True
         OnClick = mnuReturnPeriodMinClick
+      end
+      object N11: TMenuItem
+        Caption = '-'
+        GroupIndex = 15
+      end
+      object mnuBottomAxis: TMenuItem
+        Caption = 'Bottom axis k-values visible'
+        Checked = True
+        GroupIndex = 15
+        OnClick = mnuBottomAxisClick
       end
       object N7: TMenuItem
         Caption = '-'
