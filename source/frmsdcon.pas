@@ -1011,6 +1011,8 @@ var
   i, AIndex: Integer;
   ADifference, AReference: Real;
 begin
+  if AAction.Count<1 then
+    Exit;
   while lstCurves.ItemIndex > AAction.Count -1 do
     lstCurves.ItemIndex := lstCurves.ItemIndex -1;
   if DiffInSecs(AAction[lstCurves.ItemIndex].StartDate,
