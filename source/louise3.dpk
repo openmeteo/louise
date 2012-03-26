@@ -94,6 +94,7 @@ contains
   frmtswiz in 'frmtswiz.pas' {FrmTimeseriesWizard},
   frmaggr in 'frmaggr.pas' {FrmAggregationDialog},
   frmrose in 'frmrose.pas' {FrmRoseDiagram},
-  mledlg in 'mledlg.pas' {FrmMLEDialog};
+  mledlg in 'mledlg.pas' {FrmMLEDialog},
+  frmclmgr in 'frmclmgr.pas' {FrmClimacogram};
 
 end.

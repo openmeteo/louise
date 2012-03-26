@@ -210,6 +210,9 @@
 			<DCCReference Include="mledlg.pas">
 				<Form>FrmMLEDialog</Form>
 			</DCCReference>
+			<DCCReference Include="frmclmgr.pas">
+				<Form>FrmClimacogram</Form>
+			</DCCReference>
 			<DCCReference Include="tsgrid.dcr"/>
 			<DCCReference Include="strGrdOd.dcr"/>
 			<DCCReference Include="tsdialogs.dcr"/>
