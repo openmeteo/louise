@@ -5320,6 +5320,39 @@ object FrmHydroModel: TFrmHydroModel
         object mnuMidiPort: TMenuItem
           Caption = 'Midi Port'
         end
+        object mnuTempoDelay: TMenuItem
+          Caption = 'Tempo (Speed) / Delay'
+          object SuperFast0ms1: TMenuItem
+            Caption = 'Super Fast (0 ms)'
+            RadioItem = True
+            OnClick = SuperFast0ms1Click
+          end
+          object PrestoFast1ms1: TMenuItem
+            Tag = 20
+            Caption = 'Presto - Fast (20 ms)'
+            RadioItem = True
+            OnClick = SuperFast0ms1Click
+          end
+          object Allegro5msdefault1: TMenuItem
+            Tag = 120
+            Caption = 'Allegro (120 ms) - default'
+            Checked = True
+            RadioItem = True
+            OnClick = SuperFast0ms1Click
+          end
+          object Andante1: TMenuItem
+            Tag = 280
+            Caption = 'Andante (280 ms)'
+            RadioItem = True
+            OnClick = SuperFast0ms1Click
+          end
+          object Largo16ms1: TMenuItem
+            Tag = 500
+            Caption = 'Largo (0.5 s)'
+            RadioItem = True
+            OnClick = SuperFast0ms1Click
+          end
+        end
       end
       object N2: TMenuItem
         Caption = '-'

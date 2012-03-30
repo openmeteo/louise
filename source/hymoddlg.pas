@@ -249,6 +249,12 @@ type
     mnuSound: TMenuItem;
     mnuStyle: TMenuItem;
     mnuMidiPort: TMenuItem;
+    mnuTempoDelay: TMenuItem;
+    SuperFast0ms1: TMenuItem;
+    PrestoFast1ms1: TMenuItem;
+    Allegro5msdefault1: TMenuItem;
+    Andante1: TMenuItem;
+    Largo16ms1: TMenuItem;
     procedure chkPotentialEvapClick(Sender: TObject);
     procedure IFormShow(Sender: TObject);
     procedure mnuPrintClick(Sender: TObject);
@@ -272,11 +278,13 @@ type
     procedure mnuWriteParametersToFileClick(Sender: TObject);
     procedure GetSliderPosArray(SliderArray: TArrayOfInteger);
     procedure PlayMusic;
+    procedure SuperFast0ms1Click(Sender: TObject);
   private
     FPrevSliders, FCurSliders: TArrayOfInteger;
     FMusicalStyleSelected, FMidiPortSelected: Integer;
     FCommonPeriod, FMeasuredPeriod: TDateTimeList;
     FStopOptim: Boolean;
+    FTempoDelay: Integer;
     procedure RadioItemClick(Sender: TObject);
     procedure SetControlStatus;
     procedure Calculate;
@@ -679,6 +687,7 @@ begin
       Checked := True;
     end;
   mnuStyle.Items[0].Checked := True;
+  FTempoDelay := 120;
 end;
 
 procedure TFrmHydroModel.IFormDestroy(Sender: TObject);
@@ -1124,10 +1133,11 @@ procedure TFrmHydroModel.PlayMusic;
 var
   i: Integer;
 begin
-  for i := 0 to Length(FPrevSliders)-1 do
-    if FPrevSliders[i]<>FCurSliders[i] then
+  if (FMidiPortSelected>-1) and (FMusicalStyleSelected>0) then
     begin
-      if (FMidiPortSelected>-1) and (FMusicalStyleSelected>0) then
+    for i := 0 to Length(FPrevSliders)-1 do
+      if FPrevSliders[i]<>FCurSliders[i] then
+      begin
         with MusicalStyles[FMusicalStyleSelected] do
         begin
           if FPrevSliders[i]>=0 then
@@ -1136,7 +1146,9 @@ begin
           MidiOutput.Send(0, 144+Channels[i], Sounds[FCurSliders[i] div 10]+
             NotesShift[i], 100);
         end;
-    end;
+      end;
+    Sleep(FTempoDelay);
+  end;
 end;
 
 procedure TFrmHydroModel.GetCalParams(Params: TBasinSimParams);
@@ -1305,6 +1317,15 @@ begin
     end;
   finally
     TimeseriesList.Free;
+  end;
+end;
+
+procedure TFrmHydroModel.SuperFast0ms1Click(Sender: TObject);
+begin
+  with (Sender as TMenuItem) do
+  begin
+    Checked := True;
+    FTempoDelay := Tag;
   end;
 end;
 
