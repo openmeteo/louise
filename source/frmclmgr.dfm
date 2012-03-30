@@ -2,7 +2,7 @@ object FrmClimacogram: TFrmClimacogram
   Left = 0
   Top = 0
   Caption = 'Climacogram of time series'
-  ClientHeight = 465
+  ClientHeight = 469
   ClientWidth = 641
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object FrmClimacogram: TFrmClimacogram
   OnShow = FormShow
   DesignSize = (
     641
-    465)
+    469)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -32,11 +32,23 @@ object FrmClimacogram: TFrmClimacogram
     WordWrap = True
     ExplicitLeft = 495
   end
+  object Label2: TLabel
+    Left = 493
+    Top = 403
+    Width = 120
+    Height = 39
+    Anchors = [akRight, akBottom]
+    Caption = 
+      'Only time series of 50 at least records with strict time step ar' +
+      'e plotted.'
+    WordWrap = True
+  end
   object Chart: TChart
     Left = 8
     Top = 8
     Width = 479
-    Height = 449
+    Height = 453
+    AllowPanning = pmNone
     Legend.Alignment = laTop
     Legend.LegendStyle = lsSeries
     MarginTop = 5
@@ -58,7 +70,13 @@ object FrmClimacogram: TFrmClimacogram
     DepthTopAxis.AutomaticMinimum = False
     DepthTopAxis.Maximum = 0.319999999999999800
     DepthTopAxis.Minimum = -0.680000000000000200
+    LeftAxis.Automatic = False
+    LeftAxis.AutomaticMaximum = False
+    LeftAxis.AutomaticMinimum = False
+    LeftAxis.ExactDateTime = False
     LeftAxis.Logarithmic = True
+    LeftAxis.Maximum = 100.000000000000000000
+    LeftAxis.Minimum = 0.100000000000000000
     LeftAxis.MinorGrid.Color = clSilver
     LeftAxis.MinorGrid.Visible = True
     LeftAxis.MinorTickCount = 8
@@ -74,23 +92,27 @@ object FrmClimacogram: TFrmClimacogram
     TopAxis.Grid.Style = psDashDot
     TopAxis.LabelStyle = talText
     TopAxis.Logarithmic = True
+    TopAxis.MinorTicks.Visible = False
     View3D = False
     View3DOptions.Orthogonal = False
+    Zoom.Allow = False
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
+    ExplicitHeight = 449
   end
   object lstSeries: TListBox
     Left = 493
     Top = 66
     Width = 146
-    Height = 391
+    Height = 323
     Anchors = [akTop, akRight, akBottom]
     ItemHeight = 13
     MultiSelect = True
     TabOrder = 1
     OnClick = lstSeriesClick
+    ExplicitHeight = 319
   end
   object MainMenu: TMainMenu
     Left = 472
@@ -113,12 +135,13 @@ object FrmClimacogram: TFrmClimacogram
       object mnuCopyTabularData: TMenuItem
         Caption = 'Copy tabular data'
         ShortCut = 24643
+        OnClick = mnuCopyTabularDataClick
       end
     end
     object Methods1: TMenuItem
       Caption = 'Method'
       object First1: TMenuItem
-        Caption = 'Simple - single pass'
+        Caption = 'Single pass (default)'
         Checked = True
         RadioItem = True
         OnClick = First1Click
@@ -154,7 +177,7 @@ object FrmClimacogram: TFrmClimacogram
       end
     end
   end
-  object PrintDialog1: TPrintDialog
+  object PrintDialog: TPrintDialog
     Left = 472
     Top = 120
   end

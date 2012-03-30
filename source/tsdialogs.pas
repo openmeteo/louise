@@ -1539,13 +1539,34 @@ type
     function Execute: Boolean;
   end;
 
+{** Displays Climacogram graphs for time series.
+}
+  TClimacogramDialog = class(TIComponent)
+    private
+      FTimeseriesGrid: TTimeseriesGrid;
+    public
+{** Creates and initializes a TClimacogramDialog instance.
+    The Create method generates a TClimacogramDialog instance, but
+    the new dialog does not appear on the form at runtime until the Execute
+    method is called.
+    @SeeAlso <See Method=Execute>
+}
+      constructor Create(AOwner: TComponent); override;
+{** Displays the dialog.
+}
+      function Execute: Boolean;
+    published
+      property TimeseriesGrid: TTimeseriesGrid read FTimeseriesGrid
+        write FTimeseriesGrid;
+  end;
+
 implementation
 
 uses  Dialogs, frmflags, AggrDlg, RegStDlg, RngChkDlg,
   RegrDlg, RgrRsltDlg, PenmDlg, LinCombDlg,
   frmdblmass, evidfdlg, idfsetdlg, tsdblmass, hymoddlg,
   frmsd, frmstats, frmdrgts, mlttsdlg, frmdisaggr, frmtscalcparse, iform,
-  frmhydrm, frmtsarea, frmimpts, frmtswiz, frmaggr, frmrose;
+  frmhydrm, frmtsarea, frmimpts, frmtswiz, frmaggr, frmrose, frmclmgr;
 
 { TRangeCheckDialog }
 
@@ -2923,6 +2944,37 @@ begin
     end;
   finally
     FrmRoseDiagram.Free;
+  end;
+end;
+
+{ TClimacogramDialog }
+
+constructor TClimacogramDialog.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FTimeseriesGrid := nil;
+end;
+
+function TClimacogramDialog.Execute: Boolean;
+var
+  FrmClimacogram: TFrmClimacogram;
+begin
+  Assert(FTimeseriesGrid <> nil);
+  FrmClimacogram := nil;
+  try
+    FrmClimacogram := TFrmClimacogram.Create(self);
+    Result := False;
+    with FrmClimacogram do
+    begin
+      TimeseriesGrid := FTimeseriesGrid;
+      HelpType := FHelpType;
+      HelpKeyword := FHelpKeyword;
+      HelpFile := FHelpFile;
+      HelpContext := FHelpContext;
+      Result := (ShowModal = mrOK);
+    end;
+  finally
+    FrmClimacogram.Free;
   end;
 end;
 

@@ -51,7 +51,8 @@ type
     mnuCopyChart: TMenuItem;
     mnuCopyTabularData: TMenuItem;
     mnuPrintChart: TMenuItem;
-    PrintDialog1: TPrintDialog;
+    PrintDialog: TPrintDialog;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lstSeriesClick(Sender: TObject);
@@ -59,14 +60,17 @@ type
     procedure mnuOneToTenClick(Sender: TObject);
     procedure mnuPrintChartClick(Sender: TObject);
     procedure mnuCopyChartClick(Sender: TObject);
+    procedure mnuCopyTabularDataClick(Sender: TObject);
   private
     FTimeseriesGrid: TTimeseriesGrid;
+    FXMin, FXMax, FYMin, FYMax: Double;
     procedure SetTimeseriesGrid(AValue: TTimeseriesGrid);
     procedure PrepareLineSeries(Timeseries: TTimeseries; Series: TLineSeries;
                                 all: Boolean);
     procedure AddLineSeries(Timeseries: TTimeseries; Chart: TChart;
                                 all: Boolean; seriesNo: Integer);
     procedure AddPeriodMarkers;
+    procedure AddDiagonalLine;
     procedure FillList;
     procedure DrawLines;
     procedure Refresh;
@@ -79,7 +83,7 @@ implementation
 
 {$R *.dfm}
 
-uses climacgr, math;
+uses climacgr, math, Clipbrd;
 
 procedure TFrmClimacogram.FormCreate(Sender: TObject);
 begin
@@ -113,6 +117,62 @@ begin
   Chart.CopyToClipboardMetafile(True);
 end;
 
+procedure TFrmClimacogram.mnuCopyTabularDataClick(Sender: TObject);
+var
+  i, j, multiplier: Integer;
+  s, aLine: string;
+  Flag: Boolean;
+  scale, stdev, baseScale: Real;
+  Timeseries: TTimeseries;
+begin
+  s := '';
+  aLine := '';
+  for i := 0 to Chart.SeriesCount-1 do
+    if Chart.Series[i].Tag>=0 then
+      aLine := aLine+Chart.Series[i].Title+#9+#9+#9;
+  s := s+TrimRight(aLine)+#10;
+  aLine := '';
+  for i := 0 to Chart.SeriesCount-1 do
+    if Chart.Series[i].Tag>=0 then
+      aLine := aLine+'scale(days)'+#9+'multiplier'+#9+'stdev'+#9;
+  s := s+TrimRight(aLine)+#10;
+  j := 0;
+  while True do
+  begin
+    Flag := False;
+    aLine := '';
+    for i := 0 to Chart.SeriesCount-1 do
+      with Chart.Series[i] do
+      begin
+        if Tag<0 then Continue;
+        if j>=Count then
+        begin
+          aLine := aLine+#9+#9+#9;
+          Continue;
+        end;
+        Flag := True;
+        scale := XValue[j];
+        stdev := YValue[j];
+        baseScale := 1;
+        Timeseries := TTimeseries(lstSeries.Items.Objects[Tag]);
+        if Timeseries.TimeStep.LengthMinutes>0 then
+          baseScale := Timeseries.TimeStep.LengthMinutes/1440
+        else if Timeseries.TimeStep.LengthMonths>0 then
+          baseScale := Timeseries.TimeStep.LengthMonths*30.436875
+        else
+          Assert(False);
+        multiplier := Round(scale/baseScale);
+        aLine := aLine+FloatToStr(scale)+#9+IntToStr(multiplier)+#9+
+                       FloatToStr(stdev)+#9;
+      end;
+    s := s+TrimRight(aLine);
+    if not Flag then Break;
+    s := s+#10;
+    Inc(j);
+  end;
+  Clipboard.AsText := TrimRight(s);
+end;
+
 procedure TFrmClimacogram.mnuOneToTenClick(Sender: TObject);
 begin
   (Sender as TMenuItem).Checked := True;
@@ -121,7 +181,7 @@ end;
 
 procedure TFrmClimacogram.mnuPrintChartClick(Sender: TObject);
 begin
-  if PrintDialog1.Execute then
+  if PrintDialog.Execute then
     Chart.Print;
 end;
 
@@ -135,6 +195,10 @@ var
   i: Integer;
   ACursor: TCursor;
 begin
+  FXMin := 1e37;
+  FYMin := 1e37;
+  FXMax := 0;
+  FYMax := 0;
   ACursor := Screen.Cursor;
   Chart.RemoveAllSeries;
   try
@@ -154,7 +218,10 @@ begin
   finally
     Screen.Cursor := ACursor;
   end;
-    AddPeriodMarkers;
+  if (FXMax<FXMin) or (FYMax<FYMin) then Exit;
+  Chart.LeftAxis.SetMinMax(Power(10, Floor(Log10(FYMin))), FYMax);
+  AddPeriodMarkers;
+  AddDiagonalLine;
 end;
 
 procedure TFrmClimacogram.FillList;
@@ -186,6 +253,7 @@ var
   x, y, baseScale: Real;
   MaxSpan: Integer;
 begin
+  MaxSpan := 10;
   if mnuOneToTen.Checked then
     MaxSpan := 10
   else if mnuOneToFive.Checked then
@@ -196,6 +264,7 @@ begin
     Assert(False);
   scaleFunction := scaleFunctions[all];
   maxScale := Timeseries.Count div MaxSpan;
+  baseScale := 1;
   if Timeseries.TimeStep.LengthMinutes>0 then
     baseScale := Timeseries.TimeStep.LengthMinutes/1440
   else if Timeseries.TimeStep.LengthMonths>0 then
@@ -209,7 +278,13 @@ begin
     x := baseScale * fac;
     y := scaleFunction(Timeseries, fac);
     if y>=0 then
+    begin
       Series.AddXY(x, y);
+      FXMin := Min(FXMin, x);
+      FXMax := Max(FXMax, x);
+      FYMin := Min(FYMin, y);
+      FYMax := Max(FYMax, y);
+    end;
     Inc(i);
     if i<16 then
       fac := factors[i]
@@ -231,7 +306,11 @@ begin
     if s='' then s := IntToStr(seriesNo+1)+':';
     if all then s := s+' (multi pass)';
     ASeries.Title := s;
+    ASeries.Pen.Width := 2;
     ASeries.Tag := seriesNo;
+    ASeries.Shadow.VertSize := 2;
+    ASeries.Shadow.HorizSize := 1;
+    ASeries.Shadow.Color := RGB(210,210,190);
     PrepareLineSeries(Timeseries, ASeries, all);
     Chart.AddSeries(ASeries);
     ASeries := nil;
@@ -244,18 +323,10 @@ procedure TFrmClimacogram.AddPeriodMarkers;
 var
   ASeries: TPointSeries;
   i: Integer;
-  AMin, AMax: Real;
+  AMin, AMax: Double;
 begin
-  AMin := 1e37;
-  AMax := 0;
-  for i := 0 to Chart.SeriesCount - 1 do
-    with Chart.Series[i] do
-      if XValues.Count>0 then
-      begin
-        AMin := min(XValues.MinValue, AMin);
-        AMax := max(XValues.MaxValue, AMax)
-      end;
-  if AMin>AMax then
+  Chart.BottomAxis.CalcMinMax(AMin, AMax);
+  if Abs(AMin-AMax)<0.01 then
     Exit;
   ASeries := nil;
   try
@@ -268,6 +339,7 @@ begin
     Chart.Axes.Top.Maximum := AMax;
     Chart.Axes.Top.Minimum := AMin;
     ASeries.HorizAxis := aTopAxis;
+    ASeries.Tag := -1;
     for i := 0 to Length(scalePoints) - 1 do
       with scalePoints[i] do
         if (mult>=AMin) and (mult<=AMax) then
@@ -277,7 +349,28 @@ begin
   finally
     ASeries.Free;
   end;
+end;
 
+procedure TFrmClimacogram.AddDiagonalLine;
+var
+  ASeries: TLineSeries;
+  H: Double;
+begin
+  ASeries := nil;
+  try
+    ASeries := TLineSeries.Create(Chart);
+    ASeries.Title := 'slope=-0.5';
+    ASeries.Color := clLtGray;
+    ASeries.Visible := True;
+    ASeries.Tag := -1;
+    H := Chart.LeftAxis.Minimum*sqrt(FXMax/FXMin);
+    ASeries.AddXY(FXMin, Chart.LeftAxis.Minimum+H);
+    ASeries.AddXY(FXMax, Chart.LeftAxis.Minimum);
+    Chart.AddSeries(ASeries);
+    ASeries := nil;
+  finally
+    ASeries.Free;
+  end;
 end;
 
 end.
