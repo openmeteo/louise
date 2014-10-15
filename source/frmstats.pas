@@ -13,9 +13,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  iform, ts, Dates, Math, TeEngine, Series, ExtCtrls, TeeProcs, Chart,
-  ComCtrls, Menus, StdCtrls, Dialogs, Grids, frmprcsdlg, mcsettingsdlg,
-  statprocesses, StrGrdOd;
+  iform, ts, Dates, Math, VclTee.TeEngine, VclTee.Series, ExtCtrls,
+  VclTee.TeeProcs, VclTee.Chart, ComCtrls, Menus, StdCtrls, Dialogs, Grids,
+  frmprcsdlg, mcsettingsdlg, statprocesses, StrGrdOd, VclTee.TeeGDIPlus;
 
 type
   TArrayOfReal = array of Real;
@@ -786,7 +786,7 @@ begin
   sgrdData.DefaultColWidth := 60;
   sgrdData.ColWidths[0] := 200;
   if FMonthShowed>0 then
-    sgrdData.Cells[0,0] := LongMonthNames[FMonthShowed]+' - '
+    sgrdData.Cells[0,0] := FormatSettings.LongMonthNames[FMonthShowed]+' - '
   else
     sgrdData.Cells[0,0] := rsAllData+' - ';
   if Sender = mnuToAProbability then
@@ -1125,7 +1125,7 @@ begin
     FMonthShowed := 10;
     tbcMonths.Tabs.Clear;
     for i := 1 to 12 do
-      tbcMonths.Tabs.Add(LongMonthNames[MonthConvert(i)]);
+      tbcMonths.Tabs.Add(FormatSettings.LongMonthNames[MonthConvert(i)]);
     tbcMonths.Tabs.Add(rsAllData);
     tbcMonths.TabIndex := 0;
   end;
@@ -1240,7 +1240,7 @@ begin
 {Set column titles}
     if i>0 then
       sgrdData.Cells[MonthConvert(i),0] :=
-        LongMonthNames[i]
+        FormatSettings.LongMonthNames[i]
     else
       sgrdData.Cells[MonthConvert(i),0] := rsAllData;
     sgrdData.Cells[0,0] := '';
@@ -1728,7 +1728,7 @@ begin
     LMomentExist := FMonthlyDataList.Months[FMonthShowed].LMomentExist;
     ADataList := TDataList(FMonthlyDataList.Months[FMonthShowed]);
     chartPDF.Title.Text.Text := rsPDFTitle + ' - ' + rsSampleConsistingOf +
-      LongMonthNames[FMonthShowed];
+      FormatSettings.LongMonthNames[FMonthShowed];
   end;
 {Do not plot if StdDev <= 0, occured by exception}
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
@@ -2571,7 +2571,8 @@ begin
   if FMonthShowed =0 then
     sgrdData.Cells[0,0] := rsXSqTest+rsAllData
   else
-    sgrdData.Cells[0,0] := rsXSqTest+LongMonthNames[FMonthShowed];
+    sgrdData.Cells[0,0] := rsXSqTest
+      + FormatSettings.LongMonthNames[FMonthShowed];
   sgrdData.ColWidths[0] := 190;
   sgrdData.ColWidths[1] := 70;
   sgrdData.ColWidths[2] := 70;
@@ -2664,7 +2665,8 @@ begin
   if FMonthShowed =0 then
     sgrdData.Cells[0,0] := rsKolmogorovSmirnovTest+rsAllData
   else
-    sgrdData.Cells[0,0] := rsKolmogorovSmirnovTest+LongMonthNames[FMonthShowed];
+    sgrdData.Cells[0,0] := rsKolmogorovSmirnovTest
+      + FormatSettings.LongMonthNames[FMonthShowed];
   sgrdData.ColWidths[0] := 190;
   sgrdData.ColWidths[1] := 70;
   sgrdData.ColWidths[2] := 70;

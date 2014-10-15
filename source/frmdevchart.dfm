@@ -28,26 +28,33 @@ object FrmDeviationChart: TFrmDeviationChart
     Title.Text.Strings = (
       'TChart')
     Title.Visible = False
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.LabelsOnAxis = False
     BottomAxis.LabelStyle = talValue
     BottomAxis.TickOnLabelsOnly = False
     BottomAxis.Title.Caption = 'Independent variable'
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Title.Caption = 'Dependent variable'
+    RightAxis.LabelsFormat.TextAlignment = taCenter
     RightAxis.Visible = False
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     TopAxis.Visible = False
     View3D = False
     Zoom.Pen.Color = clMedGray
+    Zoom.Pen.Mode = pmNotXor
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
     object seriesLine: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clBlack
       Title = 'Line'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -57,9 +64,6 @@ object FrmDeviationChart: TFrmDeviationChart
       YValues.Order = loNone
     end
     object seriesPoints: TPointSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clTeal
       Title = 'Points'

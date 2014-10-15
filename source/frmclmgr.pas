@@ -14,8 +14,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, tsgrid, ts, ExtCtrls, TeeProcs, TeEngine, Chart, Series, StdCtrls,
-  Menus;
+  Dialogs, tsgrid, ts, ExtCtrls, VclTee.TeeProcs, VclTee.TeEngine, VclTee.Chart,
+  VclTee.Series, StdCtrls,
+  Menus, VclTee.TeeGDIPlus;
 
 type
   TTimeScale = record

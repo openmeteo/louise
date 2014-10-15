@@ -24547,41 +24547,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
     ParentFont = False
     Transparent = True
   end
-  object TIShape
-    Left = 300
-    Top = 344
-    Width = 0
-    Height = 65
-    Shape = stlLineTLRB
-  end
-  object Line1: TIShape
-    Left = 295
-    Top = 345
-    Width = 15
-    Height = 2
-    Pen.Width = 2
-  end
-  object Line2: TIShape
-    Left = 308
-    Top = 345
-    Width = 2
-    Height = 90
-    Pen.Width = 2
-  end
-  object Line4: TIShape
-    Left = 295
-    Top = 498
-    Width = 15
-    Height = 2
-    Pen.Width = 2
-  end
-  object Line3: TIShape
-    Left = 308
-    Top = 410
-    Width = 2
-    Height = 90
-    Pen.Width = 2
-  end
   object lblAggregationMode: TLabel
     Left = 140
     Top = 555
@@ -24626,7 +24591,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
       Width = 87
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 0
       Text = 'Beginning of'
@@ -24672,7 +24636,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
       Width = 87
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 32
       TabOrder = 1
       Text = 'End of'
@@ -24718,7 +24681,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
       Width = 126
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 2
       Text = '1'
@@ -24743,7 +24705,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
       Width = 126
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 11
       TabOrder = 3
       Text = '12'
@@ -25076,7 +25037,6 @@ object FrmAggregationDialog: TFrmAggregationDialog
       Top = 36
       Width = 145
       Height = 21
-      ItemHeight = 13
       TabOrder = 3
     end
     object edtMissingValuesAllowed: TEdit

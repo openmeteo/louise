@@ -65,38 +65,44 @@ object FrmRoseDiagram: TFrmRoseDiagram
     BottomAxis.AutomaticMaximum = False
     BottomAxis.AutomaticMinimum = False
     BottomAxis.Grid.Visible = False
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Maximum = 10.000000000000000000
     BottomAxis.Minimum = -10.000000000000000000
     BottomAxis.PositionPercent = 50.000000000000000000
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Automatic = False
     LeftAxis.AutomaticMaximum = False
     LeftAxis.AutomaticMinimum = False
     LeftAxis.Grid.Visible = False
     LeftAxis.Labels = False
+    LeftAxis.LabelsFormat.Visible = False
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Maximum = 10.000000000000000000
     LeftAxis.Minimum = -10.000000000000000000
     LeftAxis.PositionPercent = 50.000000000000000000
     RightAxis.Automatic = False
     RightAxis.AutomaticMinimum = False
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     View3DWalls = False
     Zoom.Allow = False
+    Zoom.Pen.Mode = pmNotXor
     OnAfterDraw = ChartBeforeDrawSeries
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
+    DefaultCanvas = 'TGDIPlusCanvas'
     PrintMargins = (
       25
       15
       25
       15)
+    ColorPaletteIndex = 13
     object Series5: TBarSeries
       Active = False
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = True
-      Gradient.Direction = gdTopBottom
       XValues.Name = 'X'
       XValues.Order = loAscending
       YValues.Name = 'Bar'
@@ -325,10 +331,5 @@ object FrmRoseDiagram: TFrmRoseDiagram
         OnClick = mnuBellowThresholdStatsClick
       end
     end
-  end
-  object StatisticsForm: TStatisticsForm
-    HYearOrigin = 10
-    Left = 464
-    Top = 256
   end
 end

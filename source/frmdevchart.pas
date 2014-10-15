@@ -12,8 +12,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, tsprocess, ExtCtrls, TeeProcs, TeEngine, Chart, StdCtrls, Series,
-  Menus;
+  Dialogs, tsprocess, ExtCtrls, VclTee.TeeProcs, VclTee.TeEngine, VclTee.Chart,
+  StdCtrls, VclTee.Series, Menus, VclTee.TeeGDIPlus;
 
 type
   TDeviationChartCoefs = array of Real;

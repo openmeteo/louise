@@ -13,9 +13,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-    Dialogs, ExtCtrls, Tabs, TeEngine, Series, TeeProcs, Chart, frmhydxs,
-    tshydraulics, StdCtrls, Math, Menus, contnrs, Dates, Mask, uiutils,
-    ts, inifiles, istrutils, Grids, ComCtrls;
+    Dialogs, ExtCtrls, Tabs, VclTee.TeEngine, VclTee.Series, VclTee.TeeProcs,
+    VclTee.Chart, frmhydxs, tshydraulics, StdCtrls, Math, Menus, contnrs, Dates,
+    Mask, uiutils, ts, inifiles, istrutils, Grids, ComCtrls, VclTee.TeeGDIPlus;
 
 const
   SectionsCount = 10;
@@ -1269,11 +1269,11 @@ SkipLoop:
 begin
   AMemIniFile := nil;
   AValueList := nil;
-  ADecimalSeparator := SysUtils.DecimalSeparator;
+  ADecimalSeparator := SysUtils.FormatSettings.DecimalSeparator;
   try
     AValueList := TStringList.Create;
     ResetAll;
-    SysUtils.DecimalSeparator := '.';
+    SysUtils.FormatSettings.DecimalSeparator := '.';
     AMemIniFile := TMemIniFile.Create(AFileName, TEncoding.UTF8);
     ReadGeneralSection;
     ReadXSections;
@@ -1281,7 +1281,7 @@ begin
     ReadSlices;
     ReadMeasurments;
   finally
-    SysUtils.DecimalSeparator := ADecimalSeparator;
+    SysUtils.FormatSettings.DecimalSeparator := ADecimalSeparator;
     AMemIniFile.Free;
     AValueList.Free;
   end;
@@ -1390,16 +1390,16 @@ var
 
 begin
   AMemIniFile := nil;
-  ADecimalSeparator := SysUtils.DecimalSeparator;
+  ADecimalSeparator := SysUtils.FormatSettings.DecimalSeparator;
   try
-    SysUtils.DecimalSeparator := '.';
+    SysUtils.FormatSettings.DecimalSeparator := '.';
     AMemIniFile := TMemIniFile.Create(AFileName, TEncoding.UTF8);
     WriteGeneralSection;
     WriteXSections;
     WriteSessions;
     AMemIniFile.UpdateFile;
   finally
-    SysUtils.DecimalSeparator := ADecimalSeparator;
+    SysUtils.FormatSettings.DecimalSeparator := ADecimalSeparator;
     AMemIniFile.Free;
   end;
 end;

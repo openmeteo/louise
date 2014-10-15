@@ -438,7 +438,8 @@ begin
     with TimeZonesArray[i] do
       cmbTimeZone.Items.Add(Abbrev+' (UTC'+ AddPlusSign(Offset) +') '+ Descr);
   for i := 1 to 12 do
-    cmbHydrologicalYearOrigin.Items.Add(SysUtils.LongMonthNames[i]);
+    cmbHydrologicalYearOrigin.Items.Add(
+      SysUtils.FormatSettings.LongMonthNames[i]);
   cmbHydrologicalYearOrigin.ItemIndex := 9;
   for i := 0 to High(ButtonsCategories) do
     with btnsTimeSteps.Categories do

@@ -13,9 +13,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ToolWin, ComCtrls, ExtCtrls, TeeProcs, TeEngine, Chart,
-  interpol, Series, contnrs, ImgList, StdCtrls, Grids, GanttCh, tsgrid,
-  tshydraulics, StrGrdOd;
+  Menus, ToolWin, ComCtrls, ExtCtrls, VclTee.TeeProcs, VclTee.TeEngine,
+  VclTee.Chart, interpol, VclTee.Series, contnrs, ImgList, StdCtrls, Grids,
+  VclTee.GanttCh, tsgrid, tshydraulics, StrGrdOd, VclTee.TeeGDIPlus;
 
 type
   EMyError = class(Exception);

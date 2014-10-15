@@ -13,8 +13,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, tsprocess, TeEngine, Series, ExtCtrls, TeeProcs, Chart,
-  ImgList, ComCtrls, ToolWin, Menus, Dates, contnrs, tsdblmass;
+  StdCtrls, tsprocess, VclTee.TeEngine, VclTee.Series, ExtCtrls,
+  VclTee.TeeProcs, VclTee.Chart, ImgList, ComCtrls, ToolWin, Menus, Dates,
+  contnrs, tsdblmass, VclTee.TeeGDIPlus;
 
 type
   TDoubleMassStatus = (dbmsNormal, dbmsMove, dbmsRotate, dbmsSeekMove,

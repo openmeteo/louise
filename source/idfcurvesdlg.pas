@@ -12,8 +12,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, tsidf, statprocesses, TeEngine, Series, ExtCtrls, TeeProcs,
-  Chart, ComCtrls, StdCtrls, Grids, StrGrdOd, frmprcsdlg;
+  Menus, tsidf, statprocesses, VclTee.TeEngine, VclTee.Series, ExtCtrls,
+  VclTee.TeeProcs, VclTee.Chart, ComCtrls, StdCtrls, Grids, StrGrdOd,
+  frmprcsdlg, VclTee.TeeGDIPlus;
 
 type
   TFrmIDFCurves = class(TForm)

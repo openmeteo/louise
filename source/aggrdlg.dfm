@@ -121,7 +121,6 @@ object FrmAggregation: TFrmAggregation
     Top = 59
     Width = 123
     Height = 21
-    ItemHeight = 13
     TabOrder = 3
   end
   object chkSeasonal: TCheckBox
@@ -139,7 +138,6 @@ object FrmAggregation: TFrmAggregation
     Width = 70
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 8
   end
   object cmbTo: TComboBox
@@ -148,7 +146,6 @@ object FrmAggregation: TFrmAggregation
     Width = 70
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 9
   end
 end

@@ -13,9 +13,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Menus, ToolWin, ComCtrls, ExtCtrls, TeeProcs, TeEngine, Chart,
-  interpol, Series, contnrs, ImgList, StdCtrls, Grids, GanttCh, tsgrid,
-  StrGrdOd, genopts;
+  Menus, ToolWin, ComCtrls, ExtCtrls, VclTee.TeeProcs, VclTee.TeEngine,
+  VclTee.Chart, interpol, contnrs, ImgList, StdCtrls, Grids, VclTee.GanttCh,
+  tsgrid, StrGrdOd, genopts, VclTee.TeeGDIPlus, VCLTee.Series;
 
 const Colors: array [0..7] of TColor = (clBlue, clRed, clGreen, clPurple,
   clDkGray, clMaroon, clNavy, clOlive);
@@ -542,7 +542,7 @@ begin
         AMenuItem := nil;
         try
           AMenuItem := TMenuItem.Create(Menus[i]);
-          AMenuItem.Caption := LongMonthNames[j+1];
+          AMenuItem.Caption := FormatSettings.LongMonthNames[j+1];
           AMenuItem.Tag := j+1;
           AMenuItem.RadioItem := True;
           AMenuItem.GroupIndex := 151+i;

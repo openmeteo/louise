@@ -12,8 +12,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, StdCtrls, Menus, ComCtrls, tsgrid, TeeProcs, TeEngine,
-  Chart, Series, hydromodel, ts, dates, midi;
+  ExtCtrls, StdCtrls, Menus, ComCtrls, tsgrid, VclTee.TeeProcs,
+  VclTee.TeEngine, VclTee.Chart, VclTee.Series, hydromodel, ts, dates, midi,
+  VclTee.TeeGDIPlus;
 
 type
 
@@ -1341,8 +1342,8 @@ procedure TFrmHydroModel.DecodeText(AText: string; ANameValueSeparator,
   begin
     if AValue='' then Exit;
     if AComponent is TEdit then
-      TEdit(AComponent).Text :=
-        ReplaceStr(AValue, ADecimalSeparator, SysUtils.DecimalSeparator)
+      TEdit(AComponent).Text := ReplaceStr(AValue, ADecimalSeparator,
+        SysUtils.FormatSettings.DecimalSeparator)
     else if AComponent is TCheckBox then
       TCheckBox(AComponent).Checked := StrToBool(AValue)
     else
@@ -1375,7 +1376,8 @@ function TFrmHydroModel.EncodeText(ANameValueSeparator,
     Result := '';
     if AComponent is TEdit then
       Result := AName + ANameValueSeparator +
-        ReplaceStr( TEdit(AComponent).Text, SysUtils.DecimalSeparator,
+        ReplaceStr(TEdit(AComponent).Text,
+          SysUtils.FormatSettings.DecimalSeparator,
           ADecimalSeparator)
     else if AComponent is TCheckBox then
       Result := AName + ANameValueSeparator +
@@ -1405,7 +1407,8 @@ begin
   try
     AStringList := TStringList.Create;
     AStringList.NameValueSeparator := #9;
-    AStringList.Text := EncodeText(#9, SysUtils.DecimalSeparator);
+    AStringList.Text := EncodeText(#9,
+      SysUtils.FormatSettings.DecimalSeparator);
     Clipboard.AsText := AStringList.Text;
   finally
     AStringList.Free;
@@ -1414,7 +1417,7 @@ end;
 
 procedure TFrmHydroModel.mnuPasteValuesClick(Sender: TObject);
 begin
-  DecodeText(Clipboard.AsText, #9, SysUtils.DecimalSeparator);
+  DecodeText(Clipboard.AsText, #9, SysUtils.FormatSettings.DecimalSeparator);
 end;
 
 procedure TFrmHydroModel.mnuOpenParametersFromFileClick(Sender: TObject);

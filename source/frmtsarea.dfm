@@ -222,16 +222,22 @@ object FrmArealIntegration: TFrmArealIntegration
     MarginTop = 0
     Title.Text.Strings = (
       '')
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Title.Caption = 'Rainfall (mm)'
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Title.Caption = 'Altitude (m)'
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     Color = clWhite
     TabOrder = 4
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
     object seriesMeasures: TPointSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clBlue
       ShowInLegend = False
@@ -246,13 +252,11 @@ object FrmArealIntegration: TFrmArealIntegration
       YValues.Order = loNone
     end
     object seriesSlope: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clMaroon
       ShowInLegend = False
       Title = 'Slope'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -262,12 +266,10 @@ object FrmArealIntegration: TFrmArealIntegration
       YValues.Order = loNone
     end
     object seriesMeanBasinAltitude: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Shadow.Color = 8487297
       Marks.Visible = False
       Title = 'Mean basin altitude'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -277,11 +279,9 @@ object FrmArealIntegration: TFrmArealIntegration
       YValues.Order = loNone
     end
     object seriesMeanStationAltitude: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       Title = 'Mean station altitude'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False

@@ -6,6 +6,7 @@ package louise3;
 {$R 'tsdialogs.dcr'}
 {$R 'OdURLLabel.dcr'}
 {$R 'OdAboutInfo.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -27,6 +28,8 @@ package louise3;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'LoUISE - Library of User Interface Special Edition'}
 {$RUNONLY}
 {$IMPLICITBUILD ON}

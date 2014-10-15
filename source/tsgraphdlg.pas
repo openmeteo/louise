@@ -12,8 +12,9 @@ interface
 
 uses
   WinTypes, WinProcs, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs,  StdCtrls, ExtCtrls, TeEngine, TeeProcs, Chart, Series, tsgrid, Ts,
-  Menus, contnrs, ToolWin, ComCtrls, ImgList;
+  Dialogs,  StdCtrls, ExtCtrls, VclTee.TeEngine, VclTee.TeeProcs, VclTee.Chart,
+  VclTee.Series, tsgrid, Ts, Menus, contnrs, ToolWin, ComCtrls, ImgList,
+  VclTee.TeeGDIPlus;
 
 type
   EIncompatible = class (Exception);
@@ -167,7 +168,7 @@ begin
   FLineSeries.Active := True;
   FBarSeries.Active := False;
   FSeriesType := tsgtLine;
-  FBarSeries.MultiBar := series.mbNone;
+  FBarSeries.MultiBar := VclTee.Series.mbNone;
   FSeriesColor := clDefault;
   FTitle := '';
 end;
@@ -192,7 +193,7 @@ begin
   FBarSeries.Active := (FSeriesType = tsgtSideBar) or
     (FSeriesType = tsgtStackedBar);
   if FSeriesType = tsgtStackedBar then
-    FBarSeries.MultiBar := series.mbNone;
+    FBarSeries.MultiBar := VclTee.Series.mbNone;
   if FSeriesType = tsgtSideBar then
     FBarSeries.MultiBar := mbSide;
 end;

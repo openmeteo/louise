@@ -32,7 +32,6 @@ object FrmTSeriesGraph: TFrmTSeriesGraph
     Hint = 
       'Drag with left mouse button from left to bottom right to zoom, d' +
       'rag with right button to move the graph (pan)'
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Gradient.EndColor = 16777088
     Legend.Alignment = laTop
@@ -47,16 +46,23 @@ object FrmTSeriesGraph: TFrmTSeriesGraph
     OnUndoZoom = chartTSGraphUndoZoom
     OnZoom = chartTSGraphZoom
     BottomAxis.DateTimeFormat = 'dd/MM/yyyy'
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.LabelsSeparation = 50
     BottomAxis.Title.Font.Charset = GREEK_CHARSET
     BottomAxis.Title.Font.Name = 'Tahoma'
     Chart3DPercent = 35
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Title.Font.Charset = GREEK_CHARSET
     LeftAxis.Title.Font.Name = 'Tahoma'
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     Zoom.Animated = True
     Zoom.AnimatedSteps = 4
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     BevelOuter = bvNone
     Color = clWhite
     ParentShowHint = False
@@ -64,6 +70,8 @@ object FrmTSeriesGraph: TFrmTSeriesGraph
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
     OnResize = chartTSGraphZoom
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
   end
   object ToolBar: TToolBar
     Left = 0
@@ -320,7 +328,7 @@ object FrmTSeriesGraph: TFrmTSeriesGraph
     Left = 376
     Top = 64
     Bitmap = {
-      494C01010A000E00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A000E00080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000008442210084422100844221008442210084422100844221000000

@@ -159,43 +159,47 @@ object FrmHydrXSections: TFrmHydrXSections
     Top = 40
     Width = 449
     Height = 409
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Legend.Visible = False
-    Title.AdjustFrame = False
     Title.Text.Strings = (
       'TChart')
     Title.Visible = False
+    Title.AdjustFrame = False
     BottomAxis.Automatic = False
     BottomAxis.AutomaticMaximum = False
     BottomAxis.AutomaticMinimum = False
     BottomAxis.Grid.Color = 12615808
-    BottomAxis.Grid.Style = psSolid
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Maximum = 100.000000000000000000
     BottomAxis.Title.Caption = 'x'
     BottomAxis.TitleSize = 1
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Automatic = False
     LeftAxis.AutomaticMaximum = False
     LeftAxis.AutomaticMinimum = False
     LeftAxis.Grid.Color = 16744576
-    LeftAxis.Grid.Style = psSolid
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Maximum = 100.000000000000000000
     LeftAxis.TickLength = 5
     LeftAxis.Title.Caption = 'y'
     LeftAxis.TitleSize = 1
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     View3DWalls = False
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     Color = clWhite
     TabOrder = 1
     Anchors = [akLeft, akTop, akRight, akBottom]
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
     object seriesSection: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clGreen
       ShowInLegend = False
+      Brush.BackColor = clDefault
       LinePen.Width = 2
       Pointer.Brush.Color = clBlack
       Pointer.HorizSize = 1
@@ -324,29 +328,6 @@ object FrmHydrXSections: TFrmHydrXSections
     Position = 8
     TabOrder = 12
   end
-  object sgrdData: TOdStringGrid
-    Left = 0
-    Top = 40
-    Width = 273
-    Height = 185
-    Anchors = [akLeft, akTop, akBottom]
-    Color = clWhite
-    ColCount = 3
-    DefaultColWidth = 40
-    DefaultRowHeight = 16
-    FixedColor = 14540253
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing]
-    TabOrder = 13
-    OnSetEditText = sgrdDataSetEditText
-    SelectedCellColor = 8404992
-    SelectedFontColor = clWhite
-    FitColToWidth = -1
-    goPasteNonEditable = False
-    ColWidths = (
-      40
-      70
-      65)
-  end
   object btnInsert: TButton
     Left = 41
     Top = 235
@@ -354,7 +335,7 @@ object FrmHydrXSections: TFrmHydrXSections
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Insert / add'
-    TabOrder = 14
+    TabOrder = 13
     OnClick = btnInsertClick
   end
   object btnRemove: TButton
@@ -364,7 +345,7 @@ object FrmHydrXSections: TFrmHydrXSections
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Remove'
-    TabOrder = 15
+    TabOrder = 14
     OnClick = btnRemoveClick
   end
   object chkLogSegments: TCheckBox
@@ -390,7 +371,7 @@ object FrmHydrXSections: TFrmHydrXSections
     Items.Strings = (
       'Manning'
       'Chezy')
-    TabOrder = 17
+    TabOrder = 15
     OnClick = rgrpCoefficientsClick
   end
   object MainMenu1: TMainMenu
@@ -541,7 +522,7 @@ object FrmHydrXSections: TFrmHydrXSections
     Left = 696
     Top = 82
     Bitmap = {
-      494C01010A000E00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010A000E00080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000B7818200B781
       8200B7818200B7818200B7818200B7818200B7818200B7818200B7818200B781
@@ -966,7 +947,7 @@ object FrmHydrXSections: TFrmHydrXSections
     Left = 696
     Top = 114
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000400080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000009393930094949400949494009494940094949400949494000000

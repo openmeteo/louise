@@ -141,7 +141,6 @@ object FrmSDConstruction: TFrmSDConstruction
     Top = 499
     Width = 721
     Height = 73
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Legend.Frame.Visible = False
     Legend.Visible = False
@@ -149,18 +148,24 @@ object FrmSDConstruction: TFrmSDConstruction
       'TChart')
     Title.Visible = False
     OnClickSeries = chartPeriodsClickSeries
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Visible = False
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     View3DWalls = False
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     BevelOuter = bvNone
     TabOrder = 1
     Anchors = [akLeft, akRight, akBottom]
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
     object seriesPeriods: TGanttSeries
       Cursor = crHandPoint
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       Title = 'seriesPeriods'
       ClickableLine = False
@@ -184,7 +189,6 @@ object FrmSDConstruction: TFrmSDConstruction
     Top = 42
     Width = 489
     Height = 431
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Legend.Visible = False
     Title.Text.Strings = (
@@ -195,7 +199,7 @@ object FrmSDConstruction: TFrmSDConstruction
     BottomAxis.AutomaticMaximum = False
     BottomAxis.AutomaticMinimum = False
     BottomAxis.Grid.Color = clNavy
-    BottomAxis.Grid.Style = psSolid
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Logarithmic = True
     BottomAxis.Maximum = 1000.000000000000000000
     BottomAxis.Minimum = 1.000000000000000000
@@ -204,11 +208,13 @@ object FrmSDConstruction: TFrmSDConstruction
     BottomAxis.MinorTickCount = 8
     BottomAxis.Title.Caption = 'Discharge'
     BottomAxis.TitleSize = 1
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Automatic = False
     LeftAxis.AutomaticMaximum = False
     LeftAxis.AutomaticMinimum = False
     LeftAxis.Grid.Color = clNavy
-    LeftAxis.Grid.Style = psSolid
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Logarithmic = True
     LeftAxis.Maximum = 100.000000000000000000
     LeftAxis.Minimum = 0.100000000000000000
@@ -219,13 +225,18 @@ object FrmSDConstruction: TFrmSDConstruction
     LeftAxis.TicksInner.Color = clNavy
     LeftAxis.Title.Caption = 'Stage'
     LeftAxis.TitleSize = 1
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     View3DWalls = False
     Zoom.Animated = True
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     Color = clWhite
     TabOrder = 2
     Anchors = [akLeft, akTop, akRight, akBottom]
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
   end
   object lstCurves: TListBox
     Left = 0
@@ -388,28 +399,6 @@ object FrmSDConstruction: TFrmSDConstruction
       Kind = dtkTime
       TabOrder = 10
       OnChange = dtpStartDateChange
-    end
-    object sgrdCurvePoints: TOdStringGrid
-      Left = 8
-      Top = 160
-      Width = 217
-      Height = 81
-      Color = clWhite
-      ColCount = 3
-      DefaultColWidth = 40
-      DefaultRowHeight = 16
-      FixedColor = 14540253
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
-      TabOrder = 11
-      OnSetEditText = sgrdCurvePointsSetEditText
-      SelectedCellColor = 8404992
-      SelectedFontColor = clWhite
-      FitColToWidth = -1
-      goPasteNonEditable = False
-      ColWidths = (
-        22
-        82
-        79)
     end
   end
   object btnInsert: TButton
@@ -615,7 +604,7 @@ object FrmSDConstruction: TFrmSDConstruction
     Left = 696
     Top = 82
     Bitmap = {
-      494C01010D000E00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010D000E000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000080000000800000008000000080000000800000008000000000
@@ -1172,7 +1161,7 @@ object FrmSDConstruction: TFrmSDConstruction
     Left = 696
     Top = 114
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020004000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000009393930094949400949494009494940094949400949494000000

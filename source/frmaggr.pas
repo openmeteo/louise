@@ -172,8 +172,8 @@ begin
   cmbToMonth.Clear;
   for i := 1 to 12 do
   begin
-    cmbFromMonth.Items.Add(LongMonthNames[i]);
-    cmbToMonth.Items.Add(LongMonthNames[i]);
+    cmbFromMonth.Items.Add(FormatSettings.LongMonthNames[i]);
+    cmbToMonth.Items.Add(FormatSettings.LongMonthNames[i]);
   end;
 end;
 

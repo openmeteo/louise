@@ -20,6 +20,8 @@ object FrmStageDischarge: TFrmStageDischarge
   OnDestroy = IFormDestroy
   OnHide = IFormHide
   OnShow = IFormShow
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   object Label3: TLabel
@@ -132,7 +134,6 @@ object FrmStageDischarge: TFrmStageDischarge
     Width = 471
     Height = 416
     AllowPanning = pmNone
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Legend.Alignment = laTop
     Legend.LegendStyle = lsSeries
@@ -143,8 +144,7 @@ object FrmStageDischarge: TFrmStageDischarge
     BottomAxis.Automatic = False
     BottomAxis.AutomaticMaximum = False
     BottomAxis.AutomaticMinimum = False
-    BottomAxis.Grid.Color = clSilver
-    BottomAxis.Grid.Style = psSolid
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Logarithmic = True
     BottomAxis.MinorGrid.Color = 14737346
     BottomAxis.MinorGrid.Visible = True
@@ -153,11 +153,12 @@ object FrmStageDischarge: TFrmStageDischarge
     BottomAxis.Ticks.Color = clSilver
     BottomAxis.TicksInner.Color = clSilver
     BottomAxis.Title.Caption = 'Discharge (m^3/s)'
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Automatic = False
     LeftAxis.AutomaticMaximum = False
     LeftAxis.AutomaticMinimum = False
-    LeftAxis.Grid.Color = clSilver
-    LeftAxis.Grid.Style = psSolid
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Logarithmic = True
     LeftAxis.MinorGrid.Color = 15263961
     LeftAxis.MinorGrid.Visible = True
@@ -166,15 +167,20 @@ object FrmStageDischarge: TFrmStageDischarge
     LeftAxis.Ticks.Color = clSilver
     LeftAxis.TicksInner.Color = clSilver
     LeftAxis.Title.Caption = 'Stage (m)'
+    RightAxis.LabelsFormat.TextAlignment = taCenter
     RightAxis.Logarithmic = True
     RightAxis.Visible = False
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     TopAxis.Logarithmic = True
     TopAxis.Visible = False
     View3D = False
     View3DWalls = False
     Zoom.Allow = False
+    Zoom.Pen.Mode = pmNotXor
     Color = clWhite
     TabOrder = 0
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
   end
   object chkLogYAxis: TCheckBox
     Left = 195

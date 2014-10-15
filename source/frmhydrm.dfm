@@ -64,28 +64,33 @@ object FrmHydrometry: TFrmHydrometry
       BottomAxis.Automatic = False
       BottomAxis.AutomaticMaximum = False
       BottomAxis.Grid.Color = 16744576
-      BottomAxis.Grid.Style = psSolid
+      BottomAxis.LabelsFormat.TextAlignment = taCenter
       BottomAxis.Maximum = 100.000000000000000000
+      DepthAxis.LabelsFormat.TextAlignment = taCenter
+      DepthTopAxis.LabelsFormat.TextAlignment = taCenter
       LeftAxis.Automatic = False
       LeftAxis.AutomaticMaximum = False
       LeftAxis.AutomaticMinimum = False
       LeftAxis.Grid.Color = 16744576
-      LeftAxis.Grid.Style = psSolid
+      LeftAxis.LabelsFormat.TextAlignment = taCenter
       LeftAxis.Maximum = 100.000000000000000000
+      RightAxis.LabelsFormat.TextAlignment = taCenter
       Shadow.Visible = False
+      TopAxis.LabelsFormat.TextAlignment = taCenter
       View3D = False
       View3DWalls = False
       Zoom.Pen.Color = clGray
+      Zoom.Pen.Mode = pmNotXor
       Align = alClient
       Color = clWhite
       TabOrder = 0
+      DefaultCanvas = 'TGDIPlusCanvas'
+      ColorPaletteIndex = 13
       object seriesGround: TLineSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         SeriesColor = clGreen
         Title = 'seriesGround'
+        Brush.BackColor = clDefault
         LinePen.Width = 2
         Pointer.HorizSize = 1
         Pointer.InflateMargins = True
@@ -98,12 +103,10 @@ object FrmHydrometry: TFrmHydrometry
         YValues.Order = loNone
       end
       object seriesCutSection: TLineSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         SeriesColor = clBlue
         Title = 'seriesCutSection'
+        Brush.BackColor = clDefault
         LinePen.Width = 2
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
@@ -114,9 +117,6 @@ object FrmHydrometry: TFrmHydrometry
         YValues.Order = loNone
       end
       object seriesMeasurePoints: TPointSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         Title = 'seriesMeasurePoints'
         ClickableLine = False
@@ -133,12 +133,10 @@ object FrmHydrometry: TFrmHydrometry
       end
       object seriesSlices: TLineSeries
         ColorEachLine = False
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         SeriesColor = 12615935
         Title = 'seriesSlices'
+        Brush.BackColor = clDefault
         Dark3D = False
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
@@ -149,9 +147,6 @@ object FrmHydrometry: TFrmHydrometry
         YValues.Order = loNone
       end
       object seriesSectionMeasurements: TPointSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         Title = 'seriesSectionMeasurements'
         ClickableLine = False
@@ -339,7 +334,6 @@ object FrmHydrometry: TFrmHydrometry
       Width = 238
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       ItemIndex = 0
       TabOrder = 5
       Text = '1 measurement at 0.6xdepth'
@@ -414,35 +408,42 @@ object FrmHydrometry: TFrmHydrometry
       Title.Visible = False
       BottomAxis.Automatic = False
       BottomAxis.AutomaticMinimum = False
-      BottomAxis.LabelsFont.Height = -9
+      BottomAxis.LabelsFormat.Font.Height = -9
+      BottomAxis.LabelsFormat.TextAlignment = taCenter
       BottomAxis.Minimum = 0.100000000000000000
       BottomAxis.MinorGrid.SmallDots = True
       BottomAxis.MinorGrid.SmallSpace = 1
       BottomAxis.MinorTickCount = 8
+      DepthAxis.LabelsFormat.TextAlignment = taCenter
+      DepthTopAxis.LabelsFormat.TextAlignment = taCenter
       LeftAxis.Automatic = False
       LeftAxis.AutomaticMaximum = False
       LeftAxis.AutomaticMinimum = False
       LeftAxis.ExactDateTime = False
       LeftAxis.Increment = 0.050000000000000000
       LeftAxis.Inverted = True
-      LeftAxis.LabelsFont.Height = -9
-      LeftAxis.LabelsFont.Shadow.Visible = False
+      LeftAxis.LabelsFormat.Font.Height = -9
+      LeftAxis.LabelsFormat.Font.Shadow.Visible = False
+      LeftAxis.LabelsFormat.TextAlignment = taCenter
       LeftAxis.Maximum = 1.000000000000000000
       LeftAxis.Title.Visible = False
+      RightAxis.LabelsFormat.TextAlignment = taCenter
+      TopAxis.LabelsFormat.TextAlignment = taCenter
       View3D = False
       View3DWalls = False
       Zoom.Pen.Color = clGray
+      Zoom.Pen.Mode = pmNotXor
       BevelInner = bvRaised
       BevelOuter = bvLowered
       Color = clWhite
       TabOrder = 1
+      DefaultCanvas = 'TGDIPlusCanvas'
+      ColorPaletteIndex = 13
       object seriesVelocityCurve: TLineSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         SeriesColor = clNavy
         Title = 'seriesVelocityCurve'
+        Brush.BackColor = clDefault
         LinePen.Width = 2
         Pointer.InflateMargins = True
         Pointer.Style = psRectangle
@@ -453,9 +454,6 @@ object FrmHydrometry: TFrmHydrometry
         YValues.Order = loNone
       end
       object seriesVelocitiesMeasurements: TPointSeries
-        Marks.Arrow.Visible = True
-        Marks.Callout.Brush.Color = clBlack
-        Marks.Callout.Arrow.Visible = True
         Marks.Visible = False
         Title = 'seriesVelocitiesMeasurements'
         ClickableLine = False

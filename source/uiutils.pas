@@ -299,12 +299,12 @@ begin
         with Components[i] as TEdit do
         begin
           try
-            SavedDecimalSeparator := DecimalSeparator;
+            SavedDecimalSeparator := FormatSettings.DecimalSeparator;
             try
-              DecimalSeparator := '.';
+              FormatSettings.DecimalSeparator := '.';
               AFloat := StrToFloat(Text);
             finally
-              DecimalSeparator := SavedDecimalSeparator;
+              FormatSettings.DecimalSeparator := SavedDecimalSeparator;
             end;
             Text := FloatToStr(AFloat);
           except

@@ -55,6 +55,7 @@ object FrmClimacogram: TFrmClimacogram
     Title.Text.Strings = (
       'TChart')
     Title.Visible = False
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.Logarithmic = True
     BottomAxis.MinorGrid.Color = clSilver
     BottomAxis.MinorGrid.Visible = True
@@ -63,17 +64,20 @@ object FrmClimacogram: TFrmClimacogram
     DepthAxis.Automatic = False
     DepthAxis.AutomaticMaximum = False
     DepthAxis.AutomaticMinimum = False
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
     DepthAxis.Maximum = 0.319999999999999800
     DepthAxis.Minimum = -0.680000000000000200
     DepthTopAxis.Automatic = False
     DepthTopAxis.AutomaticMaximum = False
     DepthTopAxis.AutomaticMinimum = False
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
     DepthTopAxis.Maximum = 0.319999999999999800
     DepthTopAxis.Minimum = -0.680000000000000200
     LeftAxis.Automatic = False
     LeftAxis.AutomaticMaximum = False
     LeftAxis.AutomaticMinimum = False
     LeftAxis.ExactDateTime = False
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.Logarithmic = True
     LeftAxis.Maximum = 100.000000000000000000
     LeftAxis.Minimum = 0.100000000000000000
@@ -85,22 +89,27 @@ object FrmClimacogram: TFrmClimacogram
     RightAxis.Automatic = False
     RightAxis.AutomaticMaximum = False
     RightAxis.AutomaticMinimum = False
+    RightAxis.LabelsFormat.TextAlignment = taCenter
     TopAxis.Automatic = False
     TopAxis.AutomaticMaximum = False
     TopAxis.AutomaticMinimum = False
     TopAxis.Grid.Color = 16744576
     TopAxis.Grid.Style = psDashDot
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     TopAxis.LabelStyle = talText
     TopAxis.Logarithmic = True
     TopAxis.MinorTicks.Visible = False
     View3D = False
     View3DOptions.Orthogonal = False
     Zoom.Allow = False
+    Zoom.Pen.Mode = pmNotXor
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
     ExplicitHeight = 449
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
   end
   object lstSeries: TListBox
     Left = 493
@@ -112,7 +121,6 @@ object FrmClimacogram: TFrmClimacogram
     MultiSelect = True
     TabOrder = 1
     OnClick = lstSeriesClick
-    ExplicitHeight = 319
   end
   object MainMenu: TMainMenu
     Left = 472

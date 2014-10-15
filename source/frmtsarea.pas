@@ -12,8 +12,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Contnrs, ts, tsarea, Grids, StdCtrls, ExtCtrls, Series, TeEngine,
-  TeeProcs, Chart, Menus, uiutils;
+  Dialogs, Contnrs, ts, tsarea, Grids, StdCtrls, ExtCtrls, VclTee.Series,
+  VclTee.TeEngine, VclTee.TeeProcs, VclTee.Chart, Menus, uiutils,
+  VclTee.TeeGDIPlus;
 
 type
   TFrmArealIntegration = class(TForm)

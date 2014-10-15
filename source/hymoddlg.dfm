@@ -32,6 +32,10 @@ object FrmHydroModel: TFrmHydroModel
       Caption = 'Simulation'
       ParentShowHint = False
       ShowHint = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object picSoilTank: TImage
         Left = 144
         Top = 88
@@ -4595,6 +4599,10 @@ object FrmHydroModel: TFrmHydroModel
     object tbcCalibration: TTabSheet
       Caption = 'Calibration'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblObjectiveFunction: TLabel
         Left = 592
         Top = 336
@@ -5170,28 +5178,34 @@ object FrmHydroModel: TFrmHydroModel
         Top = 336
         Width = 585
         Height = 178
-        BackWall.Brush.Color = clWhite
         BackWall.Brush.Style = bsClear
         Title.Text.Strings = (
           '')
+        BottomAxis.LabelsFormat.TextAlignment = taCenter
         BottomAxis.LabelsSize = 8
         BottomAxis.LabelStyle = talValue
         BottomAxis.TitleSize = 1
+        DepthAxis.LabelsFormat.TextAlignment = taCenter
+        DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+        LeftAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.LabelsSize = 9
         LeftAxis.LabelStyle = talValue
         LeftAxis.TitleSize = 1
+        RightAxis.LabelsFormat.TextAlignment = taCenter
+        TopAxis.LabelsFormat.TextAlignment = taCenter
         View3D = False
         View3DWalls = False
         Zoom.Pen.Color = clGray
+        Zoom.Pen.Mode = pmNotXor
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 7
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
         object seriesActualRunoff: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           Title = 'Actual Runoff'
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
           Pointer.Visible = False
@@ -5202,11 +5216,9 @@ object FrmHydroModel: TFrmHydroModel
           YValues.Order = loNone
         end
         object seriesCalculatedRunoff: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           Title = 'Calcu. Runoff'
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
           Pointer.Visible = False
@@ -5261,6 +5273,10 @@ object FrmHydroModel: TFrmHydroModel
     object tbcDates: TTabSheet
       Caption = 'Dates'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblCalculationDates: TLabel
         Left = 8
         Top = 8

@@ -57,20 +57,20 @@ begin
   begin
     for i := 10 to 12 do
     begin
-      cmbFrom.Items.Add(LongMonthNames[i]);
-      cmbTo.Items.Add(LongMonthNames[i]);
+      cmbFrom.Items.Add(FormatSettings.LongMonthNames[i]);
+      cmbTo.Items.Add(FormatSettings.LongMonthNames[i]);
     end;
     for i := 1 to 9 do
     begin
-      cmbFrom.Items.Add(LongMonthNames[i]);
-      cmbTo.Items.Add(LongMonthNames[i]);
+      cmbFrom.Items.Add(FormatSettings.LongMonthNames[i]);
+      cmbTo.Items.Add(FormatSettings.LongMonthNames[i]);
     end;
   end else
   begin
     for i := 1 to 12 do
     begin
-      cmbFrom.Items.Add(LongMonthNames[i]);
-      cmbTo.Items.Add(LongMonthNames[i]);
+      cmbFrom.Items.Add(FormatSettings.LongMonthNames[i]);
+      cmbTo.Items.Add(FormatSettings.LongMonthNames[i]);
     end;
   end;
   cmbFrom.ItemIndex := 0;

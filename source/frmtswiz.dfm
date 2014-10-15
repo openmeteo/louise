@@ -37,6 +37,10 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
     OnChanging = PageControlChanging
     object tabGeneral: TTabSheet
       Caption = 'General information'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblTitle: TLabel
         Left = 9
         Top = 9
@@ -105,7 +109,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Top = 329
         Width = 149
         Height = 21
-        ItemHeight = 13
         TabOrder = 4
         OnChange = cmbUnitsChange
         Items.Strings = (
@@ -130,7 +133,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Width = 293
         Height = 21
         AutoCompleteDelay = 10
-        ItemHeight = 13
         TabOrder = 3
         OnChange = cmbTimeZoneChange
       end
@@ -139,7 +141,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Top = 201
         Width = 293
         Height = 21
-        ItemHeight = 13
         TabOrder = 2
         OnChange = cmbVariableChange
         Items.Strings = (
@@ -229,6 +230,10 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
     object tabTimestep: TTabSheet
       Caption = 'Time step'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblHydrologicalYearOrigin: TLabel
         Left = 264
         Top = 401
@@ -278,7 +283,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Width = 187
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 4
         OnChange = cmbHydrologicalYearOriginChange
       end
@@ -288,7 +292,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Width = 187
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         ItemIndex = 0
         TabOrder = 6
         Text = 'Minutes'
@@ -319,8 +322,8 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         ButtonFlow = cbfVertical
         ButtonHeight = 42
         ButtonOptions = [boFullSize, boGradientFill, boShowCaptions, boBoldCaptions]
-        Images = ImageList
         Categories = <>
+        Images = ImageList
         RegularButtonColor = 15660791
         SelectedButtonColor = 16731978
         TabOrder = 2
@@ -330,6 +333,10 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
     object tabIntervalType: TTabSheet
       Caption = 'Interval'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblIntervalType: TLabel
         Left = 19
         Top = 93
@@ -365,7 +372,6 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
         Width = 398
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         ItemIndex = 0
         TabOrder = 2
         Text = 
@@ -539,7 +545,7 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
     Left = 32
     Top = 512
     Bitmap = {
-      494C010108000E00040020002000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010108000E00080020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2127,6 +2133,7 @@ object FrmTimeseriesWizard: TFrmTimeseriesWizard
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000000000000000000}
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000}
   end
 end

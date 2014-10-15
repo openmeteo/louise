@@ -12,8 +12,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Series, TeEngine, TeeShape, ExtCtrls, TeeProcs, Chart, ts, StdCtrls,
-  Menus, icomponent, tsdialogs;
+  Dialogs, VclTee.Series, VclTee.TeEngine, VclTee.TeeShape, ExtCtrls,
+  VclTee.TeeProcs, VclTee.Chart, ts, StdCtrls, Menus, icomponent, tsdialogs,
+  VclTee.TeeGDIPlus;
 
 type
   TArcPoints = record
@@ -564,7 +565,7 @@ procedure TFrmRoseDiagram.edtCalmThresholdKeyPress(Sender: TObject;
   var Key: Char);
 begin
   if not (Key in ['0', '9', '1', '2', '3', '4', '5', '6', '7', '8', #08,
-    SysUtils.DecimalSeparator]) then Key := #0;
+    SysUtils.FormatSettings.DecimalSeparator]) then Key := #0;
 end;
 
 procedure TFrmRoseDiagram.mnuBellowThresholdStatsClick(Sender: TObject);

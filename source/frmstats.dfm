@@ -101,6 +101,10 @@ object FrmStatistics: TFrmStatistics
     TabOrder = 3
     object tbcPlots: TTabSheet
       Caption = 'Distribution functions plots'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         540
         456)
@@ -144,7 +148,6 @@ object FrmStatistics: TFrmStatistics
           Width = 526
           Height = 419
           AllowPanning = pmNone
-          BackWall.Brush.Color = clWhite
           BackWall.Brush.Style = bsClear
           Legend.Alignment = laTop
           Legend.LegendStyle = lsSeries
@@ -159,16 +162,20 @@ object FrmStatistics: TFrmStatistics
           BottomAxis.ExactDateTime = False
           BottomAxis.Grid.Visible = False
           BottomAxis.Increment = 1.000000000000000000
+          BottomAxis.LabelsFormat.TextAlignment = taCenter
           BottomAxis.LabelStyle = talValue
           BottomAxis.Maximum = 24.000000000000000000
           BottomAxis.MinorTickCount = 2
           BottomAxis.MinorTickLength = 0
           BottomAxis.MinorTicks.Visible = False
           BottomAxis.Title.Visible = False
+          DepthAxis.LabelsFormat.TextAlignment = taCenter
+          DepthTopAxis.LabelsFormat.TextAlignment = taCenter
           LeftAxis.Automatic = False
           LeftAxis.AutomaticMaximum = False
           LeftAxis.AutomaticMinimum = False
           LeftAxis.Grid.Color = clBlack
+          LeftAxis.LabelsFormat.TextAlignment = taCenter
           LeftAxis.Maximum = 100.000000000000000000
           LeftAxis.Minimum = 537.500000000000000000
           LeftAxis.MinorGrid.Color = clGray
@@ -183,6 +190,8 @@ object FrmStatistics: TFrmStatistics
           RightAxis.AutomaticMinimum = False
           RightAxis.Grid.Visible = False
           RightAxis.Labels = False
+          RightAxis.LabelsFormat.Visible = False
+          RightAxis.LabelsFormat.TextAlignment = taCenter
           RightAxis.MinorTickCount = 2
           RightAxis.MinorTicks.Visible = False
           RightAxis.Title.Visible = False
@@ -191,6 +200,7 @@ object FrmStatistics: TFrmStatistics
           TopAxis.AutomaticMinimum = False
           TopAxis.Grid.Color = clBlack
           TopAxis.LabelsAngle = 90
+          TopAxis.LabelsFormat.TextAlignment = taCenter
           TopAxis.LabelStyle = talMark
           TopAxis.Maximum = 10.000000000000000000
           TopAxis.Minimum = -10.000000000000000000
@@ -204,28 +214,30 @@ object FrmStatistics: TFrmStatistics
           View3DWalls = False
           Zoom.Allow = False
           Zoom.Pen.Color = clGray
+          Zoom.Pen.Mode = pmNotXor
           BevelOuter = bvNone
           Color = clWhite
           ParentShowHint = False
           ShowHint = False
           TabOrder = 0
           Anchors = [akLeft, akTop, akRight, akBottom]
+          DefaultCanvas = 'TGDIPlusCanvas'
           PrintMargins = (
             15
             10
             15
             10)
+          ColorPaletteIndex = 13
           object GridPoint: TPointSeries
             HorizAxis = aTopAxis
-            Marks.Arrow.Visible = False
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = False
-            Marks.Callout.Length = 5
-            Marks.BackColor = clWhite
-            Marks.Clip = True
-            Marks.Color = clWhite
             Marks.Frame.Visible = False
             Marks.Visible = True
+            Marks.Arrow.Visible = False
+            Marks.BackColor = clWhite
+            Marks.Callout.Arrow.Visible = False
+            Marks.Callout.Length = 5
+            Marks.Clip = True
+            Marks.Color = clWhite
             SeriesColor = clTeal
             ShowInLegend = False
             Title = 'GridPoint'
@@ -244,9 +256,6 @@ object FrmStatistics: TFrmStatistics
           end
           object WeibullPoints: TPointSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Shadow.Color = 8553090
             Marks.Visible = False
             SeriesColor = clBlack
@@ -266,9 +275,6 @@ object FrmStatistics: TFrmStatistics
           end
           object BlomPoints: TPointSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clGreen
             Title = 'Blom'
@@ -286,12 +292,9 @@ object FrmStatistics: TFrmStatistics
           end
           object CunnanePoints: TPointSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
+            Marks.Visible = False
             Marks.BackColor = clBlack
             Marks.Color = clBlack
-            Marks.Visible = False
             SeriesColor = clBlack
             Title = 'Cunnane'
             OnClick = WeibullPointsClick
@@ -309,9 +312,6 @@ object FrmStatistics: TFrmStatistics
           end
           object GringortenPoints: TPointSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clBlue
             Title = 'Gringorten'
@@ -331,12 +331,10 @@ object FrmStatistics: TFrmStatistics
           object NormalLine: TLineSeries
             Tag = 101
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16384
             Title = 'Normal'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -349,12 +347,10 @@ object FrmStatistics: TFrmStatistics
           object NormalLLine: TLineSeries
             Tag = 115
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4210816
             Title = 'L-Moments Normal'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
@@ -368,12 +364,10 @@ object FrmStatistics: TFrmStatistics
           object LogNormalLine: TLineSeries
             Tag = 102
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clFuchsia
             Title = 'LogNormal'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -385,12 +379,10 @@ object FrmStatistics: TFrmStatistics
           object GaltonLine: TLineSeries
             Tag = 103
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clNavy
             Title = 'Galton'
+            Brush.BackColor = clDefault
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -403,12 +395,10 @@ object FrmStatistics: TFrmStatistics
           object ExponentialLine: TLineSeries
             Tag = 104
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16512
             Title = 'Exponential'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -421,12 +411,10 @@ object FrmStatistics: TFrmStatistics
           object ExponentialLLine: TLineSeries
             Tag = 116
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 12615935
             Title = 'L-Moments Exponential'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -439,12 +427,10 @@ object FrmStatistics: TFrmStatistics
           object GammaLine: TLineSeries
             Tag = 105
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clPurple
             Title = 'Gamma'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -457,12 +443,10 @@ object FrmStatistics: TFrmStatistics
           object PearsonIIILine: TLineSeries
             Tag = 106
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 64
             Title = 'PearsonIII'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -475,12 +459,10 @@ object FrmStatistics: TFrmStatistics
           object LogPearsonIIILine: TLineSeries
             Tag = 107
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 8404992
             Title = 'LogPearsonIII'
+            Brush.BackColor = clDefault
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -493,12 +475,10 @@ object FrmStatistics: TFrmStatistics
           object GumbelMAXLine: TLineSeries
             Tag = 108
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 8388672
             Title = 'Gumbel Max'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -510,12 +490,10 @@ object FrmStatistics: TFrmStatistics
           object EV2MAXLine: TLineSeries
             Tag = 109
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16744448
             Title = 'EV2-Max'
+            Brush.BackColor = clDefault
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -528,12 +506,10 @@ object FrmStatistics: TFrmStatistics
           object GumbelMINLine: TLineSeries
             Tag = 110
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16384
             Title = 'Gumbel Min'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -545,12 +521,10 @@ object FrmStatistics: TFrmStatistics
           object WeibullLine: TLineSeries
             Tag = 111
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clBlue
             Title = 'Weibull'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -562,12 +536,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMAXLine: TLineSeries
             Tag = 112
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clMaroon
             Title = 'GEV Max'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -579,12 +551,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMINLine: TLineSeries
             Tag = 113
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4227072
             Title = 'GEV Min'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -596,12 +566,10 @@ object FrmStatistics: TFrmStatistics
           object ParetoLine: TLineSeries
             Tag = 114
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4227072
             Title = 'Pareto'
+            Brush.BackColor = clDefault
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -614,12 +582,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMAXLLine: TLineSeries
             Tag = 121
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4210816
             Title = 'L-Moments GEV Max'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -631,12 +597,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMINLLine: TLineSeries
             Tag = 122
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 8404992
             Title = 'L-Moments GEV Min'
+            Brush.BackColor = clDefault
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
             Pointer.Visible = False
@@ -648,12 +612,10 @@ object FrmStatistics: TFrmStatistics
           object EV1MAXLLine: TLineSeries
             Tag = 117
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clLime
             Title = 'L-Moments EV1-Max'
+            Brush.BackColor = clDefault
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -666,12 +628,10 @@ object FrmStatistics: TFrmStatistics
           object EV2MAXLLine: TLineSeries
             Tag = 118
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clPurple
             Title = 'L-Moments EV2-Max'
+            Brush.BackColor = clDefault
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -684,12 +644,10 @@ object FrmStatistics: TFrmStatistics
           object EV1MINLLine: TLineSeries
             Tag = 119
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4227327
             Title = 'L-Moments EV1-Min'
+            Brush.BackColor = clDefault
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -702,12 +660,10 @@ object FrmStatistics: TFrmStatistics
           object EV3MINLLine: TLineSeries
             Tag = 120
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 4227200
             Title = 'L-Moments EV3-Min'
+            Brush.BackColor = clDefault
             LinePen.SmallDots = True
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -720,12 +676,10 @@ object FrmStatistics: TFrmStatistics
           object ParetoLLine: TLineSeries
             Tag = 123
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 8404992
             Title = 'L-Moments Pareto'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -738,12 +692,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMAXKLine: TLineSeries
             Tag = 124
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16711808
             Title = 'GEV-Max (k spec.)'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -756,12 +708,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMINKLine: TLineSeries
             Tag = 125
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 12615808
             Title = 'GEV-Min (k spec.)'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -774,12 +724,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMAXKLLine: TLineSeries
             Tag = 126
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 33023
             Title = 'L-Moments GEV-Max (k. spec.)'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -792,12 +740,10 @@ object FrmStatistics: TFrmStatistics
           object GEVMINKLLine: TLineSeries
             Tag = 127
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16744703
             Title = 'L-Moments GEV-Min (k. spec.)'
+            Brush.BackColor = clDefault
             LinePen.Style = psDashDotDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -809,12 +755,10 @@ object FrmStatistics: TFrmStatistics
           end
           object LowSampleLimitLine: TLineSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clBlack
             Title = 'Prediction interval lower limit'
+            Brush.BackColor = clDefault
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -826,13 +770,11 @@ object FrmStatistics: TFrmStatistics
           end
           object HighSampleLimitLine: TLineSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clBlack
             ShowInLegend = False
             Title = 'Prediction interval upper limit'
+            Brush.BackColor = clDefault
             LinePen.Style = psDot
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -844,13 +786,11 @@ object FrmStatistics: TFrmStatistics
           end
           object HighConfidenceLimitLine: TLineSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clMaroon
             ShowInLegend = False
             Title = 'Confidence interval upper limit'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -862,12 +802,10 @@ object FrmStatistics: TFrmStatistics
           end
           object LowConfidenceLimitLine: TLineSeries
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = clMaroon
             Title = 'Confidence interval lower limit'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -880,12 +818,10 @@ object FrmStatistics: TFrmStatistics
           object MLELine: TLineSeries
             Tag = 128
             Active = False
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Visible = False
             SeriesColor = 16384
             Title = 'MLE Line'
+            Brush.BackColor = clDefault
             LinePen.Style = psDash
             Pointer.InflateMargins = True
             Pointer.Style = psRectangle
@@ -901,6 +837,10 @@ object FrmStatistics: TFrmStatistics
     object tbcHistogram: TTabSheet
       Caption = 'Histogram - Density functions plots'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object chartPDF: TChart
         Left = 3
         Top = 3
@@ -915,37 +855,43 @@ object FrmStatistics: TFrmStatistics
         Title.Font.Name = 'Tahoma'
         Title.Text.Strings = (
           'Probability Density Functions (PDF) - Histogram')
+        BottomAxis.LabelsFormat.TextAlignment = taCenter
         BottomAxis.MinorGrid.Color = clSilver
         BottomAxis.MinorGrid.Style = psDash
         BottomAxis.MinorGrid.SmallDots = True
         BottomAxis.MinorGrid.Visible = True
+        DepthAxis.LabelsFormat.TextAlignment = taCenter
+        DepthTopAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Labels = False
+        LeftAxis.LabelsFormat.Visible = False
+        LeftAxis.LabelsFormat.TextAlignment = taCenter
+        RightAxis.LabelsFormat.TextAlignment = taCenter
         Shadow.Visible = False
+        TopAxis.LabelsFormat.TextAlignment = taCenter
         View3D = False
         View3DWalls = False
         Zoom.Pen.Color = clSilver
+        Zoom.Pen.Mode = pmNotXor
         BevelOuter = bvNone
         Color = clWhite
         ParentShowHint = False
         ShowHint = False
         TabOrder = 0
+        DefaultCanvas = 'TGDIPlusCanvas'
         PrintMargins = (
           15
           12
           15
           12)
+        ColorPaletteIndex = 13
         object seriesHistogram: TBarSeries
-          BarBrush.Color = clWhite
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
+          BarBrush.Gradient.StartColor = 11053311
           Marks.Visible = False
           SeriesColor = 14803696
           ShowInLegend = False
           Title = 'seriesHistogram'
           BarStyle = bsRectGradient
           BarWidthPercent = 50
-          Gradient.Direction = gdTopBottom
           Gradient.StartColor = 11053311
           Shadow.HorizSize = 1
           Shadow.Visible = False
@@ -959,32 +905,10 @@ object FrmStatistics: TFrmStatistics
     object tbcParameters: TTabSheet
       Caption = 'Parameter values - Forecasts'
       ImageIndex = 1
-      DesignSize = (
-        540
-        456)
-      object sgrdData: TOdStringGrid
-        Left = 0
-        Top = 0
-        Width = 538
-        Height = 454
-        Anchors = [akLeft, akTop, akRight, akBottom]
-        Color = clWhite
-        DefaultColWidth = 60
-        DefaultRowHeight = 18
-        FixedColor = 14540253
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goRowMoving, goColMoving]
-        TabOrder = 0
-        SelectedCellColor = 8404992
-        SelectedFontColor = clWhite
-        FitColToWidth = -1
-        goPasteNonEditable = False
-        RowHeights = (
-          18
-          18
-          18
-          18
-          18)
-      end
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
   end
   object Memo: TMemo

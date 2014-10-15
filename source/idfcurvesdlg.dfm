@@ -33,6 +33,10 @@ object FrmIDFCurves: TFrmIDFCurves
     TabOrder = 0
     object tabMulti: TTabSheet
       Caption = 'Multiple curves'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         613
         393)
@@ -158,7 +162,6 @@ object FrmIDFCurves: TFrmIDFCurves
         Width = 496
         Height = 381
         AllowPanning = pmNone
-        BackWall.Brush.Color = clWhite
         BackWall.Brush.Style = bsClear
         Legend.LegendStyle = lsSeries
         Title.Font.Color = clBlack
@@ -169,7 +172,7 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.Automatic = False
         BottomAxis.AutomaticMaximum = False
         BottomAxis.AutomaticMinimum = False
-        BottomAxis.Grid.Style = psSolid
+        BottomAxis.LabelsFormat.TextAlignment = taCenter
         BottomAxis.Logarithmic = True
         BottomAxis.Maximum = 100.000000000000000000
         BottomAxis.Minimum = 0.010000000000000000
@@ -178,10 +181,12 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.MinorTickCount = 8
         BottomAxis.Title.Caption = 'd (h)'
         BottomAxis.TitleSize = 1
+        DepthAxis.LabelsFormat.TextAlignment = taCenter
+        DepthTopAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Automatic = False
         LeftAxis.AutomaticMaximum = False
         LeftAxis.AutomaticMinimum = False
-        LeftAxis.Grid.Style = psSolid
+        LeftAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Logarithmic = True
         LeftAxis.Maximum = 1000.000000000000000000
         LeftAxis.Minimum = 1.000000000000000000
@@ -190,20 +195,23 @@ object FrmIDFCurves: TFrmIDFCurves
         LeftAxis.MinorTickCount = 8
         LeftAxis.Title.Caption = 'i (mm/h)'
         LeftAxis.TitleSize = 1
+        RightAxis.LabelsFormat.TextAlignment = taCenter
+        TopAxis.LabelsFormat.TextAlignment = taCenter
         View3D = False
         View3DWalls = False
         Zoom.Allow = False
+        Zoom.Pen.Mode = pmNotXor
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 1
         Anchors = [akLeft, akTop, akRight, akBottom]
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
         object seriesMulti100000: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 64
           Title = '100000'
+          Brush.BackColor = clDefault
           LinePen.Style = psDot
           Pointer.InflateMargins = True
           Pointer.Style = psSmallDot
@@ -214,12 +222,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti10000: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 4210688
           Title = '10000'
+          Brush.BackColor = clDefault
           LinePen.Style = psDash
           Pointer.InflateMargins = True
           Pointer.Style = psSmallDot
@@ -230,12 +236,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti1000: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clNavy
           Title = '1000'
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psSmallDot
           Pointer.Visible = True
@@ -245,13 +249,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti500: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clTeal
           Title = '500'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psDiamond
@@ -263,12 +264,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti200: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clPurple
           Title = '200'
+          Brush.BackColor = clDefault
           Pointer.Brush.Color = clPurple
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
@@ -281,12 +280,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti100: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 8388672
           Title = '100'
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psStar
           Pointer.Visible = True
@@ -296,12 +293,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti50: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clGray
           Title = '50'
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psCross
@@ -313,13 +308,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti20: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clBlue
           Title = '20'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psDownTriangle
@@ -331,13 +323,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti10: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 16512
           Title = '10'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psTriangle
@@ -349,13 +338,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti5: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clGreen
           Title = '5'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -367,13 +353,10 @@ object FrmIDFCurves: TFrmIDFCurves
           YValues.Order = loNone
         end
         object seriesMulti2: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clMaroon
           Title = '2'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psCircle
           Pointer.Visible = True
@@ -514,7 +497,6 @@ object FrmIDFCurves: TFrmIDFCurves
         Width = 361
         Height = 284
         AllowPanning = pmNone
-        BackWall.Brush.Color = clWhite
         BackWall.Brush.Style = bsClear
         Legend.Alignment = laTop
         Legend.LegendStyle = lsSeries
@@ -526,7 +508,7 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.Automatic = False
         BottomAxis.AutomaticMaximum = False
         BottomAxis.AutomaticMinimum = False
-        BottomAxis.Grid.Style = psSolid
+        BottomAxis.LabelsFormat.TextAlignment = taCenter
         BottomAxis.Logarithmic = True
         BottomAxis.Maximum = 100.000000000000000000
         BottomAxis.Minimum = 0.010000000000000000
@@ -535,10 +517,12 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.MinorTickCount = 8
         BottomAxis.Title.Caption = 'd (h)'
         BottomAxis.TitleSize = 1
+        DepthAxis.LabelsFormat.TextAlignment = taCenter
+        DepthTopAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Automatic = False
         LeftAxis.AutomaticMaximum = False
         LeftAxis.AutomaticMinimum = False
-        LeftAxis.Grid.Style = psSolid
+        LeftAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Logarithmic = True
         LeftAxis.Maximum = 1000.000000000000000000
         LeftAxis.Minimum = 1.000000000000000000
@@ -547,21 +531,23 @@ object FrmIDFCurves: TFrmIDFCurves
         LeftAxis.MinorTickCount = 8
         LeftAxis.Title.Caption = 'i (mm/h)'
         LeftAxis.TitleSize = 1
+        RightAxis.LabelsFormat.TextAlignment = taCenter
+        TopAxis.LabelsFormat.TextAlignment = taCenter
         View3D = False
         View3DWalls = False
         Zoom.Allow = False
+        Zoom.Pen.Mode = pmNotXor
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 1
         Anchors = [akLeft, akTop, akRight, akBottom]
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
         object seriesSingleCentral: TLineSeries
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clBlack
           Title = 'Rainfall intensity'
-          Pointer.Brush.Color = clWhite
+          Brush.BackColor = clDefault
           Pointer.HorizSize = 3
           Pointer.InflateMargins = True
           Pointer.Style = psDiamond
@@ -574,12 +560,10 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object seriesUpperSample: TLineSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 10485760
           Title = 'Upper Sample'
+          Brush.BackColor = clDefault
           LinePen.Style = psDash
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -591,12 +575,10 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object seriesLowerSample: TLineSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 10485760
           Title = 'Lower Sample'
+          Brush.BackColor = clDefault
           LinePen.Style = psDash
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -608,12 +590,10 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object seriesUpperConfidence: TLineSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 64
           Title = 'Upper Confidence'
+          Brush.BackColor = clDefault
           LinePen.Style = psDashDot
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -625,12 +605,10 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object seriesLowerConfidence: TLineSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 64
           Title = 'Lower Confidence'
+          Brush.BackColor = clDefault
           LinePen.Style = psDashDot
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
@@ -735,40 +713,6 @@ object FrmIDFCurves: TFrmIDFCurves
           TabOrder = 3
         end
       end
-      object sgrdSingle: TOdStringGrid
-        Left = 250
-        Top = 285
-        Width = 361
-        Height = 106
-        Anchors = [akLeft, akRight, akBottom]
-        Color = clWhite
-        ColCount = 6
-        DefaultColWidth = 58
-        DefaultRowHeight = 18
-        FixedColor = 14540253
-        RowCount = 14
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
-        TabOrder = 6
-        SelectedCellColor = 8404992
-        SelectedFontColor = clWhite
-        FitColToWidth = -1
-        goPasteNonEditable = False
-        RowHeights = (
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18)
-      end
       object btnConfidenceCalculate: TButton
         Left = 165
         Top = 150
@@ -789,7 +733,7 @@ object FrmIDFCurves: TFrmIDFCurves
           '90%'
           '95%'
           '99%')
-        TabOrder = 8
+        TabOrder = 6
         OnClick = rgrpConfidenceIntervalClick
       end
     end
@@ -1076,7 +1020,6 @@ object FrmIDFCurves: TFrmIDFCurves
         Width = 481
         Height = 386
         AllowPanning = pmNone
-        BackWall.Brush.Color = clWhite
         BackWall.Brush.Style = bsClear
         Legend.Alignment = laTop
         Legend.LegendStyle = lsSeries
@@ -1090,6 +1033,7 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.AutomaticMinimum = False
         BottomAxis.Grid.Visible = False
         BottomAxis.LabelsAngle = 90
+        BottomAxis.LabelsFormat.TextAlignment = taCenter
         BottomAxis.LabelStyle = talMark
         BottomAxis.Maximum = 10.000000000000000000
         BottomAxis.Minimum = -10.000000000000000000
@@ -1097,7 +1041,10 @@ object FrmIDFCurves: TFrmIDFCurves
         BottomAxis.MinorTickLength = 0
         BottomAxis.MinorTicks.Visible = False
         BottomAxis.Visible = False
+        DepthAxis.LabelsFormat.TextAlignment = taCenter
+        DepthTopAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.Grid.Color = clBlack
+        LeftAxis.LabelsFormat.TextAlignment = taCenter
         LeftAxis.LabelsSize = 20
         LeftAxis.MinorGrid.Color = clGray
         LeftAxis.MinorGrid.Style = psDashDotDot
@@ -1106,11 +1053,13 @@ object FrmIDFCurves: TFrmIDFCurves
         LeftAxis.MinorTickCount = 1
         LeftAxis.Title.Font.Height = -9
         LeftAxis.TitleSize = 2
+        RightAxis.LabelsFormat.TextAlignment = taCenter
         TopAxis.Automatic = False
         TopAxis.AutomaticMaximum = False
         TopAxis.AutomaticMinimum = False
         TopAxis.Grid.Color = clBlack
         TopAxis.LabelsAngle = 90
+        TopAxis.LabelsFormat.TextAlignment = taCenter
         TopAxis.LabelStyle = talMark
         TopAxis.Maximum = 10.000000000000000000
         TopAxis.Minimum = -10.000000000000000000
@@ -1123,20 +1072,22 @@ object FrmIDFCurves: TFrmIDFCurves
         View3D = False
         View3DWalls = False
         Zoom.Allow = False
+        Zoom.Pen.Mode = pmNotXor
         Color = clWhite
         TabOrder = 0
         Anchors = [akLeft, akTop, akRight, akBottom]
+        DefaultCanvas = 'TGDIPlusCanvas'
+        ColorPaletteIndex = 13
         object GridPoint: TPointSeries
           HorizAxis = aTopAxis
-          Marks.Arrow.Visible = False
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = False
-          Marks.Callout.Length = 5
-          Marks.BackColor = clWhite
-          Marks.Clip = True
-          Marks.Color = clWhite
           Marks.Frame.Visible = False
           Marks.Visible = True
+          Marks.Arrow.Visible = False
+          Marks.BackColor = clWhite
+          Marks.Callout.Arrow.Visible = False
+          Marks.Callout.Length = 5
+          Marks.Clip = True
+          Marks.Color = clWhite
           SeriesColor = clTeal
           ShowInLegend = False
           Title = 'GridPoint'
@@ -1155,9 +1106,6 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object WeibullPoints: TPointSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = clBlack
           Title = 'Weibull points'
@@ -1175,13 +1123,11 @@ object FrmIDFCurves: TFrmIDFCurves
         end
         object seriesDistribution: TLineSeries
           Active = False
-          Marks.Arrow.Visible = True
-          Marks.Callout.Brush.Color = clBlack
-          Marks.Callout.Arrow.Visible = True
           Marks.Visible = False
           SeriesColor = 64
           ShowInLegend = False
           Title = 'Distribution function'
+          Brush.BackColor = clDefault
           Pointer.InflateMargins = True
           Pointer.Style = psRectangle
           Pointer.Visible = False

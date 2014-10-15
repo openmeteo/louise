@@ -14,8 +14,9 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  tsgrid, Ts, interpol, StdCtrls, ExtCtrls, TeeProcs, TeEngine, Series, Chart,
-  Dates, Math, Menus, tsprocess, Contnrs;
+  tsgrid, Ts, interpol, StdCtrls, ExtCtrls, VclTee.TeeProcs, VclTee.TeEngine,
+  VclTee.Series, VclTee.Chart, Dates, Math, Menus, tsprocess, Contnrs,
+  VclTee.TeeGDIPlus;
 
 type
   TFrmStageDischarge = class(TForm)
@@ -439,7 +440,7 @@ begin
         FSeries[FSeriesCount-1].ParentChart := Chart1;
         Inc(FColorIndex);
         FSeries[FSeriesCount-1].SeriesColor := FColor[FColorIndex];
-        FSeries[FSeriesCount-1].Title := ShortMonthNames[i]+'- ';
+        FSeries[FSeriesCount-1].Title := FormatSettings.ShortMonthNames[i]+'- ';
         if FColorIndex>8 then FColorIndex := 1;
         for j := 0 to 20 do
         begin
@@ -1099,16 +1100,16 @@ begin
       if Length(s)=1 then
         ADelimiter := s[1]
       else Exit;
-      s := SysUtils.DecimalSeparator;
+      s := SysUtils.FormatSettings.DecimalSeparator;
       if not InputQuery(rsInputDecimalSeparator,rsInputDecimalSeparator,s) then
         Exit;
       if Length(s)=1 then
         ADecimalSeparator := s[1]
       else Exit;
       AssignFile(F, OpenDialog.FileName);
-      ASavedDecimalSeparator := SysUtils.DecimalSeparator;
+      ASavedDecimalSeparator := SysUtils.FormatSettings.DecimalSeparator;
       try
-        SysUtils.DecimalSeparator := ADecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ADecimalSeparator;
         Reset(F);
         FVolumeCurve.Clear;
         FAreaCurve.Clear;
@@ -1129,7 +1130,7 @@ begin
           FVolumeCurve.Add(ACurvePoint);
         end;
       finally
-        SysUtils.DecimalSeparator := ASavedDecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ASavedDecimalSeparator;
         CloseFile(F);
         if FVolumeCurve.Count > 0 then
         begin
@@ -1145,16 +1146,16 @@ begin
       if Length(s)=1 then
         ADelimiter := s[1]
       else Exit;
-      s := SysUtils.DecimalSeparator;
+      s := SysUtils.FormatSettings.DecimalSeparator;
       if not InputQuery(rsInputDecimalSeparator,rsInputDecimalSeparator,s) then
         Exit;
       if Length(s)=1 then
         ADecimalSeparator := s[1]
       else Exit;
       AssignFile(F, OpenDialog.FileName);
-      ASavedDecimalSeparator := SysUtils.DecimalSeparator;
+      ASavedDecimalSeparator := SysUtils.FormatSettings.DecimalSeparator;
       try
-        SysUtils.DecimalSeparator := ADecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ADecimalSeparator;
         Reset(F);
         FSpillway.Clear;
         while not eof(F) do
@@ -1169,7 +1170,7 @@ begin
           FSpillway.Add(ACurvePoint);
         end;
       finally
-        SysUtils.DecimalSeparator := ASavedDecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ASavedDecimalSeparator;
         CloseFile(F);
         if FSpillway.Count > 0 then
         begin
@@ -1185,16 +1186,16 @@ begin
       if Length(s)=1 then
         ADelimiter := s[1]
       else Exit;
-      s := SysUtils.DecimalSeparator;
+      s := SysUtils.FormatSettings.DecimalSeparator;
       if not InputQuery(rsInputDecimalSeparator,rsInputDecimalSeparator,s) then
         Exit;
       if Length(s)=1 then
         ADecimalSeparator := s[1]
       else Exit;
       AssignFile(F, OpenDialog.FileName);
-      ASavedDecimalSeparator := SysUtils.DecimalSeparator;
+      ASavedDecimalSeparator := SysUtils.FormatSettings.DecimalSeparator;
       try
-        SysUtils.DecimalSeparator := ADecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ADecimalSeparator;
         Reset(F);
         ReadLn(F,s);
         FLeakage.FHmin := StrToFloat(s);
@@ -1210,7 +1211,7 @@ begin
           FLeakage.FECoef[i] := StrToFloat(DelimitedStringItem(s, 4, ADelimiter));
         end;
       finally
-        SysUtils.DecimalSeparator := ASavedDecimalSeparator;
+        SysUtils.FormatSettings.DecimalSeparator := ASavedDecimalSeparator;
         CloseFile(F);
         FCurvesLoaded := True;
         RedrawChart;

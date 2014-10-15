@@ -39,7 +39,6 @@ object FrmDoubleMass: TFrmDoubleMass
     Top = 25
     Width = 586
     Height = 346
-    BackWall.Brush.Color = clWhite
     BackWall.Brush.Style = bsClear
     Legend.Alignment = laTop
     Legend.HorizMargin = 1
@@ -48,30 +47,36 @@ object FrmDoubleMass: TFrmDoubleMass
       'TChart')
     Title.Visible = False
     OnClickSeries = ChartClickSeries
+    BottomAxis.LabelsFormat.TextAlignment = taCenter
     BottomAxis.LabelsSize = 8
     BottomAxis.LabelStyle = talValue
     BottomAxis.TickInnerLength = 1
+    DepthAxis.LabelsFormat.TextAlignment = taCenter
+    DepthTopAxis.LabelsFormat.TextAlignment = taCenter
+    LeftAxis.LabelsFormat.TextAlignment = taCenter
     LeftAxis.LabelStyle = talValue
     LeftAxis.TickInnerLength = 1
     LeftAxis.TitleSize = 1
+    RightAxis.LabelsFormat.TextAlignment = taCenter
+    TopAxis.LabelsFormat.TextAlignment = taCenter
     View3D = False
     View3DWalls = False
     Zoom.Pen.Color = clGray
+    Zoom.Pen.Mode = pmNotXor
     Color = clWhite
     TabOrder = 1
     Anchors = [akLeft, akTop, akRight, akBottom]
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
     object seriesPoints: TPointSeries
-      Marks.Arrow.Color = clBlack
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
-      Marks.BackColor = clWhite
-      Marks.Color = clWhite
       Marks.Font.Height = -13
       Marks.Frame.Visible = False
       Marks.Transparent = True
       Marks.Visible = False
+      Marks.Arrow.Color = clBlack
+      Marks.BackColor = clWhite
+      Marks.Callout.Arrow.Color = clBlack
+      Marks.Color = clWhite
       ShowInLegend = False
       Title = 'Points'
       ClickableLine = False
@@ -86,20 +91,16 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object seriesMark: TPointSeries
-      Marks.Arrow.Color = clBlack
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
-      Marks.Callout.Length = 15
-      Marks.BackColor = clWhite
-      Marks.Color = clWhite
       Marks.Font.Height = -13
       Marks.Frame.Color = clSilver
       Marks.Visible = True
+      Marks.Arrow.Color = clBlack
+      Marks.BackColor = clWhite
+      Marks.Callout.Arrow.Color = clBlack
+      Marks.Callout.Length = 15
+      Marks.Color = clWhite
       Title = 'seriesMark'
       ClickableLine = False
-      Pointer.Brush.Color = clWhite
       Pointer.HorizSize = 5
       Pointer.InflateMargins = False
       Pointer.Style = psDiamond
@@ -111,22 +112,18 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object seriesStartEnd: TPointSeries
-      Marks.Arrow.Color = clBlack
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
-      Marks.Callout.Length = 15
-      Marks.BackColor = clWhite
-      Marks.Color = clWhite
       Marks.Font.Height = -13
       Marks.Frame.Color = clSilver
       Marks.Visible = True
+      Marks.Arrow.Color = clBlack
+      Marks.BackColor = clWhite
+      Marks.Callout.Arrow.Color = clBlack
+      Marks.Callout.Length = 15
+      Marks.Color = clWhite
       SeriesColor = clGreen
       ShowInLegend = False
       Title = 'seriesStartEnd'
       ClickableLine = False
-      Pointer.Brush.Color = clWhite
       Pointer.HorizSize = 5
       Pointer.InflateMargins = True
       Pointer.Style = psDiamond
@@ -138,12 +135,10 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object lineFull: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clBlack
       Title = 'lineFull'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -153,13 +148,11 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object lineRotateLeft: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clBlue
       ShowInLegend = False
       Title = 'lineRotateLeft'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -169,13 +162,11 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object lineRotateRight: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clBlue
       ShowInLegend = False
       Title = 'lineRotateRight'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -185,13 +176,11 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object lineMoveLeft: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clTeal
       ShowInLegend = False
       Title = 'lineMoveLeft'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -201,13 +190,11 @@ object FrmDoubleMass: TFrmDoubleMass
       YValues.Order = loNone
     end
     object lineMoveRight: TLineSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
       Marks.Visible = False
       SeriesColor = clTeal
       ShowInLegend = False
       Title = 'lineMoveRight'
+      Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       Pointer.Visible = False
@@ -392,7 +379,7 @@ object FrmDoubleMass: TFrmDoubleMass
   object ImageList: TImageList
     Top = 375
     Bitmap = {
-      494C01010B000E00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010B000E00080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

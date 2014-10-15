@@ -3383,14 +3383,14 @@ begin
     raise Exception.Create(rsCanOnlyPasteInSimpleDisplayFormat);
   CellsToPaste := nil;
   EditorMode := False;
-  SavedShortDateFormat := ShortDateFormat;
+  SavedShortDateFormat := FormatSettings.ShortDateFormat;
   try
-    if (StrIComp(PChar(ShortDateFormat),PChar('d/m/yyyy'))=0) or
-      (StrIComp(PChar(ShortDateFormat),PChar('d-m-yyyy'))=0) then
-      ShortDateFormat := 'dd/mm/yyyy';
-    if (StrIComp(PChar(ShortDateFormat),PChar('m/d/yyyy'))=0) or
-      (StrIComp(PChar(ShortDateFormat),PChar('m-d-yyyy'))=0) then
-      ShortDateFormat := 'mm/dd/yyyy';
+    if (StrIComp(PChar(FormatSettings.ShortDateFormat),PChar('d/m/yyyy'))=0) or
+      (StrIComp(PChar(FormatSettings.ShortDateFormat),PChar('d-m-yyyy'))=0) then
+      FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
+    if (StrIComp(PChar(FormatSettings.ShortDateFormat),PChar('m/d/yyyy'))=0) or
+      (StrIComp(PChar(FormatSettings.ShortDateFormat),PChar('m-d-yyyy'))=0) then
+      FormatSettings.ShortDateFormat := 'mm/dd/yyyy';
     CellsToPaste := TObjectList.Create(True);
     ParseClipboard(CellsToPaste); { Parse clipboard into CellsToPaste. }
     if TStringList(CellsToPaste.First).Count > 0 then
@@ -3425,7 +3425,7 @@ begin
       Result := PasteWithoutDates(ARect, CellsToPaste);
     end;
   finally
-    ShortDateFormat := SavedShortDateFormat;
+    FormatSettings.ShortDateFormat := SavedShortDateFormat;
     CellsToPaste.Free;
     FCheckOnly := False;
   end;
@@ -3964,7 +3964,7 @@ begin
       Perform(WM_KEYDOWN, VK_DOWN, 0);
     end;
   end else if not EditorMode and CharInSet(Key, [' ','0'..'9','A'..'Z','a'..'z','-',
-    DecimalSeparator]) then
+    FormatSettings.DecimalSeparator]) then
     if not FReadOnly then
     begin
       if ActiveIndex>-1 then
