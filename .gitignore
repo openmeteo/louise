@@ -1,0 +1,6 @@
+lib/*.dcu
+__history/
+*.identcache
+*.local
+*.res
+*.otares
