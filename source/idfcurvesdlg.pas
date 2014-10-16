@@ -236,7 +236,16 @@ uses
   uiutils, montecarlo;
 
 {$R *.DFM}
-{$RESOURCE idfeqs.res}
+(*
+  At this point the file originally contained the directive
+  {$RESOURCE idfeqs.res}
+  However, in Delphi XE5 we do away with .res files from the repository; they
+  are now purely "binary" files. At this stage it is not clear what idfeqs.res
+  contained and what was the purpose of the above directive (and Delphi has
+  discontinued the resource editor since version 2009). Until we investigate
+  further, we remove the directive so that the library can compile.
+    A.X., 2014-10-16
+*)
 
 const
   DurationList: array[0..12] of Real =
