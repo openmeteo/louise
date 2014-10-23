@@ -98,6 +98,7 @@ contains
   frmaggr in 'frmaggr.pas' {FrmAggregationDialog},
   frmrose in 'frmrose.pas' {FrmRoseDiagram},
   mledlg in 'mledlg.pas' {FrmMLEDialog},
-  frmclmgr in 'frmclmgr.pas' {FrmClimacogram};
+  frmclmgr in 'frmclmgr.pas' {FrmClimacogram},
+  gnugettext in 'gnugettext.pas';
 
 end.
