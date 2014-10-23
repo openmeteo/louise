@@ -74,7 +74,7 @@
         <DCCReference Include="OdURLLabel.dcr"/>
         <DCCReference Include="OdAboutInfo.dcr"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="thelma3.dcp"/>
+        <DCCReference Include="thelma.dcp"/>
         <DCCReference Include="tee.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>

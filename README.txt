@@ -34,8 +34,8 @@ Check library revisions required by the hydrognomon
 version.
 Build / Install libraries in this order:
 
-  a. Thelma runtime (thelma3.bpl)
-  b. Thelma designtime (thelam3dsgn.bpl)
+  a. Thelma runtime (thelma.bpl)
+  b. Thelma designtime (thelmadsgn.bpl)
 
 2. Ensure that louise\lib directory exist to output
 *.dcu files (compiled object files).

@@ -31,7 +31,7 @@ package louise3dsgn;
 
 requires
   rtl,
-  thelma3,
+  thelma,
   louise3,
   designide,
   xmlrtl,

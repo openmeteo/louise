@@ -36,7 +36,7 @@ package louise3;
 
 requires
   rtl,
-  thelma3,
+  thelma,
   tee,
   vcl,
   vcldb,
