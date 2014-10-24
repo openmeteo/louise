@@ -60,8 +60,7 @@ begin
   s := '';
   if not InputQuery(rsInputFlagCaption, rsInputFlag, s) then Exit;
   if s = '' then Exit;
-  s := TrimAllSpaces(s);
-  s := ToUpper(s);
+  s := TrimAllSpaces(s).ToUpper();
   ACheckBox := nil;
   for i := 1 to DelimitedStringCount(s, ' ') do
   begin

@@ -113,7 +113,7 @@ type
     procedure rgrpSpeedClassesClick(Sender: TObject);
     procedure edtCalmRatioChange(Sender: TObject);
     procedure edtCalmThresholdChange(Sender: TObject);
-    procedure edtCalmThresholdKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCalmThresholdKeyPress(Sender: TObject; var Key: AnsiChar);
     procedure btnSaveClick(Sender: TObject);
     procedure lstMarkSectionClick(Sender: TObject);
     procedure lstMarkSectionKeyDown(Sender: TObject; var Key: Word;
@@ -562,7 +562,7 @@ begin
 end;
 
 procedure TFrmRoseDiagram.edtCalmThresholdKeyPress(Sender: TObject;
-  var Key: Char);
+  var Key: AnsiChar);
 begin
   if not (Key in ['0', '9', '1', '2', '3', '4', '5', '6', '7', '8', #08,
     SysUtils.FormatSettings.DecimalSeparator]) then Key := #0;
@@ -1019,13 +1019,13 @@ begin
     if Xm>=0 then AAzim := 90 else if Xm<0 then AAzim := 270;
   end;
   while AAzim<0 do AAzim := AAzim +360;
+  VAzim := 0;
   if FSpeedDisplay then
   begin
     ADist := Sqrt(Sqr(VXm)+Sqr(VYm));
     if Abs(ADist)<1e-37 then ADist := 1;
     VXm := VXm * FMax / ADist;
     VYm := VYm * FMax / ADist;
-    VAzim := 0;
     if VYm<>0 then VAzim := ArcTan2(VXm, VYm)*180/Pi else
     begin
       if VXm>=0 then VAzim := 90 else if VXm<0 then VAzim := 270;

@@ -84,7 +84,6 @@ type
     procedure RedrawChart;
     procedure DoCalculate;
     procedure SetControlStatus;
-    function GetCurveID(ToWrite: Boolean): Integer;
   public
     TimeSeriesGrid: TTimeSeriesGrid;
     DBSession: TComponent;
@@ -943,7 +942,6 @@ begin
         FTransientCurveList);
       for i := 0 to ATimeSeries.Count-1 do
         ATimeSeries.Items[i].MStatus := msNew;
-      NewTsIndex := TimeSeriesGrid.Add(ATimeSeries);
     end;
   end;
 end;
@@ -952,34 +950,6 @@ procedure TFrmStageDischarge.btnCalculateClick(Sender: TObject);
 begin
   DoCalculate;
   ModalResult := mrOK;
-end;
-
-function TFrmStageDischarge.GetCurveID(ToWrite: Boolean): Integer;
-{var
-  ASubTable: string;
-  ASelectCurvesForm: TFrmSelectCurve;}
-begin
-  Assert(False,'Suftoware Should not reach here...');
-  Result := -1;
-{  ASelectCurvesForm := nil;
-  try
-    case FCalculationType of
-      0: ASubTable := 'hq_curves';
-      1: ASubTable := 'reservoir_hsvb';
-      2: ASubTable := 'reservoir_leakage';
-      3: ASubTable := 'reservoir_spill';
-    else
-      Assert(False);
-    end;
-    ASelectCurvesForm := TFrmSelectCurve.Create(Self);
-    with ASelectCurvesForm do
-    begin
-      SetParams(DBSession, ASubTable, ToWrite);
-      if ShowModal = mrOk then Result := ReturnId;
-    end;
-  finally
-    ASelectCurvesForm.Release;
-  end;}
 end;
 
 resourcestring

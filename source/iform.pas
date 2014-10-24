@@ -74,8 +74,8 @@ type
       @SeeAlso <See Method=copyAllCtrlData>
   }
     procedure pasteCtrlData;
-    constructor create(AOwner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
 

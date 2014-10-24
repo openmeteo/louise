@@ -1694,6 +1694,12 @@ resourcestring
   rsSampleConsistingOf = 'Sample consisting from values of the month: ';
   rsPDFTitle = 'Probability Density Functions (PDF) - Histogram';
 
+{ In the following procedure, the compiler erroneously shows the message that
+p1, p2 and p3 may be used before being initialized. However, this is wrong. In
+fact, if anything like "p1 := 0" is placed at the beginning of the code, the
+warning disappears but a hint that the value is not being used appears instead.
+We turn these warnings off for that function. }
+{$WARN USE_BEFORE_DEF OFF}
 procedure TFrmStatistics.PrepareLineSeries;
 var
   i: Integer;
@@ -1708,9 +1714,10 @@ var
   p1, p2, p3: Real;
 begin
   if not FAutoLeftAxisMin then
-    ActualMinX := FPaperMinX else
+    ActualMinX := FPaperMinX
+  else
     ActualMinX := Min(FPaperMinX, WeibullPoints.MinYValue);
-{Get statistical values}
+  {Get statistical values}
   if FMonthShowed = 0 then
   begin
     FFullDataList.Unbiased := FUnbiased;
@@ -1730,7 +1737,7 @@ begin
     chartPDF.Title.Text.Text := rsPDFTitle + ' - ' + rsSampleConsistingOf +
       FormatSettings.LongMonthNames[FMonthShowed];
   end;
-{Do not plot if StdDev <= 0, occured by exception}
+  {Do not plot if StdDev <= 0, occured by exception}
   if (AStandardDeviation <= 0) or (ALogStandardDeviation <= 0) then
     Exit;
   for t := 0 to 27 do
@@ -1744,102 +1751,88 @@ begin
     ChartPDF.SeriesList[j+1].Clear;
     if ADataList.Count<3 then
       Continue;
-    try
-      try
-        if t<27 then
-        begin
-          ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
-            ADataList, FGEVParameter);
-          p1 := ADistribution.Parameter1;
-          p2 := ADistribution.Parameter2;
-          p3 := ADistribution.Parameter3;
-        end else begin
-          if not (FMLEEstimationExists and (FMLEMonth = FMonthShowed)) then
+    try try
+      if t<27 then
+      begin
+        ADistribution := TStatisticalDistribution.Create(pl_Distributions[t],
+          ADataList, FGEVParameter);
+        p1 := ADistribution.Parameter1;
+        p2 := ADistribution.Parameter2;
+        p3 := ADistribution.Parameter3;
+      end else begin
+        if not (FMLEEstimationExists and (FMLEMonth = FMonthShowed)) then
+          Continue;
+        ADistribution := TStatisticalDistribution.Create(FMLEDistribution,
+          ADataList, FGEVParameter);
+        p1 := FMLEp1;
+        p2 := FMLEp2;
+        p3 := FMLEp3;
+      end;
+      ADistribution.SetGEVShape(FGEVParameter);
+      for i := 0 to 120 do
+      begin
+        AXValue := (FPaperMaxX-ActualMinX)*i/120+ActualMinX;
+        {Scale X Values for logarithmic, make the suitable for log. paper}
+        if btnLog.Checked then
+          AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
+            (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
+        if (not FAutoLeftAxisMin) and (AXValue <0) then
+          Continue;
+        if ADistribution.IsLowerBounded then
+          if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3) then
             Continue;
-          ADistribution := TStatisticalDistribution.Create(FMLEDistribution,
-            ADataList, FGEVParameter);
-          p1 := FMLEp1;
-          p2 := FMLEp2;
-          p3 := FMLEp3;
+        if ADistribution.IsUpperBounded then
+          if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3) then
+            Continue;
+        if ADistribution.IsLMomentMethod then
+          if not LMomentExist then
+            Continue;
+        AZValue := 1-ADistribution.cdfValue(p1, p2, p3, AXValue);
+        {Do this, to avoid numerical errors for Extreme XValues}
+        if (AZValue>=FMinProbability) and (AZValue<=FMaxProbability) then
+        begin
+          {Linearize...}
+          AZValue := ProbabilityPaper(AZValue, FPaperType, FGEVParameter);
+          if (AZValue >= FPaperMinZ[FPaperType]) and
+            (AZValue <= FPaperMaxZ[FPaperType]) then
+          Chart.Series[j+5].AddXY(AZValue,AXValue,'',
+            Chart.Series[j+5].SeriesColor);
         end;
-        ADistribution.SetGEVShape(FGEVParameter);
-      except
-        on EMathError do
-          Continue;
-        else
-          raise;
-      end;
-      try
-        for i := 0 to 120 do
-        begin
-          AXValue := (FPaperMaxX-ActualMinX)*i/120+ActualMinX;
-{Scale X Values for logarithmic, make the suitable for log. paper}
-          if btnLog.Checked then
-            AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
-              (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
-          if (not FAutoLeftAxisMin) and (AXValue <0) then
+      end; {i := 0..120}
+      {Prepare Histogram}
+      for i := 0 to 119 do
+      begin
+        AXValue := (FPaperMaxX-ActualMinX)*(i+0.5)/120+ActualMinX;
+        {Scale X Values for logarithmic, make the suitable for log. paper}
+        if btnLog.Checked then
+          AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
+            (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
+        if ADistribution.IsLowerBounded then
+          if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3)+0.05 then
             Continue;
-          if ADistribution.IsLowerBounded then
-            if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3) then
-              Continue;
-          if ADistribution.IsUpperBounded then
-            if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3) then
-              Continue;
-          if ADistribution.IsLMomentMethod then
-            if not LMomentExist then
-              Continue;
-          AZValue := 1-ADistribution.cdfValue(p1, p2, p3, AXValue);
-{Do this, to avoid numerical errors for Extreme XValues}
-          if (AZValue>=FMinProbability) and (AZValue<=FMaxProbability) then
-          begin
-{Linearize...}
-            AZValue := ProbabilityPaper(AZValue, FPaperType, FGEVParameter);
-            if (AZValue >= FPaperMinZ[FPaperType]) and
-              (AZValue <= FPaperMaxZ[FPaperType]) then
-            Chart.Series[j+5].AddXY(AZValue,AXValue,'',
-              Chart.Series[j+5].SeriesColor);
-          end;
-        end; {i := 0..120}
-      except
-        on EMathError do
-          Continue;
-        else
-          raise;
-      end;
-{Prepare Histogram}
-      try
-        for i := 0 to 119 do
-        begin
-          AXValue := (FPaperMaxX-ActualMinX)*(i+0.5)/120+ActualMinX;
-{Scale X Values for logarithmic, make the suitable for log. paper}
-          if btnLog.Checked then
-            AXValue := (Power(10, (AXValue-ActualMinX)/(FPaperMaxX-ActualMinX) )-1)*
-              (FPaperMaxX-ActualMinX)/(9)+ActualMinX;
-          if ADistribution.IsLowerBounded then
-            if AXValue <= ADistribution.GetMinXAtP(p1, p2, p3)+0.05 then
-              Continue;
-          if ADistribution.IsUpperBounded then
-            if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3)-0.05 then
-              Continue;
-          if ADistribution.IsLMomentMethod then
-            if not LMomentExist then
-              Continue;
-          AZValue := (ADistribution.cdfValue(p1, p2, p3, AXValue+0.05)-
-            ADistribution.cdfValue(p1, p2, p3, AXValue-0.05))/0.10;
-          ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
-            ChartPDF.Series[j+1].SeriesColor);
-        end; {i := 0..119}
-      except
-        on EMathError do
-          Continue;
-        else
-          raise;
-      end;
+        if ADistribution.IsUpperBounded then
+          if AXValue >= ADistribution.GetMaxXAtP(p1, p2, p3)-0.05 then
+            Continue;
+        if ADistribution.IsLMomentMethod then
+          if not LMomentExist then
+            Continue;
+        AZValue := (ADistribution.cdfValue(p1, p2, p3, AXValue+0.05)-
+          ADistribution.cdfValue(p1, p2, p3, AXValue-0.05))/0.10;
+        ChartPDF.Series[j+1].AddXY(AXValue,AZValue,'',
+          ChartPDF.Series[j+1].SeriesColor);
+      end; {i := 0..119}
+    except
+      on EMathError do
+        Continue;
+      else
+        raise;
+    end;
     finally
-      ADistribution.Free;
+        ADistribution.Free;
     end;
   end;
 end;
+{$WARN USE_BEFORE_DEF ON}
 
 resourcestring
   rsPointLabel =
@@ -2276,6 +2269,7 @@ begin
       (MCCount div 100)*(ADistribution.ParameterCount+1));
     FrmProcessingDialog.Show;
 { Loop for MCPointsCount points}
+    APrevFValue := -9999;
     for i := 0 to MCPointsCount-1 do
     begin
 { Get a graph value (linear)}

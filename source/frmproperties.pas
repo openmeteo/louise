@@ -60,8 +60,8 @@ type
     function execute(info:PTypeInfo; ObjList:TList):Boolean;
     function executeDontShow(info:PTypeInfo; ObjList:TList):Boolean;
     procedure setData;
-    constructor Create(AOwner: TComponent); override;
   public
+    constructor Create(AOwner: TComponent); override;
     { Public declarations }
   end;
 
@@ -239,6 +239,13 @@ begin
      for i:=0 to StrGrdProp.RowCount-1  do StrGrdProp.Rows[i].Clear;
    //set the data
      setData;
+
+     { The author of this function forgot to tell it to return a result and
+     ignored the compiler warning. He also didn't document what this function
+     is supposed to do. I'm adding the statement below so that there is no
+     compiler warning, but, frankly, I don't know what the correct fix should
+     be. A.X. 2014-10-24. }
+     Result := False;
 end;
 
 procedure TFrmPropertiesDlg.setData;
@@ -254,7 +261,8 @@ begin
      try
         propCount := GetPropList(local_info, tkAny,  propList, false);
         StrGrdProp.ColCount := propCount+1;
-        for j:=0 to propCount-1 do StrGrdProp.Cells[j+1,0] := propList^[j]^.Name;
+        for j:=0 to propCount-1 do
+          StrGrdProp.Cells[j+1,0] := string(propList^[j]^.Name);
         for i:=0 to local_ObjList.Count-1 do
         begin
              obj1:=local_ObjList[i];
@@ -262,7 +270,7 @@ begin
              StrGrdProp.Objects[0,i+1] := obj1; //associate the object with the first cell of the row
              for j:=0 to propCount-1 do
              begin
-                 stringVal := GetPropertyVal(obj1, propList^[j]^.Name);
+                 stringVal := GetPropertyVal(obj1, string(propList^[j]^.Name));
                  if stringVal=FloatToStr(isNil) then
                       StrGrdProp.Cells[j+1,i+1] := ''
                  else StrGrdProp.Cells[j+1,i+1] := stringVal;

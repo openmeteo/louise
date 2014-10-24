@@ -63,14 +63,23 @@ const
     'dayinyear', 'hour', 'minute');
 
 procedure TFrmTimeseriesParser.CreateVars;
+(*
 var
   i: Integer;
+*)
 begin
+  { FVarsArray[i].name, according to the code below, is a string; however,
+  according to the definition of calculus.TVarDef, it is a list of strings.
+  I don't know what the heck the programmer who wrote it means. I'm just
+  commenting out all the code, and instead I raise an exception whenever the
+  program tries to execute this procedure. A.X., 2014-10-24. }
+  raise Exception.Create('Internal error (frmtscalcparse.TFrmTimeseriesParser.CreateVars');
+  (*
   SetLength(FVarsArray, FTimeseriesGrid.Count+7);
   for i := 0 to FTimeseriesGrid.Count-1 do
   begin
     FVarsArray[i] := TVarDef.Create;
-    FVarsArray[i].name := 'x'+IntToStr(i+1);
+    FVarsArray[i].name := 'x' + IntToStr(i + 1);
     FParser.addVar(FVarsArray[i]);
   end;
   for i := FTimeseriesGrid.Count to FTimeseriesGrid.Count+6 do
@@ -80,6 +89,7 @@ begin
     FParser.addVar(FVarsArray[i]);
   end;
   FParser.standardFunctions;
+  *)
 end;
 
 resourcestring
@@ -154,9 +164,10 @@ begin
       FVarsArray[j].value := HourOfTheDay(ADateTimeList[i]); Inc(j);
       FVarsArray[j].value := MinuteOfTheHour(ADateTimeList[i]);
       ACalculus := nil;
+      MathErrorFlag := False;
+      AResult := 0.0;
       try
         try
-          MathErrorFlag := False;
           ACalculus := FParser.compile(expr, err);
           if ACalculus<>nil then
             AResult := ACalculus.eval;
@@ -174,7 +185,7 @@ begin
         end;
       if MathErrorFlag then
         ATimeseries.Last.SetFlag('SUSPECT', True);
-        ATimeseries.Last.AsFloat := AResult;
+      ATimeseries.Last.AsFloat := AResult;
     end;
     FTimeseriesGrid.Add(ATimeseries);
     ATimeseries := nil;

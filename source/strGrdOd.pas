@@ -106,7 +106,7 @@ type
   {** Takes into account the FitColToWidth property.
       @SeeAlso <See Property=FitColToWidth>
   }
-     procedure paint; override;
+     procedure Paint; override;
   {** Uses the quicksort algorithm to sort the rows l to r
       of the grid by the values of column col, which have to be real.
   }
@@ -115,7 +115,7 @@ type
       in ascending or descending order.
   }
      procedure SortStringgrid(byColumn: LongInt; ascending: Boolean);
-     constructor create(AOwner: TComponent); override;
+     constructor Create(AOwner: TComponent); override;
      destructor Destroy; override;
   published
   {** Introduces a distiguish color for selected cells as a property
@@ -207,8 +207,8 @@ type
   {** Takes into account the FitColToWidth property.
       @SeeAlso <See Property=FitColToWidth>
   }
-     procedure paint; override;
-     constructor create(AOwner: TComponent); override;
+     procedure Paint; override;
+     constructor Create(AOwner: TComponent); override;
      destructor Destroy; override;
   published
   {** Introduces a distiguish color for selected cells as a property

@@ -125,8 +125,8 @@ type
 }
     function getVersion : string;
     property BuildDate: string read FBuildDate write FBuildDate;
-    Constructor create(AOwner:TComponent);override;
-    destructor destroy;override;
+    Constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     function execute:boolean;
   published
 
@@ -245,7 +245,7 @@ begin
 end;
 procedure TOdAboutInfo.showCredits;
 var
-  k,h:integer;
+  k:integer;
 begin
    EASTERNEGG:='';
    exitloop:=false;
@@ -286,7 +286,6 @@ begin
         Font.Style:=[fsbold];
         Lines.Assign(Credits);
         Font.height:=11;
-        h:=aform.Canvas.TextHeight(Text);
 //        Height:=(Lines.Count+6)*h;
         BorderStyle:=bsnone;
         Alignment:=TaCenter;
@@ -407,13 +406,9 @@ resourcestring
 
 function TOdAboutInfo.execute: boolean;
 var
-    lblCopyrights1,lblCopyrights2,
-    lblCopyrights3,lblPartner1,
-    lblPartner2,lblPartner3,
-    lblApplicationTitle,LblVersion,
+    LblVersion,
     lblDescription: TLabel;
     abevel:Tbevel;
-    OdURLLabel1,OdURLLabel2,OdURLLabel3:TOdURLLabel;
     aIcon,aImage:Timage;
     i,maxwidth,offset:integer;
 
@@ -597,24 +592,6 @@ begin
              Left:=10+offset;
              Top:= aform.Controls[aform.ControlCount-2].top+aform.Controls[aform.ControlCount-2].Height+2;
              Visible:=true;
-         end;
-         if partner1.fShow then
-         begin
-               lblPartner1:=Createlbl(Partner1.Name,aform,0,15);
-               lblCopyrights1:=Createlbl(Partner1.Copyrights,aform,0,3);
-               OdURLLabel1:= CreateLblURL(Partner1.URL,Partner1.URL,aform,0,3);
-         end;
-         if partner2.fShow then
-         begin
-               lblPartner2:=Createlbl(Partner2.Name,aform,0,10);
-               lblCopyrights2:=Createlbl(Partner2.Copyrights,aform,0,3);
-               OdURLLabel2:= CreateLblURL(Partner2.URL,Partner2.URL,aform,0,3);
-         end;
-         if partner3.fShow then
-         begin
-               lblPartner3:=Createlbl(fPartner3.Name,aform,0,10);
-               lblCopyrights3:=Createlbl(fPartner3.Copyrights,aform,0,3);
-               OdURLLabel3:= CreateLblURL(fPartner3.URL,fPartner3.URL,aform,0,3);
          end;
          maxwidth:=0;
          for i:=0 to aform.ControlCount-1 do
