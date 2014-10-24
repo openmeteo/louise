@@ -1,4 +1,4 @@
-package louise3;
+package louise;
 
 {$R *.res}
 {$R 'tsgrid.dcr'}

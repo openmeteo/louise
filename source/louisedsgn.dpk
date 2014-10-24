@@ -1,4 +1,4 @@
-package louise3dsgn;
+package louisedsgn;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -32,7 +32,7 @@ package louise3dsgn;
 requires
   rtl,
   thelma,
-  louise3,
+  louise,
   designide,
   xmlrtl,
   vclactnband,
