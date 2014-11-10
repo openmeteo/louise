@@ -334,6 +334,7 @@ begin
          else
             Canvas.Brush.Color := clCream;
       end;
+	  //This is causing the problem with the shadow fonts
     //canvas.textrect (rect,rect.left+2,rect.top+0,cells[acol,arow]);
     Canvas.Brush.Color := clOldBrushColor;
     Canvas.font.Color  := clOldFontColor;

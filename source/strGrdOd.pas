@@ -416,6 +416,7 @@ begin
           canvas.font.color  := SelectedFontColor;
      end
      else canvas.font.color  := font.color;
+	 //This is causing the problem with the shadow fonts
      //canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
      inherited DrawCell(ACol, ARow, ARect, AState);
 end;
@@ -698,6 +699,7 @@ begin
           canvas.font.color  := SelectedFontColor;
      end
      else canvas.font.color  := font.color;
+	 //This is causing the problem with the shadow fonts
      //canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
      inherited DrawCell(ACol, ARow, ARect, AState);
 end;
