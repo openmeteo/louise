@@ -416,8 +416,14 @@ begin
           canvas.font.color  := SelectedFontColor;
      end
      else canvas.font.color  := font.color;
-	 //This is causing the problem with the shadow fonts
-     //canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
+
+     { At this point there used to be this statement:
+         canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
+       It's not clear to us why it was here, and in Delphi XE5 it causes
+       the headings of the grid to be printed twice, one of them slightly
+       displaced. We temporarily leave this comment here, but if there are no
+       problems for some time it should be deleted. A.X., 2014-11-13. }
+
      inherited DrawCell(ACol, ARow, ARect, AState);
 end;
 
@@ -699,8 +705,14 @@ begin
           canvas.font.color  := SelectedFontColor;
      end
      else canvas.font.color  := font.color;
-	 //This is causing the problem with the shadow fonts
-     //canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
+
+     { At this point there used to be this statement:
+         canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
+       It's not clear to us why it was here, and in Delphi XE5 it causes
+       the headings of the grid to be printed twice, one of them slightly
+       displaced. We temporarily leave this comment here, but if there are no
+       problems for some time it should be deleted. A.X., 2014-11-13. }
+
      inherited DrawCell(ACol, ARow, ARect, AState);
 end;
 

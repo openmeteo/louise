@@ -334,8 +334,14 @@ begin
          else
             Canvas.Brush.Color := clCream;
       end;
-	  //This is causing the problem with the shadow fonts
-    //canvas.textrect (rect,rect.left+2,rect.top+0,cells[acol,arow]);
+
+    { At this point there used to be this statement:
+        canvas.textrect (ARect,ARect.left+2,ARect.top+0,cells[ACol,Arow]);
+      It's not clear to us why it was here, and in Delphi XE5 it causes
+      the headings of the grid to be printed twice, one of them slightly
+      displaced. We temporarily leave this comment here, but if there are no
+      problems for some time it should be deleted. A.X., 2014-11-13. }
+
     Canvas.Brush.Color := clOldBrushColor;
     Canvas.font.Color  := clOldFontColor;
   end;
