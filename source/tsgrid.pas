@@ -2401,8 +2401,7 @@ begin
     (ATsRecord.Owner = FFilteredSeries) and
     (Canvas.Brush.Color=clWindow) then
     Canvas.Brush.Color := FFilteredColor;
-  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED or
-    ETO_OPAQUE, @ARect, PChar(s), Length(s), nil);
+  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED, @ARect, PChar(s), Length(s), nil);
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
