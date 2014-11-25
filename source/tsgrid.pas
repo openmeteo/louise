@@ -2401,8 +2401,40 @@ begin
     (ATsRecord.Owner = FFilteredSeries) and
     (Canvas.Brush.Color=clWindow) then
     Canvas.Brush.Color := FFilteredColor;
-  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED or
-    ETO_OPAQUE, @ARect, PChar(s), Length(s), nil);
+
+  { The ExtTextOut statement below used to have "ETO_CLIPPED or ETO_OPAQUE" as
+    its fourth argument. This worked correctly in Delphi 7 (on older Windows
+    versions), but does not work properly on Delphi XE5; at least not on
+    Windows 7.
+
+    We cannot figure out exactly how it should work. If we do the following
+    before the ExtTextOut:
+      Canvas.Brush.Color := clGreen;
+      Canvas.Font.Color := clWebMaroon;
+    then it seems to work logically: with ETO_OPAQUE it paints the entire cell
+    green, whereas without it only the area of the cell that has text is
+    painted green (the text itself is red in both cases).
+
+    Now, when we reach this point in the code, Canvas.Brush.Color is usually
+    clWhite; however, the top row (the grid headings) and left column (the
+    dates) is painted black instead (with ETO_OPAQUE). However, if we add this
+    command before the ExtTextOut:
+      Canvas.Brush.Color := Canvas.Brush.Color;
+    then these cells are painted white. Go figure.
+
+    The required behaviour is for the top row and left column to be gray
+    instead. If we just remove the ETO_OPAQUE, it seems to work as required.
+    Go figure why, we don't understand. However, since it seems to fix our
+    problem, that's what we do.
+
+    There are also some issues when selecting a column. Without ETO_OPAQUE,
+    it seems to do mostly the correct thing. It always highlights two cells
+    instead of one, but it shouldn't create any serious problem for the user.
+
+    Antonis Christofides and Alexandros Siskos, 2014-11-25.
+  }
+  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
+    ETO_CLIPPED {or ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
