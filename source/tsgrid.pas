@@ -2462,8 +2462,9 @@ begin
       Canvas.Brush.Color := BgColor;
   s := FDisplayedTable[ARow, ACol].DisplayedValue + ' ';
     { The space at the end is for a right border. }
-  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED or
-    ETO_OPAQUE, @ARect, PChar(s), Length(s), nil);
+  //See the big comment in DrawCellSimple
+  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED {or
+    ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
