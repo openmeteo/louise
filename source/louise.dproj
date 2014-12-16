@@ -42,6 +42,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_OutputXMLDocumentation>true</DCC_OutputXMLDocumentation>
         <VerInfo_Build>25</VerInfo_Build>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;VclTee;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
@@ -85,6 +86,7 @@
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <Debugger_HostApplication>I:\hydrognomon\bin\hydrognomon.exe</Debugger_HostApplication>
         <VerInfo_Build>0</VerInfo_Build>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=0.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -160,10 +162,6 @@
         </DCCReference>
         <DCCReference Include="frmdrgts.pas">
             <Form>FrmTimeseriesSelections</Form>
-            <DesignClass>TLForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="frmMsgDlg.pas">
-            <Form>FrmMessageDlg</Form>
             <DesignClass>TLForm</DesignClass>
         </DCCReference>
         <DCCReference Include="frmprcsdlg.pas">
@@ -263,6 +261,7 @@
             <Form>FrmClimacogram</Form>
         </DCCReference>
         <DCCReference Include="gnugettext.pas"/>
+        <DCCReference Include="msglist.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -369,6 +368,9 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
+            <UnitTesting>
+                <TestProjectName>I:\louise\source\Test\louiseTests.dproj</TestProjectName>
+            </UnitTesting>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
