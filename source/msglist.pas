@@ -131,10 +131,9 @@ begin
 end;
 
 procedure TMessageList.AddMsgIf(Condition: Boolean;
-                                Content: string; MType;
-                                TMessageType);
+                                Content: string; MType: TMessageType);
 begin
-  if Condition:
+  if Condition then
     AddMsg(Content, MType);
 end;
 
@@ -143,7 +142,7 @@ procedure TMessageList.AddMsgIfNotReal(s: string;
                                        MType: TMessageType);
 var AReal: Double;
 begin
-  AddMsgIf(s <> '' and not TryStrToFloat(s, AReal);
+  AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal)), Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfNegative(s: string;
@@ -151,7 +150,8 @@ procedure TMessageList.AddMsgIfNegative(s: string;
                                        MType: TMessageType);
 var AReal: Double;
 begin
-  AddMsgIf(s <> '' and (not TryStrToFloat(s, AReal) or AReal < 0);
+  AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal) or (AReal < 0)),
+           Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfINegative(s: string;
@@ -159,7 +159,8 @@ procedure TMessageList.AddMsgIfINegative(s: string;
                                         MType: TMessageType);
 var AInteger: Integer;
 begin
-  AddMsgIf(s <> '' and (not TryStrToInt(s, AInteger) or AInteger < 0);
+  AddMsgIf((s <> '') and (not TryStrToInt(s, AInteger) or (AInteger < 0)),
+           Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfOutsideZeroOne(s: string;
@@ -167,8 +168,8 @@ procedure TMessageList.AddMsgIfOutsideZeroOne(s: string;
                                               MType: TMessageType);
 var AReal: Double;
 begin
-  AddMsgIf(s <> '' and (not TryStrToReal(s, AInteger)
-                        or AReal < 0 or AReal > 1);
+  AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal)
+                        or (AReal < 0) or (AReal > 1)), Content, MType);
 end;
 
 procedure TMessageList.Show;
