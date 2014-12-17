@@ -51,21 +51,25 @@ type
 
     /// <summary>Adds a message to the list, but only if a string
     /// contains a value that is not a real number.</summary>
-    procedure AddMsgIfNotReal(s: string; Content: string; MType: TMessageType);
+    procedure AddMsgIfNotReal(s: string; Content: string; MType: TMessageType;
+                              AllowEmpty: Boolean = True);
 
     /// <summary>Adds a message to the list, but only if a string
     /// contains a value that is not a positive number or zero.</summary>
-    procedure AddMsgIfNegative(s: string; Content: string; MType: TMessageType);
+    procedure AddMsgIfNegative(s: string; Content: string; MType: TMessageType;
+                               AllowEmpty: Boolean = True);
 
     /// <summary>Adds a message to the list, but only if a string
     /// contains a value that is not a positive integer or zero.</summary>
-    procedure AddMsgIfINegative(s: string; Content: string; MType: TMessageType);
+    procedure AddMsgIfINegative(s: string; Content: string; MType: TMessageType;
+                                AllowEmpty: Boolean = True);
 
     /// <summary>Adds a message to the list, but only if a string
     /// contains a value that is not between zero and one.</summary>
     procedure AddMsgIfOutsideZeroOne(s: string;
                                      Content: string;
-                                     MType: TMessageType);
+                                     MType: TMessageType;
+                                     AllowEmpty: Boolean = True);
 
     /// <summary>Displays dialog box with the messages</summary>
     /// <remarks>
@@ -139,35 +143,43 @@ end;
 
 procedure TMessageList.AddMsgIfNotReal(s: string;
                                        Content: string;
-                                       MType: TMessageType);
+                                       MType: TMessageType;
+                                       AllowEmpty: Boolean = True);
 var AReal: Double;
 begin
+  AddMsgIf((s = '') and (not AllowEmpty), Content, MType);
   AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal)), Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfNegative(s: string;
                                        Content: string;
-                                       MType: TMessageType);
+                                       MType: TMessageType;
+                                       AllowEmpty: Boolean = True);
 var AReal: Double;
 begin
+  AddMsgIf((s = '') and (not AllowEmpty), Content, MType);
   AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal) or (AReal < 0)),
            Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfINegative(s: string;
                                         Content: string;
-                                        MType: TMessageType);
+                                        MType: TMessageType;
+                                        AllowEmpty: Boolean = True);
 var AInteger: Integer;
 begin
+  AddMsgIf((s = '') and (not AllowEmpty), Content, MType);
   AddMsgIf((s <> '') and (not TryStrToInt(s, AInteger) or (AInteger < 0)),
            Content, MType);
 end;
 
 procedure TMessageList.AddMsgIfOutsideZeroOne(s: string;
                                               Content: string;
-                                              MType: TMessageType);
+                                              MType: TMessageType;
+                                              AllowEmpty: Boolean = True);
 var AReal: Double;
 begin
+  AddMsgIf((s = '') and (not AllowEmpty), Content, MType);
   AddMsgIf((s <> '') and (not TryStrToFloat(s, AReal)
                         or (AReal < 0) or (AReal > 1)), Content, MType);
 end;

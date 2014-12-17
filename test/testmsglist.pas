@@ -91,14 +91,17 @@ procedure TestTMessageList.TestAddMsgIfNotReal;
 var s: string;
 begin
   FMessageList.AddMsgIfNotReal(
-    '', 'This message, 12, should be out', msgWarning);
+    '', 'This message, 120, should be out', msgWarning);
+  FMessageList.AddMsgIfNotReal(
+    '', 'This message, 121, should be in', msgWarning, False);
   FMessageList.AddMsgIfNotReal(
     'notreal', 'This message, 34, should be in', msgWarning);
   FMessageList.AddMsgIfNotReal(
     '18', 'This message, 56, should be out', msgWarning);
   s := FMessageList.GetAllMessages;
   Check(s.Contains('34'));
-  CheckFalse(s.Contains('12'));
+  CheckFalse(s.Contains('120'));
+  Check(s.Contains('121'));
   CheckFalse(s.Contains('56'));
 end;
 
@@ -106,7 +109,9 @@ procedure TestTMessageList.TestAddMsgIfNegative;
 var s: string;
 begin
   FMessageList.AddMsgIfNegative(
-    '', 'This message, 12, should be out', msgWarning);
+    '', 'This message, 120, should be out', msgWarning);
+  FMessageList.AddMsgIfNegative(
+    '', 'This message, 121, should be in', msgWarning, False);
   FMessageList.AddMsgIfNegative(
     'notanumber', 'This message, 34, should be in', msgWarning);
   FMessageList.AddMsgIfNegative(
@@ -116,7 +121,8 @@ begin
   s := FMessageList.GetAllMessages;
   Check(s.Contains('34'));
   Check(s.Contains('78'));
-  CheckFalse(s.Contains('12'));
+  CheckFalse(s.Contains('120'));
+  Check(s.Contains('121'));
   CheckFalse(s.Contains('56'));
 end;
 
@@ -124,7 +130,9 @@ procedure TestTMessageList.TestAddMsgIfINegative;
 var s: string;
 begin
   FMessageList.AddMsgIfINegative(
-    '', 'This message, 12, should be out', msgWarning);
+    '', 'This message, 120, should be out', msgWarning);
+  FMessageList.AddMsgIfINegative(
+    '', 'This message, 121, should be in', msgWarning, False);
   FMessageList.AddMsgIfINegative(
     'notanumber', 'This message, 34, should be in', msgWarning);
   FMessageList.AddMsgIfINegative(
@@ -137,7 +145,8 @@ begin
   Check(s.Contains('34'));
   Check(s.Contains('78'));
   Check(s.Contains('90'));
-  CheckFalse(s.Contains('12'));
+  CheckFalse(s.Contains('120'));
+  Check(s.Contains('121'));
   CheckFalse(s.Contains('56'));
 end;
 
@@ -145,7 +154,9 @@ procedure TestTMessageList.TestAddMsgIfOutsideZeroOne;
 var s: string;
 begin
   FMessageList.AddMsgIfOutsideZeroOne(
-    '', 'This message, 12, should be out', msgWarning);
+    '', 'This message, 120, should be out', msgWarning);
+  FMessageList.AddMsgIfOutsideZeroOne(
+    '', 'This message, 121, should be in', msgWarning, False);
   FMessageList.AddMsgIfOutsideZeroOne(
     'notanumber', 'This message, 34, should be in', msgWarning);
   FMessageList.AddMsgIfOutsideZeroOne(
@@ -158,7 +169,8 @@ begin
   Check(s.Contains('34'));
   Check(s.Contains('78'));
   Check(s.Contains('90'));
-  CheckFalse(s.Contains('12'));
+  CheckFalse(s.Contains('120'));
+  Check(s.Contains('121'));
   CheckFalse(s.Contains('56'));
 end;
 
