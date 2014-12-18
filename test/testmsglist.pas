@@ -14,6 +14,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestErrorCount;
     procedure TestGetAllMessages;
     procedure TestShowOrRaiseAndFree;
     procedure TestAddMsgIf;
@@ -36,6 +37,18 @@ procedure TestTMessageList.TearDown;
 begin
   FMessageList.Free;
   FMessageList := nil;
+end;
+
+procedure TestTMessageList.TestErrorCount;
+begin
+  CheckEquals(FMessageList.ErrorCount, 0);
+  FMessageList.AddMsg('This is information', msgInfo);
+  FMessageList.AddMsg('This is a warning', msgWarning);
+  FMessageList.AddMsg('This is an error', msgError);
+  CheckEquals(FMessageList.ErrorCount, 1);
+  FMessageList.AddMsg('This is another error', msgError);
+  FMessageList.AddMsg('This is yet another error', msgError);
+  CheckEquals(FMessageList.ErrorCount, 3);
 end;
 
 procedure TestTMessageList.TestGetAllMessages;

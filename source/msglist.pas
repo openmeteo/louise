@@ -38,7 +38,14 @@ type
   ///   </code>
   /// </example>
   TMessageList = class(TObjectList)
+  private
+    function GetErrorCount: Integer;
   public
+    /// <summary>The number of messages of type msgError that have been added
+    /// so far
+    /// </summary>
+    property ErrorCount: Integer read GetErrorCount;
+
     /// <summary>Renders all messages and returns them as a string</summary>
     function GetAllMessages: string;
 
@@ -100,6 +107,15 @@ resourcestring
   rsInfo    = 'Information';
   rsWarning = 'Warning';
   rsError   = 'Error';
+
+function TMessageList.GetErrorCount: Integer;
+var i: Integer;
+begin
+  Result := 0;
+  for i := 0 to Count-1 do
+    if TMsg(Items[i]).MType = msgError then
+      Inc(Result);
+end;
 
 function TMessageList.GetAllMessages: string;
 var
