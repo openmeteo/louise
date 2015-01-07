@@ -2346,6 +2346,7 @@ var
   SavedColor: TColor;
   AStatisticsBgColor: Boolean;
   s: string;
+  temp : integer;
 begin
   s := '';
   SaveFont;
@@ -2433,8 +2434,13 @@ begin
 
     Antonis Christofides and Alexandros Siskos, 2014-11-25.
   }
+  if canvas.brush.color = ODSTRGRDDEFAULTSELECTEDCELLCOLOR then
+     temp:= ETO_CLIPPED or ETO_OPAQUE
+  else
+     temp:= ETO_CLIPPED;
   ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
-    ETO_CLIPPED {or ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
+         temp, @ARect, PChar(s), Length(s), nil);
+
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
@@ -2444,6 +2450,7 @@ var
   ReferencePoint: Integer;
   s: string;
   SavedColor: TColor;
+  temp: integer;
 begin
   SaveFont;
 
@@ -2463,8 +2470,15 @@ begin
   s := FDisplayedTable[ARow, ACol].DisplayedValue + ' ';
     { The space at the end is for a right border. }
   //See the big comment in DrawCellSimple
-  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED {or
-    ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
+  //ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2, ETO_CLIPPED {or
+  //  ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
+  if canvas.brush.color = ODSTRGRDDEFAULTSELECTEDCELLCOLOR then
+     temp:= ETO_CLIPPED or ETO_OPAQUE
+  else
+     temp:= ETO_CLIPPED;
+  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
+         temp, @ARect, PChar(s), Length(s), nil);
+
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
@@ -3010,15 +3024,16 @@ begin
   if FFullyInvalidated then
     Reformat;
   if DefaultDrawing then
+  begin
+    if gdSelected	in AState then
+    begin
+      canvas.brush.color := ODSTRGRDDEFAULTSELECTEDCELLCOLOR;
+      canvas.font.color  := ODSTRGRDDEFAULTSELECTEDFONTCOLOR;
+    end;
     if FDisplayFormat = dfSimple then DrawCellSimple(ACol, ARow, ARect)
     else if FDisplayFormat = dfTable then DrawCellTable(ACol, ARow, ARect)
     else Assert(False);
-  if gdSelected	in AState then
-  begin
-    canvas.brush.color := ODSTRGRDDEFAULTSELECTEDCELLCOLOR;
-    canvas.font.color  := ODSTRGRDDEFAULTSELECTEDFONTCOLOR;
-  end
-  else canvas.font.color  := font.color;
+  end;
   if FDisplayFormat = dfSimple then
     if ACol = 0 then
       ColWidths[0] := FFirstColumnDefaultWidth;
