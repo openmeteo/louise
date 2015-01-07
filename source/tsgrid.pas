@@ -2433,8 +2433,14 @@ begin
 
     Antonis Christofides and Alexandros Siskos, 2014-11-25.
   }
-  ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
-    ETO_CLIPPED {or ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
+
+  if canvas.brush.color = ODSTRGRDDEFAULTSELECTEDCELLCOLOR then
+    ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
+         ETO_CLIPPED or ETO_OPAQUE, @ARect, PChar(s), Length(s), nil)
+  else
+    ExtTextOut(Canvas.Handle, ReferencePoint, ARect.Top + 2,
+         ETO_CLIPPED {or ETO_OPAQUE}, @ARect, PChar(s), Length(s), nil);
+
   Canvas.Brush.Color := SavedColor;
   RestoreFont;
 end;
@@ -3017,6 +3023,7 @@ begin
   begin
     canvas.brush.color := ODSTRGRDDEFAULTSELECTEDCELLCOLOR;
     canvas.font.color  := ODSTRGRDDEFAULTSELECTEDFONTCOLOR;
+    DrawCellSimple(ACol, ARow, ARect);
   end
   else canvas.font.color  := font.color;
   if FDisplayFormat = dfSimple then
