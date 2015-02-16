@@ -909,6 +909,29 @@ object FrmStatistics: TFrmStatistics
       ExplicitTop = 0
       ExplicitWidth = 0
       ExplicitHeight = 0
+      object sgrdData: TOdStringGrid
+        Left = 0
+        Top = 0
+        Width = 538
+        Height = 454
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Color = clWhite
+        DefaultColWidth = 60
+        DefaultRowHeight = 18
+        FixedColor = 14540253
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goRowMoving, goColMoving]
+        TabOrder = 0
+        SelectedCellColor = 8404992
+        SelectedFontColor = clWhite
+        FitColToWidth = -1
+        goPasteNonEditable = False
+        RowHeights = (
+          18
+          18
+          18
+          18
+          18)
+      end
     end
   end
   object Memo: TMemo

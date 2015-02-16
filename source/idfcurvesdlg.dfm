@@ -713,6 +713,40 @@ object FrmIDFCurves: TFrmIDFCurves
           TabOrder = 3
         end
       end
+      object sgrdSingle: TOdStringGrid
+        Left = 250
+        Top = 285
+        Width = 361
+        Height = 106
+        Anchors = [akLeft, akRight, akBottom]
+        Color = clWhite
+        ColCount = 6
+        DefaultColWidth = 58
+        DefaultRowHeight = 18
+        FixedColor = 14540253
+        RowCount = 14
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
+        TabOrder = 6
+        SelectedCellColor = 8404992
+        SelectedFontColor = clWhite
+        FitColToWidth = -1
+        goPasteNonEditable = False
+        RowHeights = (
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18
+          18)
+      end
       object btnConfidenceCalculate: TButton
         Left = 165
         Top = 150

@@ -400,6 +400,28 @@ object FrmSDConstruction: TFrmSDConstruction
       TabOrder = 10
       OnChange = dtpStartDateChange
     end
+    object sgrdCurvePoints: TOdStringGrid
+      Left = 8
+      Top = 160
+      Width = 217
+      Height = 81
+      Color = clWhite
+      ColCount = 3
+      DefaultColWidth = 40
+      DefaultRowHeight = 16
+      FixedColor = 14540253
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+      TabOrder = 11
+      OnSetEditText = sgrdCurvePointsSetEditText
+      SelectedCellColor = 8404992
+      SelectedFontColor = clWhite
+      FitColToWidth = -1
+      goPasteNonEditable = False
+      ColWidths = (
+        22
+        82
+        79)
+    end
   end
   object btnInsert: TButton
     Left = 0

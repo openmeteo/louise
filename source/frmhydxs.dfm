@@ -328,6 +328,29 @@ object FrmHydrXSections: TFrmHydrXSections
     Position = 8
     TabOrder = 12
   end
+  object sgrdData: TOdStringGrid
+    Left = 0
+    Top = 40
+    Width = 273
+    Height = 185
+    Anchors = [akLeft, akTop, akBottom]
+    Color = clWhite
+    ColCount = 3
+    DefaultColWidth = 40
+    DefaultRowHeight = 16
+    FixedColor = 14540253
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing]
+    TabOrder = 13
+    OnSetEditText = sgrdDataSetEditText
+    SelectedCellColor = 8404992
+    SelectedFontColor = clWhite
+    FitColToWidth = -1
+    goPasteNonEditable = False
+    ColWidths = (
+      40
+      70
+      65)
+  end
   object btnInsert: TButton
     Left = 41
     Top = 235
