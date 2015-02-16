@@ -973,9 +973,10 @@ begin
   AConfidenceLevel := 0.950;
   RandSeed := 0;
   case rgrpConfidenceInterval.ItemIndex of
-    0: AConfidenceLevel := 0.900;
-    1: AConfidenceLevel := 0.950;
-    2: AConfidenceLevel := 0.990;
+    0: AConfidenceLevel := 0.800;
+    1: AConfidenceLevel := 0.900;
+    2: AConfidenceLevel := 0.950;
+    3: AConfidenceLevel := 0.990;
   else
     Assert(False);
   end;

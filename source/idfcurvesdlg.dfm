@@ -726,10 +726,11 @@ object FrmIDFCurves: TFrmIDFCurves
         Left = 10
         Top = 285
         Width = 231
-        Height = 61
+        Height = 76
         Caption = 'Confidence interval of:'
         ItemIndex = 1
         Items.Strings = (
+          '80%'
           '90%'
           '95%'
           '99%')
