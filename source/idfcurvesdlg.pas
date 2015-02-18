@@ -14,7 +14,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Menus, tsidf, statprocesses, VclTee.TeEngine, VclTee.Series, ExtCtrls,
   VclTee.TeeProcs, VclTee.Chart, ComCtrls, StdCtrls, Grids, StrGrdOd,
-  frmprcsdlg, VclTee.TeeGDIPlus;
+  frmprcsdlg, VclTee.TeeGDIPlus, Vcl.ImgList;
 
 type
   TFrmIDFCurves = class(TForm)
@@ -160,6 +160,7 @@ type
     chkLogY: TCheckBox;
     mnuLogLogPaper: TMenuItem;
     Convertreturnperiodsforabovethresholdtimeseries1: TMenuItem;
+    ImglstIdfEquations: TImageList;
     procedure IFormCreate(Sender: TObject);
     procedure IFormDestroy(Sender: TObject);
     procedure IFormShow(Sender: TObject);
@@ -545,22 +546,21 @@ end;
 
 procedure TFrmIDFCurves.DrawEquation;
 var
-  ABitmap: TBitmap;
+  i: Integer;
 begin
-  ABitmap := Image.Picture.Bitmap;
   case FStatisticalDistributionType of
-    sdtExponential, sdtLExponential:
-      ABitmap.LoadFromResourceName(HInstance,'EXPONENTIAL');
-    sdtGamma: ABitmap.LoadFromResourceName(HInstance,'GAMMA');
-    sdtLogPearsonIII: ABitmap.LoadFromResourceName(HInstance,'LOGPEARSON3');
-    sdtEV1Max, sdtLEV1Max: ABitmap.LoadFromResourceName(HInstance,'EV1');
-    sdtEV2Max, sdtLEV2Max: ABitmap.LoadFromResourceName(HInstance,'EV2');
-    sdtGEVMax, sdtLGEVMax, sdtGEVMaxK, sdtLGEVMaxK:
-      ABitmap.LoadFromResourceName(HInstance,'GEV');
-    sdtPareto, sdtLPareto: ABitmap.LoadFromResourceName(HInstance,'PARETO');
+    sdtExponential, sdtLExponential: i := 3;
+    sdtGamma: i := 4;
+    sdtLogPearsonIII: i := 6;
+    sdtEV1Max, sdtLEV1Max: i := 1;
+    sdtEV2Max, sdtLEV2Max: i := 2;
+    sdtGEVMax, sdtLGEVMax, sdtGEVMaxK, sdtLGEVMaxK: i := 5;
+    sdtPareto, sdtLPareto: i := 7;
   else
-    Assert(False);
+    raise Exception.Create('Internal error');
   end;
+  ImglstIdfEquations.GetBitmap(i, Image.Picture.Bitmap);
+  Image.Repaint;
 end;
 
 procedure TFrmIDFCurves.SetControlStatus;
