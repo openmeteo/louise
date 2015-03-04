@@ -67,7 +67,6 @@ contains
   frmdblmass in 'frmdblmass.pas' {FrmDoubleMass: TLForm},
   frmdisaggr in 'frmdisaggr.pas' {FrmDissagregate: TLForm},
   frmdrgts in 'frmdrgts.pas' {FrmTimeseriesSelections: TLForm},
-  frmMsgDlg in 'frmMsgDlg.pas' {FrmMessageDlg: TLForm},
   frmprcsdlg in 'frmprcsdlg.pas' {FrmProcessingDialog: TLForm},
   frmproperties in 'frmproperties.pas' {FrmPropertiesDlg},
   frmstats in 'frmstats.pas' {FrmStatistics},
@@ -99,6 +98,7 @@ contains
   frmrose in 'frmrose.pas' {FrmRoseDiagram},
   mledlg in 'mledlg.pas' {FrmMLEDialog},
   frmclmgr in 'frmclmgr.pas' {FrmClimacogram},
-  gnugettext in 'gnugettext.pas';
+  gnugettext in 'gnugettext.pas',
+  msglist in 'msglist.pas';
 
 end.

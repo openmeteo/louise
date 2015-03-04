@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{906830B2-3831-4F0E-A907-85D7D288FC09}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="louise.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\test\louiseTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="louisedsgn.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="louise">
+        <MSBuild Projects="louise.dproj"/>
+    </Target>
+    <Target Name="louise:Clean">
+        <MSBuild Projects="louise.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="louise:Make">
+        <MSBuild Projects="louise.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="louiseTests">
+        <MSBuild Projects="..\test\louiseTests.dproj"/>
+    </Target>
+    <Target Name="louiseTests:Clean">
+        <MSBuild Projects="..\test\louiseTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="louiseTests:Make">
+        <MSBuild Projects="..\test\louiseTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="louisedsgn">
+        <MSBuild Projects="louisedsgn.dproj"/>
+    </Target>
+    <Target Name="louisedsgn:Clean">
+        <MSBuild Projects="louisedsgn.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="louisedsgn:Make">
+        <MSBuild Projects="louisedsgn.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="louise;louiseTests;louisedsgn"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="louise:Clean;louiseTests:Clean;louisedsgn:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="louise:Make;louiseTests:Make;louisedsgn:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
