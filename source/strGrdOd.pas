@@ -509,25 +509,29 @@ end;
 procedure TOdStringGrid.sortGrid(l,r: integer; col:Integer);
 var
    i,j,k: integer;
-   x2, y2: real;
+   x1, x2, y2: real;
+   swapped : boolean;
 begin
-      i:=l;  j:=r;  x2:=StrToFloat(Cells[col,((l+r) DIV 2)]);
+      //Bubble sort Algorithm
       repeat
-        while (StrToFloat(Cells[col,i])<x2) do i :=i+1;
-        while (x2<StrToFloat(Cells[col,j])) do j :=j-1;
-        if i<=j then
+        swapped := False;
+        for  i:= l to r-1 do
         begin
-          for k:=0 to ColCount-1 do
-          begin
-               y2:=StrToFloat(Cells[k,i]);
-               Cells[k,i]:=Cells[k,j];
-               Cells[k,j]:=FloatToStr(y2);
-          end;
-          i :=i+1; j :=j-1;
+             x1 := StrToFloat(Cells[col,i]);
+             x2 := StrToFloat(Cells[col,i+1]);
+             if x1 > x2 then
+             begin
+                 for k:=0 to ColCount-1 do
+                 begin
+                    x1 := StrToFloat(Cells[k,i]);
+                    x2 := StrToFloat(Cells[k,i+1]);
+                    Cells[k,i] := FloatToStr(x2);
+                    Cells[k,i+1] := FloatToStr(x1);
+                 end;
+             swapped := True;
+             end;
         end;
-      until i>j;
-      if l<j then sortGrid(l,j,col);
-      if i<r then sortGrid(i,r,col);
+      until swapped = False;
 end;
 
 
