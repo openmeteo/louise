@@ -84,7 +84,7 @@ type
       @SeeAlso <See Method=OdClipboardToFitStringGrid>
       @SeeAlso <See Method=saveToCSV>
   }
-     odPopUpMenu:TOdPopupMenu;  
+     odPopUpMenu:TOdPopupMenu;
      procedure clickPopupMenu(Sender: TObject); virtual;
   {** Saves the Grid in a comma-separated values (CSV) file format
   }
@@ -100,7 +100,7 @@ type
      procedure OdClipboardToFitStringGrid(StartCol, StartRow: Integer);  virtual;
   {** Paints the selected cells with a distinguish color.
       @SeeAlso <See Property=SelectedCellColor>
-      @SeeAlso <See Property=SelectedFontColor>      
+      @SeeAlso <See Property=SelectedFontColor>
   }
      procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
   {** Takes into account the FitColToWidth property.
@@ -201,7 +201,7 @@ type
      procedure OdClipboardToFitStringGrid(StartCol, StartRow: Integer);  virtual;
   {** Paints the selected cells with a distinguish color.
       @SeeAlso <See Property=SelectedCellColor>
-      @SeeAlso <See Property=SelectedFontColor>      
+      @SeeAlso <See Property=SelectedFontColor>
   }
      procedure DrawCell(ACol, ARow: Longint; ARect: TRect; AState: TGridDrawState); override;
   {** Takes into account the FitColToWidth property.
@@ -508,26 +508,33 @@ end;
 
 procedure TOdStringGrid.sortGrid(l,r: integer; col:Integer);
 var
-   i,j,k: integer;
-   x2, y2: real;
+  i, j, k: Integer;
+  x2, y2: real;
 begin
-      i:=l;  j:=r;  x2:=StrToFloat(Cells[col,((l+r) DIV 2)]);
-      repeat
-        while (StrToFloat(Cells[col,i])<x2) do i :=i+1;
-        while (x2<StrToFloat(Cells[col,j])) do j :=j-1;
-        if i<=j then
-        begin
-          for k:=0 to ColCount-1 do
-          begin
-               y2:=StrToFloat(Cells[k,i]);
-               Cells[k,i]:=Cells[k,j];
-               Cells[k,j]:=FloatToStr(y2);
-          end;
-          i :=i+1; j :=j-1;
-        end;
-      until i>j;
-      if l<j then sortGrid(l,j,col);
-      if i<r then sortGrid(i,r,col);
+  i := l;
+  j := r;
+  x2 := StrToFloat(Cells[col, ((l + r) DIV 2)]);
+  repeat
+    while StrToFloat(Cells[col, i]) - x2 < -1E-13 do
+      i := i + 1;
+    while x2 - StrToFloat(Cells[col, j]) < -1E-13 do
+      j := j - 1;
+    if i <= j then
+    begin
+      for k := 0 to ColCount - 1 do
+      begin
+        y2 := StrToFloat(Cells[k, i]);
+        Cells[k, i] := Cells[k, j];
+        Cells[k, j] := FloatToStr(y2);
+      end;
+      i := i + 1;
+      j := j - 1;
+    end;
+  until i > j;
+  if l < j then
+    sortGrid(l, j, col);
+  if i < r then
+    sortGrid(i, r, col);
 end;
 
 
