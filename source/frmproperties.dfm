@@ -1,9 +1,9 @@
 object FrmPropertiesDlg: TFrmPropertiesDlg
   Left = 344
   Top = 199
-  Width = 762
-  Height = 681
   Caption = 'FrmPropertiesDlg'
+  ClientHeight = 643
+  ClientWidth = 746
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,11 +17,13 @@ object FrmPropertiesDlg: TFrmPropertiesDlg
   object PanelPropertiesDlg: TPanel
     Left = 0
     Top = 0
-    Width = 754
-    Height = 608
+    Width = 746
+    Height = 604
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 754
+    ExplicitHeight = 608
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -119,11 +121,13 @@ object FrmPropertiesDlg: TFrmPropertiesDlg
   end
   object Panel2: TPanel
     Left = 0
-    Top = 608
-    Width = 754
+    Top = 604
+    Width = 746
     Height = 39
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 608
+    ExplicitWidth = 754
     object Button1: TButton
       Left = 337
       Top = 8
@@ -138,7 +142,7 @@ object FrmPropertiesDlg: TFrmPropertiesDlg
     Left = 552
     Top = 8
     Bitmap = {
-      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000400080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000B7818200B781
       8200B7818200B7818200B7818200B7818200B7818200B7818200B7818200B781

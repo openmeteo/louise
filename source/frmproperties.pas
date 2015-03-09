@@ -485,6 +485,7 @@ begin
           tkLString:      result := GetStrProp(Obj, propinfo);
           tkFloat  :      result := FloatToStr(GetFloatProp(Obj, propinfo));
           tkEnumeration : result := IntToStr(GetOrdProp(Obj, propinfo));
+          tkUString:      result := GetStrProp(Obj, propinfo);
        end;
    end;
 end;
